@@ -1,18 +1,15 @@
 <template lang="pug">
   .me
-    h1 Hello World
+    my-profile
 </template>
 
 <script>
+  import myProfile from './Profile'
+
   export default {
-    name: 'hello',
-    data () {
-      return {
-        msg: 'Welcome to Your Vue.js App'
-      }
+    name: 'me',
+    components: {
+      myProfile
     }
   }
 </script>
-
-<style lang="scss" scoped>
-</style>
