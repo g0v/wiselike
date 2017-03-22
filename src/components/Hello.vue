@@ -1,5 +1,6 @@
 <template lang="pug">
   .hello
+    img(src="../assets/logo.png")
     h1 {{ msg }}
     h2 Essential Links
     ul
