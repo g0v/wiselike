@@ -1,35 +1,33 @@
 <template lang="pug">
   .header
-    
+    el-menu
+      el-menu-item
+        el-row.row-bg(type='flex', justify='space-between')
+          el-col(:span='6')
+            el-input(icon='search', :on-icon-click='search')
+          el-col(:span='6') 
+            h1 Wiselike
+          el-col(:span='6')
+            .btn-group
+              el-button Create My Profile
+              el-button Login
+
 </template>
 
 <script>
   export default {
     name: 'header',
     data () {
-      return {
-        msg: 'Welcome to Your Vue.js App'
-      }
     }
   }
 </script>
 
 <style lang="scss" scoped>
-  h1, h2 {
-    font-weight: normal;
+  .btn-group{
+    text-align: right;
   }
-
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  a {
-    color: #42b983;
+  h1{
+    margin-top: 0px;
+    text-align: center
   }
 </style>
