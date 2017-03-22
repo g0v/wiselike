@@ -3,9 +3,16 @@
 const express = require('express');
 const crypto = require('crypto');
 
+var config = require('./config');
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV);
+}
+
 // Discourse SSO
 const DISCOURSE_SSO_SECRET = process.env.DISCOURSE_SSO_SECRET;
 const DISCOURSE_HOST = process.env.DISCOURSE_HOST; // https://talk.pdis.nat.gov.tw
+const proxy_port = process.env.PROXY_PORT || config.dev.proxy_port;
+
 
 const app = express();
 
@@ -38,7 +45,6 @@ app.get('/sso_done', (req, res) => {
   res.send('discourse sso done');
 });
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`server started at localhost:${port}`);
+app.listen(proxy_port, () => {
+  console.log(`server started at localhost:${proxy_port}`);
 });
