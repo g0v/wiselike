@@ -1,16 +1,16 @@
 <template lang="pug">
   #app
-    Header
+    my-header
     router-view
 </template>
 
 <script>
-  import Header from './components/Header.vue'
+  import myHeader from './components/Header.vue'
 
   export default {
     name: 'app',
     components: {
-      Header
+      myHeader
     }
   }
 </script>
