@@ -1,13 +1,14 @@
-all: proxy
+all: web
 
+dev: web
 
 proxy: node_modules
-	node proxy.js
+	yarn run dev-proxy
 
-dev: node_modules
+web: node_modules
 	yarn run dev
 
 node_modules:
 	yarn install
 
-.PHONY: all proxy dev
+.PHONY: all proxy dev web
