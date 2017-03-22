@@ -10,6 +10,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "element-ui": "^1.2.5",
     "node-sass": "^4.5.1",
     "pug": "^2.0.0-beta11",
     "sass-loader": "^6.0.3",
