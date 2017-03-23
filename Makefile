@@ -2,6 +2,9 @@ all: web
 
 dev: web
 
+.env:
+	cp .env.example .env
+
 proxy: node_modules
 	yarn run dev-proxy
 
@@ -11,4 +14,7 @@ web: node_modules
 node_modules:
 	yarn install
 
-.PHONY: all proxy dev web
+docker: .env
+	docker-compose up
+
+.PHONY: all proxy dev web docker
