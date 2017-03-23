@@ -4,7 +4,8 @@
       el-menu-item
         el-row.row-bg(type='flex', justify='space-between')
           el-col(:span='6')
-            el-input(icon='search', :on-icon-click='search')
+            //- el-input(icon='search', v-model="myKey", :on-icon-click='search')
+            Search
           el-col(:span='6') 
             h1 Wiselike
           el-col(:span='6')
@@ -15,9 +16,17 @@
 </template>
 
 <script>
+  import Search from './Search.vue'
+
   export default {
     name: 'header',
+    components: {
+      Search
+    },
     data () {
+      return {
+        myKey: ''
+      }
     }
   }
 </script>
