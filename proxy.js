@@ -93,6 +93,15 @@ app.get('/users', (req, res) => {
   });
 });
 
+app.get('/users/:user', (req, res) => {
+  request({
+    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
+  }, (error, response, body) => {
+    var data = JSON.parse(body);
+    res.json(data.topic_list.topics[0]); // the first topic describes the user profile
+  });
+});
+
 
 app.get('/users/:user/wisdoms', (req, res) => {
   request({
