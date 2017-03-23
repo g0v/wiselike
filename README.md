@@ -2,6 +2,14 @@
 
 > A Vue.js project
 
+## Dev only API (Linode Tokyo)
+
+ - http://139.162.109.88:9000/users
+ - http://139.162.109.88:9000/users/audreyt
+ - http://139.162.109.88:9000/users/audreyt/wisdoms
+ - http://139.162.109.88:9000/login
+
+
 ## Development
 
 ``` bash
