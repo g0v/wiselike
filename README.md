@@ -2,20 +2,67 @@
 
 > A Vue.js project
 
+## Development
+
+``` bash
+# install dependencies
+yarn install
+
+# develop web
+yarn dev-web
+
+# develop API proxy
+yarn dev-proxy
+```
+
 ## Build Setup
 
 ``` bash
 # install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
+yarn install
 
 # build for production with minification
-npm run build
+yarn build
 
 # build for production and view the bundle analyzer report
-npm run build --report
+yarn build --report
 ```
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+## API
+
+ - /users
+ - /login
+ - /logout
+ - /users/{id}
+ - /users/{id}/widdoms
+ - /wisdoms/{id}
+ - /search
+
+## Naming
+
+### Entities
+
+ - Profile - A profile page of a member
+ - Wisdom - A thread of a question and its replies. A Wisdom belongs to a profile.
+ - Member - A registered user.
+ - Guest - A guest user.
+
+### Actions
+
+ - Register / Login
+ - Ask - Ask a quesion
+ - Answer / Reply - Answer / reply to a question.
+ - Subscribe
+ - Appreciate
+
+## Stories
+
+ - As a guest, I can sign on by Discourse SSO
+ - As a member, I can ask questions on s page, these unanswered questions prviate  are only accessible by the authors (askers) and the profile owner.
+ - As a member, I can reply (answer) questions on my page, and then these answered questions public .
+ - As a member, I can reply to any public Wisdoms.
+ - As a guest, I can read any public Wisdoms.
+ - As a member, I can update my profile (page) information.Wisdomsbecome Wisdomsaka someone
