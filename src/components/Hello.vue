@@ -25,11 +25,16 @@
         a(href="http://vue-loader.vuejs.org/", target="_blank") vue-loader
       li
         a(href="https://github.com/vuejs/awesome-vue", target="_blank") awesome-vue
+    wisdom
 </template>
 
 <script>
+  import wisdom from './Wisdom.vue'
   export default {
     name: 'hello',
+    components: {
+      wisdom
+    },
     data () {
       return {
         msg: 'Welcome to Your Vue.js App'

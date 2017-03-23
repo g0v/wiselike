@@ -12,6 +12,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "axios": "^0.15.3",
     "cookie-session": "^2.0.0-beta.1",
     "element-ui": "^1.2.5",
     "node-sass": "^4.5.1",
