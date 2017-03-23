@@ -5,7 +5,7 @@ dev: web
 .env:
 	cp .env.example .env
 
-proxy: node_modules
+proxy: node_modules .env
 	yarn run dev-proxy
 
 web: node_modules

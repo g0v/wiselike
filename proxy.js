@@ -5,18 +5,15 @@ const crypto = require('crypto');
 const url = require('url');
 const querystring = require('querystring');
 const cookieSession = require('cookie-session');
-const config = require('./config');
-
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV);
-}
+const request = require('request');
+require('dotenv').config(); // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
 const DISCOURSE_SSO_SECRET = process.env.DISCOURSE_SSO_SECRET;
 const DISCOURSE_HOST = process.env.DISCOURSE_HOST || "https://talk.pdis.nat.gov.tw";
 const COOKIE_KEY = process.env.COOKIE_KEY || "dev";
 const COOKIE_KEY2 = process.env.COOKIE_KEY || process.env.DISCOURSE_SSO_SECRET; // in case key rotation
-const proxy_port = process.env.PROXY_PORT || config.dev.proxy_port;
+const PROXY_PORT = process.env.PROXY_PORT || 9000;
 
 
 const app = express();
@@ -82,6 +79,21 @@ app.get('/whoami', (req, res) => {
 });
 
 
-app.listen(proxy_port, () => {
-  console.log(`server started at localhost:${proxy_port}`);
+app.get('/users', (req, res) => {
+  request({
+    uri: process.env.DISCOURSE_HOST + '/categories.json',
+    qs: {
+      parent_category_id: 21, // the "wiselike" category in discourse
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME
+    }
+  }, (error, response, body) => {
+    var data = JSON.parse(body);
+    res.end(JSON.stringify(data.category_list.categories));
+  });
+});
+
+
+app.listen(PROXY_PORT, () => {
+  console.log(`server started at localhost:${PROXY_PORT}`);
 });
