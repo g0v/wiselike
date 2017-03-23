@@ -83,13 +83,23 @@ app.get('/users', (req, res) => {
   request({
     uri: process.env.DISCOURSE_HOST + '/categories.json',
     qs: {
-      parent_category_id: 21, // the "wiselike" category in discourse
+      parent_category_id: 21, // the "wiselike" category in discourse, FIXME
       api_key: process.env.DISCOURSE_API_KEY,
       api_username: process.env.DISCOURSE_API_USERNAME
     }
   }, (error, response, body) => {
     var data = JSON.parse(body);
-    res.end(JSON.stringify(data.category_list.categories));
+    res.json(data.category_list.categories);
+  });
+});
+
+
+app.get('/users/:user/wisdoms', (req, res) => {
+  request({
+    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
+  }, (error, response, body) => {
+    var data = JSON.parse(body);
+    res.json(data.topic_list.topics);
   });
 });
 
