@@ -75,7 +75,7 @@ app.get('/sso_done', (req, res) => {
 
 app.get('/whoami', (req, res) => {
   let username = req.session.username;
-  res.end('You are ' + username);
+  res.json({'username': username});
 });
 
 
@@ -93,12 +93,34 @@ app.get('/users', (req, res) => {
   });
 });
 
+app.get('/me', (req, res) => {
+  let username = req.session.username;
+  if (!username) {
+    return res.json({});
+  }
+  request({
+    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`
+  }, (error, response, body) => {
+    if (!response || response.statusCode != 200) {
+      console.log(body);
+      return res.status(response.statusCode).end(body);
+    }
+    var data = JSON.parse(body);
+    return res.json(data.topic_list.topics[0]); // the first topic describes the user profile
+  });
+  return null;
+});
+
 app.get('/users/:user', (req, res) => {
   request({
     uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
   }, (error, response, body) => {
+    if (!response || response.statusCode != 200) {
+      console.log(body);
+      return res.status(response.statusCode).end(body);
+    }
     var data = JSON.parse(body);
-    res.json(data.topic_list.topics[0]); // the first topic describes the user profile
+    return res.json(data.topic_list.topics[0]); // the first topic describes the user profile
   });
 });
 
@@ -107,8 +129,12 @@ app.get('/users/:user/wisdoms', (req, res) => {
   request({
     uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
   }, (error, response, body) => {
+    if (!response || response.statusCode != 200) {
+      console.log(body);
+      return res.status(response.statusCode).end(body);
+    }
     var data = JSON.parse(body);
-    res.json(data.topic_list.topics);
+    return res.json(data.topic_list.topics);
   });
 });
 
