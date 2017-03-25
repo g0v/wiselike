@@ -51,6 +51,11 @@ app.get('/login', (req, res) => {
   });
 });
 
+app.get('/logout', (req, res) => {
+  req.session = null;
+  res.redirect('/whoami');
+});
+
 app.get('/sso_done', (req, res) => {
   // TODO get user profile.
   let sso = req.query.sso;
