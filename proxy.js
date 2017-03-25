@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const url = require('url');
 const querystring = require('querystring');
@@ -32,6 +33,9 @@ app.use(function (req, res, next) {
   req.session.nowInMinutes = Math.floor(Date.now() / 60e3);
   next();
 });
+
+
+app.use(bodyParser.json());
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`;
@@ -146,6 +150,48 @@ app.get('/users/:user/wisdoms', (req, res) => {
       console.log(error.response);
       return res.status(error.response.status).json(error.response.data);
     });
+});
+
+/**
+ * Ask a question on someone's profile.
+ *
+ * Request Body: (application/json)
+ * {
+ *   "title": "{QUESTION_TITLE}",
+ *   "raw": "{QUESTION_BODY}"
+ * }
+ */
+app.post('/users/:user/wisdoms', (req, res) => {
+
+  let me = req.session.username;
+  if (me === undefined) {
+    res.status(403);
+    return res.json({"error": "Please login"});
+  }
+
+  let formData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      category: `profile-${req.params.user}`,
+      title: req.body.title,
+      raw: req.body.raw
+    }
+  );
+  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
+    .then(response => {
+      return res.json(response.data);
+    })
+    .catch(error => {
+      console.log(error.response);
+      return res.status(error.response.status).json(error.response.data);
+    });
+
+  // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
+  //       a. Change the owner to "me" (req.session.username) by PUT /t/-{topic_id}.json API
+  //        or
+  //       b. Use the POST /admin/users/{uid}/generate_api_key API to gen a API key for "me", and use that key to post the topic instead.
+  return null;
 });
 
 

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.15.3",
+    "body-parser": "^1.17.1",
     "cookie-session": "^2.0.0-beta.1",
     "dotenv": "^4.0.0",
     "element-ui": "^1.2.5",
