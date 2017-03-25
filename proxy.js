@@ -6,6 +6,7 @@ const url = require('url');
 const querystring = require('querystring');
 const cookieSession = require('cookie-session');
 const request = require('request');
+const axios = require('axios');
 require('dotenv').config(); // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
@@ -80,17 +81,21 @@ app.get('/whoami', (req, res) => {
 
 
 app.get('/users', (req, res) => {
-  request({
-    uri: process.env.DISCOURSE_HOST + '/categories.json',
-    qs: {
-      parent_category_id: 21, // the "wiselike" category in discourse, FIXME
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME
-    }
-  }, (error, response, body) => {
-    var data = JSON.parse(body);
-    res.json(data.category_list.categories);
-  });
+  axios.get(
+    process.env.DISCOURSE_HOST + '/categories.json', {
+      params: {
+        parent_category_id: 21, // the "wiselike" category in discourse, FIXME
+        api_key: process.env.DISCOURSE_API_KEY,
+        api_username: process.env.DISCOURSE_API_USERNAME
+      }
+    })
+    .then(response => {
+      return res.json(response.data.category_list.categories);
+    })
+    .catch(error => {
+      console.log(error);
+      return res.status(error.response.status).json(error.response.data);
+    });
 });
 
 app.get('/me', (req, res) => {
@@ -98,44 +103,44 @@ app.get('/me', (req, res) => {
   if (!username) {
     return res.json({});
   }
-  request({
-    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`
-  }, (error, response, body) => {
-    if (!response || response.statusCode != 200) {
-      console.log(body);
-      return res.status(response.statusCode).end(body);
-    }
-    var data = JSON.parse(body);
-    return res.json(data.topic_list.topics[0]); // the first topic describes the user profile
-  });
+  axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`)
+    .then(response => {
+      return res.json(response.data.topic_list.topics[0]); // the first topic describes the user profile
+    })
+    .catch(error => {
+      console.log(error);
+      return res.status(error.response.status).json(error.response.data);
+    });
   return null;
 });
 
 app.get('/users/:user', (req, res) => {
-  request({
-    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
-  }, (error, response, body) => {
-    if (!response || response.statusCode != 200) {
-      console.log(body);
-      return res.status(response.statusCode).end(body);
-    }
-    var data = JSON.parse(body);
-    return res.json(data.topic_list.topics[0]); // the first topic describes the user profile
-  });
+  let username = req.params.user;
+  if (!username) {
+    return res.json({});
+  }
+  axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`)
+    .then(response => {
+      return res.json(response.data.topic_list.topics[0]); // the first topic describes the user profile
+    })
+    .catch(error => {
+      console.log(error.response);
+      return res.status(error.response.status).json(error.response.data);
+    });
+  return null;
 });
 
 
 app.get('/users/:user/wisdoms', (req, res) => {
-  request({
-    uri: `${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`
-  }, (error, response, body) => {
-    if (!response || response.statusCode != 200) {
-      console.log(body);
-      return res.status(response.statusCode).end(body);
-    }
-    var data = JSON.parse(body);
-    return res.json(data.topic_list.topics);
-  });
+  axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`)
+    .then(response => {
+      response.data.topic_list.topics.shift();
+      return res.json(response.data.topic_list.topics);
+    })
+    .catch(error => {
+      console.log(error.response);
+      return res.status(error.response.status).json(error.response.data);
+    });
 });
 
 
