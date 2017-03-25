@@ -2,7 +2,21 @@
 
 > A Vue.js project
 
-## Dev only API (Linode Tokyo)
+## Development
+
+``` bash
+# install dependencies
+yarn install
+
+# develop web
+yarn dev-web # port 8000
+
+# develop API proxy
+yarn dev-proxy # port 9000
+
+### Dev only API
+
+> when not running `yarn dev-proxy`, you may use these API to develop web.
 
  - http://139.162.109.88:9000/login
  - http://139.162.109.88:9000/logout
@@ -11,19 +25,6 @@
  - http://139.162.109.88:9000/me = http://139.162.109.88:9000/users/{my username}
  - http://139.162.109.88:9000/whoami
  - http://139.162.109.88:9000/users/audreyt/wisdoms
-
-
-## Development
-
-``` bash
-# install dependencies
-yarn install
-
-# develop web
-yarn dev-web
-
-# develop API proxy
-yarn dev-proxy
 ```
 
 ## Build Setup
