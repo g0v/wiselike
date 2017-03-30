@@ -5,8 +5,9 @@
       icon="search",
       custom-item="my-item-zh",
       :fetch-suggestions="querySearch",
-      placeholder="搜尋...",
+      placeholder="搜尋用戶...",
       :on-icon-click="handleIconClick",
+      :trigger-on-focus="false",
       @select="handleSelect")
 
 
@@ -20,8 +21,8 @@
     render: function (h, ctx) {
       var item = ctx.props.item
       return h('li', ctx.data, [
-        h('div', { attrs: { class: 'name' } }, [item.value]),
-        h('span', { attrs: { class: 'addr' } }, [item.title])
+        h('div', { attrs: { class: 'name' } }, [item.userId])
+        // h('span', { attrs: { class: 'addr' } }, [item.title])
       ])
     },
     props: {
@@ -30,16 +31,17 @@
   })
   export default {
     name: 'search',
-    props: ['myKey'],
+    props: ['myKey', 'users'],
     data () {
       return {
-        users: [],
+        userList: [],
         state2: ''
       }
     },
     methods: {
       querySearch (queryString, cb) {
-        var users = this.users
+        var users = this.userList
+        console.log(users)
         var results = queryString ? users.filter(this.createFilter(queryString)) : users
         cb(results)
       },
@@ -47,7 +49,7 @@
         var reg = new RegExp(queryString, 'i')
         return (o) => {
           // return (restaurant.value.indexOf(queryString) === 0)
-          return (reg.test(o.value) || reg.test(o.title))
+          return (reg.test(o.userId) || reg.test(o.title))
         }
       },
       loadAll () {
@@ -67,20 +69,17 @@
       }
     },
     mounted () {
-      this.users = this.loadAll()
+      this.userList = this.users
     }
   }
-
 </script>
 
 
 <style lang="scss">
-
 .my-autocomplete{
   li {
     line-height: normal;
     padding: 7px;
-
     .name {
       text-overflow: ellipsis;
       overflow: hidden;
@@ -89,11 +88,9 @@
       font-size: 12px;
       color: #b4b4b4;
     }
-
     .highlighted .addr {
       color: #ddd;
     }
   }
 }
-
 </style>

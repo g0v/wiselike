@@ -1,16 +1,31 @@
 <template lang="pug">
   #app
-    my-header
+    myHeader(:users="users")
     router-view
 </template>
 
 <script>
   import myHeader from './components/Header.vue'
-
+  import axios from 'axios'
   export default {
     name: 'app',
     components: {
       myHeader
+    },
+    data () {
+      return {
+        users: []
+      }
+    },
+    mounted: function () {
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => {
+        var user = response.data.users
+        user.forEach((val) => {
+          var tmp = {}
+          tmp['userId'] = val['username']
+          this.users.push(tmp)
+        })
+      })
     }
   }
 </script>
