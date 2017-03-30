@@ -55,7 +55,6 @@
         this.lazyload = 2
         this.page = 0
         this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=0')
-        console.log(this.All_category)
         let topic = await this.getDiscussion_Topic(this.All_category)
         await this.Data_Processing(topic)
       },
@@ -66,11 +65,7 @@
         if ((this.lazyload % 30) === 0) {
           this.page += 1
           this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=' + this.page)
-          // ['data']['topic_list']['topics']
-          console.log(this.All_category)
         }
-        console.log(this.page)
-        console.log(this.lazyload)
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
