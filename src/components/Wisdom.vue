@@ -70,15 +70,38 @@
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
-            resolve(val)
+            if (url.indexOf('page=0') > -1) {
+              val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
+              resolve(val)
+            } else {
+              resolve(val)
+            }
           })
         })
       },
       getDiscussion_Topic: function (url) { // 一次抓兩篇topic
         return new Promise((resolve, reject) => {
           let id = url['data']['topic_list']['topics']
-          console.log(id[0].id)
           let data = []
+          // function a (i, callback) {
+          //   let con = i + 2
+          //   while (i < con) {
+          //     axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i % 10].id + '.json?include_raw=1').then((val) => {
+          //       data.push(val)
+          //       console.log(id[1].id)
+          //       if (data.length === 2) {
+          //         resolve(data)
+          //         console.log(data)
+          //       }
+          //       if (data.length === 1) {
+          //         i++
+          //       }
+          //     })
+          //     i++
+          //   }
+          //   callback(i)
+          // }
+          // a((this.lazyload - 2), function (result) {})
           for (let i = (this.lazyload - 2); i < this.lazyload; i++) {
           // for (let i in id) {
             axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i % 10].id + '.json?include_raw=1').then((val) => {
