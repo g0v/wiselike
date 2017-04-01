@@ -18,12 +18,11 @@ yarn dev-proxy # port 9000
 
 > when not running `yarn dev-proxy`, you may use these API to develop web.
 
- - http://139.162.109.88:9000/login
- - http://139.162.109.88:9000/logout
+ - http://139.162.109.88:9000/login => {'sso': '{sso}', 'sig': '{sig}', 'username': '{username}'}
  - http://139.162.109.88:9000/users
  - http://139.162.109.88:9000/users/audreyt
- - http://139.162.109.88:9000/me = http://139.162.109.88:9000/users/{my username}
- - http://139.162.109.88:9000/whoami
+ - http://139.162.109.88:9000/me?sso={sso}&sig={sig}
+ - http://139.162.109.88:9000/whoami?sso={sso}&sig={sig}
  - http://139.162.109.88:9000/users/audreyt/wisdoms
 ```
 

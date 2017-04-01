@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const url = require('url');
 const querystring = require('querystring');
-const cookieSession = require('cookie-session');
 const request = require('request');
 const axios = require('axios');
 require('dotenv').config(); // use dotenv (prevent messing up with vuejs env config)
@@ -13,26 +12,33 @@ require('dotenv').config(); // use dotenv (prevent messing up with vuejs env con
 // Discourse SSO
 const DISCOURSE_SSO_SECRET = process.env.DISCOURSE_SSO_SECRET;
 const DISCOURSE_HOST = process.env.DISCOURSE_HOST || "https://talk.pdis.nat.gov.tw";
-const COOKIE_KEY = process.env.COOKIE_KEY || "dev";
-const COOKIE_KEY2 = process.env.COOKIE_KEY || process.env.DISCOURSE_SSO_SECRET; // in case key rotation
 const PROXY_PORT = process.env.PROXY_PORT || 9000;
 
 
+function getProfile(sso, sig) {
+  let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET);
+  let decodedSso = decodeURIComponent(sso);
+  let hash = hmac.update(decodedSso).digest('hex');
+
+  if (sig != hash) {
+    console.error('Invalid auth');
+    // FIXME send 403
+    //res.status(403).send('Invalid auth');
+  }
+
+  let profile = querystring.parse(new Buffer(sso, 'base64').toString('utf8'));
+
+  // TODO check that profile.nonce should match the nonce from the login step.
+  console.log(profile);
+  return profile;
+}
+
+function getUsername(sso, sig) {
+  let profile = getProfile(sso, sig);
+  return profile.username;
+}
+
 const app = express();
-
-app.use(cookieSession({
-  name: 'session',
-  keys: [COOKIE_KEY, COOKIE_KEY2],
-  // Cookie Options
-  maxAge: 1 * 60 * 60 * 1000 // 1 hours (for dev), TODO change to 24 hours later
-}));
-
-
-app.use(function (req, res, next) {
-  // expand cookie expire time every minute
-  req.session.nowInMinutes = Math.floor(Date.now() / 60e3);
-  next();
-});
 
 
 app.use(bodyParser.json());
@@ -55,36 +61,25 @@ app.get('/login', (req, res) => {
   });
 });
 
-app.get('/logout', (req, res) => {
-  req.session = null;
-  res.redirect('/whoami');
-});
-
 app.get('/sso_done', (req, res) => {
   // TODO get user profile.
   let sso = req.query.sso;
   let sig = req.query.sig;
-
-  let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET);
-  let decodedSso = decodeURIComponent(sso);
-  let hash = hmac.update(decodedSso).digest('hex');
-
-  if (sig != hash) {
-    console.error('Invalid auth');
-    res.status(403).send('Invalid auth');
-  }
-
-  let profile = querystring.parse(new Buffer(sso, 'base64').toString('utf8'));
-
-  // TODO check that profile.nonce should match the nonce from the login step.
-  console.log(profile);
-
-  req.session.username = profile.username;
-  res.end('Hello ' + profile.username + ', cookie-session saved! Check it at /whoami');
+  let username = getUsername(sso, sig);
+  let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username});
+  let body = `
+Hello ${username}, you may close this window
+<script>
+window.opener.postMessage(${data}, 'http://localhost:8000'); // FIXME read from config
+</script>
+`;
+  res.send(body);
 });
 
 app.get('/whoami', (req, res) => {
-  let username = req.session.username;
+  let sso = req.query.sso;
+  let sig = req.query.sig;
+  let username = getUsername(sso, sig);
   res.json({'username': username});
 });
 
@@ -108,7 +103,9 @@ app.get('/users', (req, res) => {
 });
 
 app.get('/me', (req, res) => {
-  let username = req.session.username;
+  let sso = req.query.sso;
+  let sig = req.query.sig;
+  let username = getUsername(sso, sig);
   if (!username) {
     return res.json({});
   }
@@ -188,7 +185,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
     });
 
   // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
-  //       a. Change the owner to "me" (req.session.username) by PUT /t/-{topic_id}.json API
+  //       a. Change the owner to "me" by PUT /t/-{topic_id}.json API
   //        or
   //       b. Use the POST /admin/users/{uid}/generate_api_key API to gen a API key for "me", and use that key to post the topic instead.
   return null;

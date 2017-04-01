@@ -11,7 +11,10 @@
           el-col(:span='6')
             .btn-group
               el-button Create My Profile
-              el-button Login
+              span(v-if="username === ''")
+                el-button(@click.native="login") Login
+              span(v-else)
+                el-button {{username}}
 
 </template>
 
@@ -26,8 +29,23 @@
     },
     data () {
       return {
-        myKey: ''
+        myKey: '',
+        username: ''
       }
+    },
+    methods: {
+      login: function (event) {
+        window.open('http://139.162.109.88:9000/login') // FIXME
+      }
+    },
+    mounted: function () {
+      window.addEventListener('message', (event) => {
+        if (event.origin !== 'http://139.162.109.88:9000') { // FIXME
+          console.log('Incorrect origin')
+          return
+        }
+        this.username = event.data.username
+      }, false)
     }
   }
 </script>
