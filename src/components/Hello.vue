@@ -1,6 +1,5 @@
 <template lang="pug">
   .hello
-    h2 {{msg}}
     profile
     wisdom
 </template>
@@ -16,7 +15,6 @@
     },
     data () {
       return {
-        msg: 'Welcome to Wiselike!'
       }
     }
   }

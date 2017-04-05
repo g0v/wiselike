@@ -1,6 +1,6 @@
 <template lang="pug">
   .wisdom
-    el-row(:gutter='20')
+    el-row
       el-col(:span='4')
         p 
       el-col(:span='16')
@@ -22,7 +22,7 @@
               span.sereply(v-html='wisdom.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-        el-button(type="primary",v-on:click="lazy")
+        el-button.loader(type="primary",v-on:click="lazy", v-loading.fullscreen="loading")
          | load more
       el-col(:span='4')
         P 
@@ -47,7 +47,8 @@
         page: Number,
         lazyload: '',
         lazyload_count: '',
-        All_category: []
+        All_category: [],
+        loading: false
       }
     },
     methods: {
@@ -126,10 +127,32 @@
           this.wisdom.time.push(time)
           this.wisdom.icon.push(icon)
         }
+      },
+      /* trigger 'load more' when window scroll to bottom */
+      hitLoad: function () {
+        let wBottom = window.pageYOffset + window.innerHeight
+        /* cross-browser highest document finding */
+        let dHeight = Math.max(
+          document.body.scrollHeight, document.documentElement.scrollHeight,
+          document.body.offsetHeight, document.documentElement.offsetHeight,
+          document.body.clientHeight, document.documentElement.clientHeight
+        )
+        /* check if scroll to bottom */
+        if (wBottom === dHeight) {
+          this.loading = true
+          /* pause for testing */
+          setTimeout(() => {
+            this.lazy()
+            this.loading = false
+          }, 1000)
+        }
       }
     },
     created: function () {
       this.getUserData()
+
+      /* bind event 'scroll' to window */
+      window.addEventListener('scroll', this.hitLoad)
     }
   }
 </script>
