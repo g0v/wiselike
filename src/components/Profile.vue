@@ -1,6 +1,6 @@
 <template lang="pug">
   .profile
-    h1 Hello World
+    h1 Audrey Tang
     p: img.avatar(src="../assets/avatar.png")
     p: el-button(type="primary", size="large") 我要發問
 </template>
