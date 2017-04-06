@@ -11,7 +11,6 @@
       @select="handleSelect")
 
 
-
 </template>
 
 <script>
@@ -20,8 +19,9 @@
     functional: true,
     render: function (h, ctx) {
       var item = ctx.props.item
+      var route = '/profile/' + item.userId
       return h('li', ctx.data, [
-        h('div', { attrs: { class: 'name' } }, [item.userId])
+        h('router-link', { attrs: { class: 'name', to: route } }, [item.userId])
         // h('span', { attrs: { class: 'addr' } }, [item.title])
       ])
     },
@@ -29,13 +29,18 @@
       item: { type: Object, required: true }
     }
   })
+  import profile from './Profile.vue'
   export default {
     name: 'search',
+    components: {
+      profile
+    },
     props: ['myKey', 'users'],
     data () {
       return {
         userList: [],
-        state2: ''
+        state2: '',
+        sUser: []
       }
     },
     methods: {
@@ -52,17 +57,9 @@
           return (reg.test(o.userId) || reg.test(o.title))
         }
       },
-      loadAll () {
-        return [
-          { 'value': 'Audrey Tang', 'title': '數位政委' },
-          { 'value': 'Mark Dai', 'title': '資策會工程師' },
-          { 'value': 'John Chou', 'title': '替代役1' },
-          { 'value': 'Z.d Lin', 'title': '替代役2' },
-          { 'value': 'Joke', 'title': '導演' }
-        ]
-      },
       handleSelect (item) {
-        console.log(item)
+        this.sUser = item
+        console.log(this.sUser)
       },
       handleIconClick (ev) {
         console.log(ev)
@@ -70,6 +67,7 @@
     },
     mounted () {
       this.userList = this.users
+      this.sUser = this.sUser
     }
   }
 </script>
