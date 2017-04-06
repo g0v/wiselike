@@ -138,7 +138,7 @@
           setTimeout(() => {
             this.lazy()
             this.loading = false
-          }, 300)
+          }, 1000)
         }
       }
     },
