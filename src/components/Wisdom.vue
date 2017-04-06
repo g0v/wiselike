@@ -90,12 +90,6 @@
           axios.get(url).then((val) => {
             val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
             resolve(val)
-            // if (url.indexOf('page=0') > -1) {
-            //   val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
-            //   resolve(val)
-            // } else {
-            //   resolve(val)
-            // }
           })
         })
       },
@@ -144,7 +138,7 @@
           setTimeout(() => {
             this.lazy()
             this.loading = false
-          }, 1000)
+          }, 300)
         }
       }
     },
