@@ -1,20 +1,20 @@
 <template lang="pug">
   .header
-    el-menu
-      el-menu-item(index='1')
-        el-row.row-bg(type='flex', justify='space-between')
-          el-col(:span='6')
-            //- el-input(icon='search', v-model="myKey", :on-icon-click='search')
-            Search(:users="users")
-          el-col(:span='6') 
-            h1 Wiselike 
-          el-col(:span='6')
-            .btn-group
-              el-button Create My Profile
-              span(v-if="username === ''")
-                el-button(@click.native="login") Login
-              span(v-else)
-                el-button {{username}}
+    //- el-menu
+      //- el-menu-item(index='1')
+    el-row.row-bg(type='flex', justify='space-between')
+      el-col.left(:span='6')
+        //- el-input(icon='search', v-model="myKey", :on-icon-click='search')
+        h1 Wiselike
+        Search(:users="users")
+      el-col(:span='6')
+      el-col(:span='6')
+        .btn-group
+          el-button Create My Profile
+          span(v-if="username === ''")
+            el-button(@click.native="login") Login
+          span(v-else)
+            el-button {{username}}
 
 </template>
 
@@ -51,6 +51,18 @@
 </script>
 
 <style lang="scss" scoped>
+  .header {
+    position: absolute;
+    padding: 1em 5ch;
+    box-sizing: border-box;
+    width: 100%;
+    .left {
+      display: flex;
+      h1 {
+        color: white;
+      }
+    }
+  }
   .btn-group{
     text-align: right;
   }

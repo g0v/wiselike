@@ -15,6 +15,10 @@
 <style lang="scss" scoped>
   .profile {
     text-align: center;
+    padding: 3em 0;
+    margin: 0 0 1em 0;
+    background: url("https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=");
+    background-size: cover;
 
     .avatar {
       border-radius: 50%;
