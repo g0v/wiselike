@@ -2,7 +2,7 @@
   .wisdom
     el-row
       el-col(:span='4')
-        p 
+        p
       el-col(:span='16')
         div(v-for='(item, contentindex) in wisdom.content', v-if="contentindex<lazyload && wisdom.content != undefined")
           el-card.box-card
@@ -13,19 +13,19 @@
               span 提問:
               h2 {{wisdom.title[contentindex]}}
               p(v-html='wisdom.content[contentindex][0]')
-              
+
             .text.item(v-for='(item, index) in wisdom.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
-                
+
               img(:src='wisdom.icon[contentindex][index]')
               span.el-dialog__title {{wisdom.aouther[contentindex][index]}}
               span 回應:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{wisdom.time[contentindex][index]}}
               span.sereply(v-html='wisdom.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-        el-button.loader(type="primary",v-on:click="lazy", v-loading.fullscreen="loading")
+        el-button.loader(type="primary",v-on:click="lazy", v-loading="loading")
          | load more
       el-col(:span='4')
-        P 
+        p
 
 </template>
 
@@ -90,12 +90,6 @@
           axios.get(url).then((val) => {
             val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
             resolve(val)
-            // if (url.indexOf('page=0') > -1) {
-            //   val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
-            //   resolve(val)
-            // } else {
-            //   resolve(val)
-            // }
           })
         })
       },
@@ -144,7 +138,7 @@
           setTimeout(() => {
             this.lazy()
             this.loading = false
-          }, 1000)
+          }, 300)
         }
       }
     },
@@ -200,9 +194,9 @@
   .el-dialog__title{
     font-size:1.5rem;
   }
-  el-input{
-    width:50%;
-  }
+  // el-input{
+  //   width:50%;
+  // }
   .el-textarea {
     display: inline-block;
     width: 88%;
@@ -218,5 +212,9 @@
   font-size: 2rem;
   width: 100%;
 }
-    
+
+.loader {
+  margin-bottom: 1em;
+}
+
 </style>

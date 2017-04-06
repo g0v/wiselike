@@ -1,7 +1,7 @@
 <template lang="pug">
   .header
     el-menu
-      el-menu-item
+      el-menu-item(index='1')
         el-row.row-bg(type='flex', justify='space-between')
           el-col(:span='6')
             //- el-input(icon='search', v-model="myKey", :on-icon-click='search')
