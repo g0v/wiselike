@@ -4,25 +4,40 @@
       el-col(:span='4')
         p
       el-col(:span='16')
-        div(v-for='(item, contentindex) in wisdom.content', v-if="contentindex<lazyload && wisdom.content != undefined")
+        p(v-if="wisdom_Private.content.length > 0") 等待回答
+          el-collapse(v-model='activeName', accordion='')
+            div.private(v-for='(item, contentindex) in wisdom_Private.content', v-if="contentindex<lazyload && wisdom_Private.content.length > 0")
+              el-collapse-item
+                template(slot='title')
+                  | {{wisdom_Private.title[contentindex]}}
+                  i.header-icon.el-icon-information
+                img(:src='wisdom_Private.icon[contentindex][0]')
+                span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
+                span 提問:
+                p(v-html='wisdom_Private.content[contentindex][0]')
+                el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
+          el-button.loader(type="primary",v-on:click="Private")
+            | load more
+        p(v-if="wisdom_Private.content != undefined") 歷史問題
+        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload && wisdom_Pubilc.content != undefined")
           el-card.box-card
             .clearfix(slot='header')
               span(style='line-height: 36px;')
-              img(:src='wisdom.icon[contentindex][0]')
-              span.el-dialog__title {{wisdom.aouther[contentindex][0]}}
+              img(:src='wisdom_Pubilc.icon[contentindex][0]')
+              span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][0]}}
               span 提問:
-              h2 {{wisdom.title[contentindex]}}
-              p(v-html='wisdom.content[contentindex][0]')
+              h2 {{wisdom_Pubilc.title[contentindex]}}
+              p(v-html='wisdom_Pubilc.content[contentindex][0]')
 
-            .text.item(v-for='(item, index) in wisdom.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
+            .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
 
-              img(:src='wisdom.icon[contentindex][index]')
-              span.el-dialog__title {{wisdom.aouther[contentindex][index]}}
-              span 回應:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{wisdom.time[contentindex][index]}}
-              span.sereply(v-html='wisdom.content[contentindex][index]')
+              img(:src='wisdom_Pubilc.icon[contentindex][index]')
+              span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
+              span 回應:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{wisdom_Pubilc.time[contentindex][index]}}
+              span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-        el-button.loader(type="primary",v-on:click="lazy", v-loading="loading")
+        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading")
          | load more
       el-col(:span='4')
         p
@@ -37,14 +52,23 @@
     },
     data () {
       return {
-        wisdom: {
+        activeName: '1',
+        wisdom_Pubilc: {
           title: [],
           icon: [],
           content: [],
           aouther: [],
           time: []
         },
-        page: Number,
+        wisdom_Private: {
+          title: [],
+          icon: [],
+          content: [],
+          aouther: [],
+          time: []
+        },
+        page: '0',
+        private_page: '0',
         lazyload: '',
         lazyload_count: '',
         All_category: [],
@@ -53,16 +77,19 @@
     },
     methods: {
       getUserData: async function () {
-        // this.getDiscussion_Comment('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=0')
         this.lazyload = 0
         this.lazyload_count = 0
         this.page = 0
-        this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=0')
-        await this.lazy()
+        this.private_page = 0
+        this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt.json?page=0')
+        await this.Lazy_Pubilc()
+        await this.Lazy_Private(this.All_category)
       },
-      lazy: async function (val) { // lazyload
+      Lazy_Pubilc: async function (val) { // lazyload
         let topic = []
         let length = this.All_category.data.topic_list.topics.length
+        let length1 = this.All_category.data.topic_list.topics.length % 2
+        console.log(length1)
         if (length - this.lazyload_count === 1) {
           this.lazyload_count += 1
           this.lazyload += 1
@@ -78,12 +105,41 @@
             topic.push(topicdata)
           }
         }
-        await this.Data_Processing(topic)
+        await this.Data_Processing(topic, true)
         if (this.lazyload_count === length) {
           this.lazyload_count = 0
           this.page += 1
           this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=' + this.page)
         }
+      },
+      Private: async function (val) { // lazyload
+        this.private_page += 1
+        let category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=' + this.page)
+        this.Lazy_Private(category)
+        console.log(category)
+      },
+      Lazy_Private: async function (val) { // lazyload
+        let topic = []
+        let id = val
+        // let category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith/l/latest.json?page=0&api_key=e48e540665fe1382c47f47b73ec57b7c828871e8e43200fbc8f7ab79a5c9489c&api_username=smith02620')
+        let category = val.data.topic_list.topics
+        // id.data.topic_list.topics = []
+        for (let i in category) {
+          if (category[i].visible === false) {
+            id.data.topic_list.topics.push(category[i])
+          }
+        }
+        let idlength = id.data.topic_list.topics.length
+        for (let i = 0; i < idlength; i++) {
+          let topicdata = await this.getDiscussion_Topic(id, i)
+          topic.push(topicdata)
+        }
+        // await this.Data_Processing(topic.reverse(), false)
+        // if (this.lazyload_count === length) {
+        //   this.lazyload_count = 0
+        //   this.page += 1
+        //   this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith/l/latest.json?page=0&api_key=e48e540665fe1382c47f47b73ec57b7c828871e8e43200fbc8f7ab79a5c9489c&api_username=smith02620')
+        // }
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
@@ -101,7 +157,7 @@
           })
         })
       },
-      Data_Processing: function (topic) {
+      Data_Processing: function (topic, pubilc) {
         for (let i in topic) {
           let content = []
           let icon = []
@@ -115,11 +171,20 @@
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          this.wisdom.title.push(topic[i]['data']['title'])
-          this.wisdom.content.push(content)
-          this.wisdom.aouther.push(aouther)
-          this.wisdom.time.push(time)
-          this.wisdom.icon.push(icon)
+          if (topic[i]['data']['visible'] === true && pubilc === true) {
+            this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
+            this.wisdom_Pubilc.content.push(content)
+            this.wisdom_Pubilc.aouther.push(aouther)
+            this.wisdom_Pubilc.time.push(time)
+            this.wisdom_Pubilc.icon.push(icon)
+          }
+          if (topic[i]['data']['visible'] === false && pubilc === false) {
+            this.wisdom_Private.title.push(topic[i]['data']['title'])
+            this.wisdom_Private.content.push(content)
+            this.wisdom_Private.aouther.push(aouther)
+            this.wisdom_Private.time.push(time)
+            this.wisdom_Private.icon.push(icon)
+          }
         }
       },
       /* trigger 'load more' when window scroll to bottom */
@@ -136,7 +201,7 @@
           this.loading = true
           /* pause for testing */
           setTimeout(() => {
-            this.lazy()
+            this.Lazy_Pubilc()
             this.loading = false
           }, 1000)
         }
