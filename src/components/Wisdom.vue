@@ -52,6 +52,8 @@
     },
     data () {
       return {
+        // id: this.$route.params.userId,
+        id: 'audreyt',
         activeName: '1',
         wisdom_Pubilc: {
           title: [],
@@ -75,13 +77,18 @@
         loading: false
       }
     },
+    computed: {
+      profileLink: function () {
+        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.id
+      }
+    },
     methods: {
       getUserData: async function () {
         this.lazyload = 0
         this.lazyload_count = 0
         this.page = 0
         this.private_page = 0
-        this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt.json?page=0')
+        this.All_category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
         await this.Lazy_Pubilc()
         await this.Lazy_Private(this.All_category)
       },
@@ -109,12 +116,12 @@
         if (this.lazyload_count === length) {
           this.lazyload_count = 0
           this.page += 1
-          this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=' + this.page)
+          this.All_category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
         }
       },
       Private: async function (val) { // lazyload
         this.private_page += 1
-        let category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-audreyt/l/latest.json?page=' + this.page)
+        let category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
         this.Lazy_Private(category)
         console.log(category)
       },
