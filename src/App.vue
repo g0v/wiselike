@@ -1,7 +1,7 @@
 <template lang="pug">
   #app
     myHeader(:users="users")
-    router-view
+    router-view(:users="users")
 </template>
 
 <script>
@@ -23,6 +23,7 @@
         user.forEach((val) => {
           var tmp = {}
           tmp['userId'] = val['username']
+          tmp['userIcon'] = 'https://talk.pdis.nat.gov.tw' + val['avatar_template'].replace(/{size}/, '100')
           this.users.push(tmp)
         })
       })

@@ -1,15 +1,34 @@
 <template lang="pug">
   .profile
     h2 {{$route.params.userId}}
-    p: img.avatar(src="../assets/avatar.png")
+    p: img.avatar(v-if="users != null", :src="userInfo")
     p: el-button(type="primary", size="large") 我要發問
 </template>
 
 <script>
   export default {
     name: 'profile',
-    props: ['sUser']
+    props: ['sUser', 'users'],
+    data () {
+      return {
+        icon: ''
+      }
+    },
+    computed: {
+      userInfo: function () {
+        var userid = this.$route.params.userId
+        var t = this.users.filter((o) => {
+          return o.userId === userid
+        })[0]['userIcon']
+        if (t === undefined) {
+          return null
+        } else {
+          return t
+        }
+      }
+    }
   }
+  
 </script>
 
 <style lang="scss" scoped>
