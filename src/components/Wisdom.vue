@@ -94,30 +94,16 @@
       },
       Lazy_Pubilc: async function (val) { // lazyload
         let topic = []
+        let standard = Number
         let length = this.All_category.data.topic_list.topics.length
-        let length1 = this.All_category.data.topic_list.topics.length % 2
-        console.log(length1)
-        if (length - this.lazyload_count === 1) {
-          this.lazyload_count += 1
-          this.lazyload += 1
-          for (let i = (this.lazyload_count - 1); i < this.lazyload_count; i++) {
-            let topicdata = await this.getDiscussion_Topic(this.All_category, i)
-            topic.push(topicdata)
-          }
-        } else if (length - this.lazyload_count > 1) {
-          this.lazyload_count += 2
-          this.lazyload += 2
-          for (let i = (this.lazyload_count - 2); i < this.lazyload_count; i++) {
-            let topicdata = await this.getDiscussion_Topic(this.All_category, i)
-            topic.push(topicdata)
-          }
+        let remain = length - this.lazyload_count
+        remain === 1 ? ((this.lazyload_count += 1), (this.lazyload += 1), (standard = 1)) : ((this.lazyload_count += 2), (this.lazyload += 2), (standard = 2))
+        for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
+          let topicdata = await this.getDiscussion_Topic(this.All_category, i)
+          topic.push(topicdata)
         }
-        await this.Data_Processing(topic, true)
-        if (this.lazyload_count === length) {
-          this.lazyload_count = 0
-          this.page += 1
-          this.All_category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
-        }
+        await this.Data_Processing(topic, true);
+        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.All_category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page))
       },
       Private: async function (val) { // lazyload
         this.private_page += 1
@@ -132,9 +118,7 @@
         let category = val.data.topic_list.topics
         // id.data.topic_list.topics = []
         for (let i in category) {
-          if (category[i].visible === false) {
-            id.data.topic_list.topics.push(category[i])
-          }
+          (category[i].visible === false) && (id.data.topic_list.topics.push(category[i]))
         }
         let idlength = id.data.topic_list.topics.length
         for (let i = 0; i < idlength; i++) {
