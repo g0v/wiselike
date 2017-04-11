@@ -1,38 +1,48 @@
 <template lang="pug">
   .profile
-    h2 {{$route.params.userId}}
-    p: img.avatar(v-if="users != null", :src="userInfo")
-    p: el-button(type="primary", size="large") 我要發問
+    .info
+      h2 {{ userId }}
+      p: img.avatar(v-if="users", :src="getAvatar")
+      p: el-button(type="primary", size="large") 我要發問
+
+    wisdom(:userId = "userId")
 </template>
 
 <script>
+  import wisdom from './Wisdom.vue'
   export default {
     name: 'profile',
-    props: ['sUser', 'users'],
+    props: ['users', 'default'],
+    components: {
+      wisdom
+    },
     data () {
       return {
+        userId: this.$route.params.userId || this.default,
         icon: ''
       }
     },
     computed: {
-      userInfo: function () {
-        var userid = this.$route.params.userId
-        var t = this.users.filter((o) => {
-          return o.userId === userid
-        })[0]['userIcon']
-        if (t === undefined) {
-          return null
+      getAvatar: function () {
+        // let user = this.users.filter((o) => {
+        //   return o.userId === this.userId
+        // })
+        let pos = this.users.map(e => e.userId).indexOf(this.userId)
+        let user = this.users[pos]
+        // console.log(user)
+        if (user === undefined) {
+          return 'http://placehold.it/300x300'
         } else {
-          return t
+          return user.userIcon
         }
       }
     }
   }
-  
+
 </script>
 
 <style lang="scss" scoped>
-  .profile {
+  .info {
     text-align: center;
     padding: 3em 0;
     margin: 0 0 1em 0;

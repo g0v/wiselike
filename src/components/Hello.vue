@@ -1,7 +1,7 @@
 <template lang="pug">
   .hello
-    profile
-    wisdom
+    profile(:users="users", :default="'audreyt'")
+    //- wisdom
 </template>
 
 <script>
@@ -9,6 +9,7 @@
   import wisdom from './Wisdom.vue'
   export default {
     name: 'hello',
+    props: ['users'],
     components: {
       wisdom,
       profile

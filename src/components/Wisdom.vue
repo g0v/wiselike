@@ -48,12 +48,12 @@
   import axios from 'axios'
   export default {
     name: 'hello',
+    props: ['userId'],
     components: {
     },
     data () {
       return {
-        // id: this.$route.params.userId,
-        id: 'audreyt',
+        id: this.userId,
         activeName: '1',
         wisdom_Pubilc: {
           title: [],
