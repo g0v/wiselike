@@ -4,7 +4,7 @@
       el-col(:span='4')
         h1
       el-col(:span='16')
-        wisdomprivate
+        wisdomprivate(:userId="userId")
         p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
         div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload")
           el-card.box-card

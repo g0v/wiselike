@@ -21,6 +21,7 @@
   import axios from 'axios'
   export default {
     name: 'hello',
+    props: ['userId'],
     components: {
     },
     data () {
@@ -42,10 +43,10 @@
     },
     methods: {
       profile_PrivateLink: function (categoryid) {
-        return 'https://talk.pdis.nat.gov.tw/tags/c/wiselike/' + categoryid + '/尚未回覆.json'
+        return 'https://talk.pdis.nat.gov.tw/tags/c/wiselike/profile-' + categoryid + '/尚未回覆.json'
       },
       getUserData: async function () {
-        this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink('profile-smith') + '?page=0')
+        this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink(this.userId) + '?page=0')
         await this.Lazy_Private()
       },
       Lazy_Private: async function () { // lazyload
@@ -56,7 +57,7 @@
         }
         await this.Data_Processing(topic.reverse())
         this.page += 1
-        this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink('profile-smith') + '?page=' + this.page)
+        this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink(this.userId) + '?page=' + this.page)
         this.loadmore = this.Private_Category.data.topic_list.topics.length
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
@@ -98,6 +99,7 @@
     },
     created: function () {
       this.getUserData()
+      console.log(this.userId)
     }
   }
 </script>
