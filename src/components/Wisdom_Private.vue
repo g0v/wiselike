@@ -1,15 +1,16 @@
 <template lang="pug">
   .wisdom_private
-    p(v-if="wisdom_Private.content.length > 0") 等待回答
+    div(v-if="wisdom_Private.content.length > 0") 
+      p 等待回答
       el-collapse(v-model='activeName', accordion='')
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
           el-collapse-item
             template(slot='title')
                 | {{wisdom_Private.title[contentindex]}}
-                i.header-icon.el-icon-information
+                i.notifi.header-icon.el-icon-information
             img(:src='wisdom_Private.icon[contentindex][0]')
             span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
-            span 提問:
+            span &nbsp;&nbsp;提問:
             p(v-html='wisdom_Private.content[contentindex][0]')
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
@@ -101,11 +102,27 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .wisdom_private{
-  
+  .el-collapse-item__header {
+    color: black;
+    font-size: 1.2rem !important;
+    .notifi{
+      color: red !important;
+    }
+  }
+  .el-collapse-item__content {
+    padding: 1.5em;
+    font-size: 1rem;
+    img {
+      vertical-align: middle;
+      margin-right: 1em;
+    }
+    p {
+      font-size: 1rem;
+    }    
+  }
 }
-slot{
-  font-size: 20px;
-}
+
+
 </style>

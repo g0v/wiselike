@@ -2,7 +2,7 @@
   .wisdom
     el-row
       el-col(:span='4')
-        p
+        h1
       el-col(:span='16')
         wisdomprivate
         p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
@@ -24,10 +24,11 @@
               span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
+        hr(size='300', width='1')
         el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading")
          | load more
       el-col(:span='4')
-        p
+        h1
 
 </template>
 
@@ -105,7 +106,7 @@
           let time = []
           for (let j in topic[i]['data']['post_stream']['posts']) {
             content.push(topic[i]['data']['post_stream']['posts'][j]['cooked'])
-            aouther.push(topic[i]['data']['post_stream']['posts'][j]['name'])
+            aouther.push(topic[i]['data']['post_stream']['posts'][j]['username'])
             time.push(topic[i]['data']['post_stream']['posts'][j]['created_at'].replace(/T.*/, ''))
             if (topic[i]['data']['post_stream']['posts'][j]['avatar_template'].indexOf('https:') === -1) {
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
@@ -156,6 +157,9 @@
     height: 250px;
   }
 }
+.item[data-v-30f76649] {
+  padding: 0;
+}
 .text {
   font-size: 14px;
 }
@@ -199,7 +203,7 @@
 }
 .el-card__body {
   padding: 20px;
-  background-color: rgba(11, 0, 236, 0.08) !important;
+  background-color: beige !important;
 }
 .el-button--primary {
   color: #fff;
