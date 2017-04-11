@@ -2,24 +2,11 @@
   .wisdom
     el-row
       el-col(:span='4')
-        p
+        h1
       el-col(:span='16')
-        p(v-if="wisdom_Private.content.length > 0") 等待回答
-          el-collapse(v-model='activeName', accordion='')
-            div.private(v-for='(item, contentindex) in wisdom_Private.content', v-if="contentindex<lazyload && wisdom_Private.content.length > 0")
-              el-collapse-item
-                template(slot='title')
-                  | {{wisdom_Private.title[contentindex]}}
-                  i.header-icon.el-icon-information
-                img(:src='wisdom_Private.icon[contentindex][0]')
-                span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
-                span 提問:
-                p(v-html='wisdom_Private.content[contentindex][0]')
-                el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-          el-button.loader(type="primary",v-on:click="Private")
-            | load more
-        p(v-if="wisdom_Private.content != undefined") 歷史問題
-        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload && wisdom_Pubilc.content != undefined")
+        wisdomprivate
+        p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
+        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload")
           el-card.box-card
             .clearfix(slot='header')
               span(style='line-height: 36px;')
@@ -37,19 +24,22 @@
               span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
+        hr(size='300', width='1')
         el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading")
          | load more
       el-col(:span='4')
-        p
+        h1
 
 </template>
 
 <script>
   import axios from 'axios'
+  import wisdomprivate from './Wisdom_Private.vue'
   export default {
     name: 'hello',
     props: ['userId'],
     components: {
+      wisdomprivate
     },
     data () {
       return {
@@ -62,18 +52,10 @@
           aouther: [],
           time: []
         },
-        wisdom_Private: {
-          title: [],
-          icon: [],
-          content: [],
-          aouther: [],
-          time: []
-        },
-        page: '0',
-        private_page: '0',
-        lazyload: '',
-        lazyload_count: '',
-        All_category: [],
+        page: 0,
+        lazyload: 0,
+        lazyload_count: 0,
+        Pubilc_Category: [],
         loading: false
       }
     },
@@ -84,53 +66,21 @@
     },
     methods: {
       getUserData: async function () {
-        this.lazyload = 0
-        this.lazyload_count = 0
-        this.page = 0
-        this.private_page = 0
-        this.All_category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
+        this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
         await this.Lazy_Pubilc()
-        await this.Lazy_Private(this.All_category)
       },
       Lazy_Pubilc: async function (val) { // lazyload
         let topic = []
         let standard = Number
-        let length = this.All_category.data.topic_list.topics.length
+        let length = this.Pubilc_Category.data.topic_list.topics.length
         let remain = length - this.lazyload_count
         remain === 1 ? ((this.lazyload_count += 1), (this.lazyload += 1), (standard = 1)) : ((this.lazyload_count += 2), (this.lazyload += 2), (standard = 2))
         for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
-          let topicdata = await this.getDiscussion_Topic(this.All_category, i)
+          let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
           topic.push(topicdata)
         }
         await this.Data_Processing(topic, true);
-        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.All_category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page))
-      },
-      Private: async function (val) { // lazyload
-        this.private_page += 1
-        let category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
-        this.Lazy_Private(category)
-        console.log(category)
-      },
-      Lazy_Private: async function (val) { // lazyload
-        let topic = []
-        let id = val
-        // let category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith/l/latest.json?page=0&api_key=e48e540665fe1382c47f47b73ec57b7c828871e8e43200fbc8f7ab79a5c9489c&api_username=smith02620')
-        let category = val.data.topic_list.topics
-        // id.data.topic_list.topics = []
-        for (let i in category) {
-          (category[i].visible === false) && (id.data.topic_list.topics.push(category[i]))
-        }
-        let idlength = id.data.topic_list.topics.length
-        for (let i = 0; i < idlength; i++) {
-          let topicdata = await this.getDiscussion_Topic(id, i)
-          topic.push(topicdata)
-        }
-        // await this.Data_Processing(topic.reverse(), false)
-        // if (this.lazyload_count === length) {
-        //   this.lazyload_count = 0
-        //   this.page += 1
-        //   this.All_category = await this.getDiscussion_Category('https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith/l/latest.json?page=0&api_key=e48e540665fe1382c47f47b73ec57b7c828871e8e43200fbc8f7ab79a5c9489c&api_username=smith02620')
-        // }
+        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page))
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
@@ -156,25 +106,18 @@
           let time = []
           for (let j in topic[i]['data']['post_stream']['posts']) {
             content.push(topic[i]['data']['post_stream']['posts'][j]['cooked'])
-            aouther.push(topic[i]['data']['post_stream']['posts'][j]['name'])
+            aouther.push(topic[i]['data']['post_stream']['posts'][j]['username'])
             time.push(topic[i]['data']['post_stream']['posts'][j]['created_at'].replace(/T.*/, ''))
             if (topic[i]['data']['post_stream']['posts'][j]['avatar_template'].indexOf('https:') === -1) {
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          if (topic[i]['data']['visible'] === true && pubilc === true) {
+          if (topic[i]['data']['posts_count'] > 0 && pubilc === true) {
             this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
             this.wisdom_Pubilc.content.push(content)
             this.wisdom_Pubilc.aouther.push(aouther)
             this.wisdom_Pubilc.time.push(time)
             this.wisdom_Pubilc.icon.push(icon)
-          }
-          if (topic[i]['data']['visible'] === false && pubilc === false) {
-            this.wisdom_Private.title.push(topic[i]['data']['title'])
-            this.wisdom_Private.content.push(content)
-            this.wisdom_Private.aouther.push(aouther)
-            this.wisdom_Private.time.push(time)
-            this.wisdom_Private.icon.push(icon)
           }
         }
       },
@@ -200,7 +143,6 @@
     },
     created: function () {
       this.getUserData()
-
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }
@@ -214,6 +156,9 @@
     width: 250px;
     height: 250px;
   }
+}
+.item[data-v-30f76649] {
+  padding: 0;
 }
 .text {
   font-size: 14px;
@@ -250,9 +195,6 @@
   .el-dialog__title{
     font-size:1.5rem;
   }
-  // el-input{
-  //   width:50%;
-  // }
   .el-textarea {
     display: inline-block;
     width: 88%;
@@ -261,7 +203,7 @@
 }
 .el-card__body {
   padding: 20px;
-  background-color: rgba(11, 0, 236, 0.08) !important;
+  background-color: beige !important;
 }
 .el-button--primary {
   color: #fff;
