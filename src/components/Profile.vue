@@ -31,7 +31,7 @@
         let user = this.users[pos]
         // console.log(user)
         if (user === undefined) {
-          return 'http://placehold.it/300x300'
+          return 'http://placehold.it/300x300' // asset/avatar.png
         } else {
           return user.userIcon
         }
