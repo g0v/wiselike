@@ -18,6 +18,7 @@
 
 <script>
   import Search from './Search.vue'
+  import config from '../../config'
 
   export default {
     name: 'header',
@@ -33,13 +34,14 @@
     },
     methods: {
       login: function (event) {
-        window.open('http://139.162.109.88:9000/login') // FIXME
+        window.open(config.runtime.proxyHost + '/login')
       }
     },
     mounted: function () {
       this.username = window.localStorage.getItem('username')
       window.addEventListener('message', (event) => {
-        if (event.origin !== 'http://139.162.109.88:9000') { // FIXME
+        console.log(event)
+        if (event.origin !== config.runtime.proxyHost) {
           console.log('Incorrect origin')
           return
         }

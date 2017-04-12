@@ -8,6 +8,7 @@ const cors = require('cors')
 const querystring = require('querystring')
 // const request = require('request')
 const axios = require('axios')
+const config = require('./config')
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
@@ -67,10 +68,11 @@ app.get('/sso_done', (req, res) => {
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
+  let webHost = config.runtime.webHost
   let body = `
 Hello ${username}, you may close this window
 <script>
-window.opener.postMessage(${data}, 'http://localhost:8000'); // FIXME read from config
+window.opener.postMessage(${data}, "${webHost}"); // FIXME read from config
 </script>
 `
   res.send(body)
