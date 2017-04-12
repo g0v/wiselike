@@ -2,7 +2,9 @@
   .profile
     .info
       h2 {{ userId }}
-      p: img.avatar(v-if="users", :src="getAvatar")
+      p
+        img.avatar(v-if="user", :src="user.userIcon")
+        img.avatar(v-else, src="../assets/avatar.png")
       p: el-button(type="primary", size="large") 我要發問
 
     wisdom(:userId = "userId")
@@ -23,18 +25,9 @@
       }
     },
     computed: {
-      getAvatar: function () {
-        // let user = this.users.filter((o) => {
-        //   return o.userId === this.userId
-        // })
+      user: function () {
         let pos = this.users.map(e => e.userId).indexOf(this.userId)
-        let user = this.users[pos]
-        // console.log(user)
-        if (user === undefined) {
-          return 'http://placehold.it/300x300' // asset/avatar.png
-        } else {
-          return user.userIcon
-        }
+        return this.users[pos]
       }
     }
   }
