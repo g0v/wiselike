@@ -3,6 +3,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
+const cors = require('cors')
 // const url = require('url')
 const querystring = require('querystring')
 // const request = require('request')
@@ -40,6 +41,7 @@ function getUsername (sso, sig) {
 const app = express()
 
 app.use(bodyParser.json())
+app.use(cors())
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
