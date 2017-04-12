@@ -1,18 +1,16 @@
 <template lang="pug">
   .header
-    //- el-menu
-      //- el-menu-item(index='1')
+
     el-row.row-bg(type='flex', justify='space-between')
       el-col.left(:span='6')
-        //- el-input(icon='search', v-model="myKey", :on-icon-click='search')
-        h1 Wiselike
+        router-link.logo(to='/', exact='') Wiselike
+          //- span Wiselike
         Search(:users="users")
       el-col(:span='6')
-      el-col(:span='6')
         .btn-group
-          el-button Create My Profile
+          el-button.create Create My Profile
           span(v-if="username === ''")
-            el-button(@click.native="login") Login
+            el-button.login(@click.native="login") Login
           span(v-else)
             el-button {{username}}
 
@@ -53,7 +51,7 @@
 <style lang="scss" scoped>
   .header {
     position: absolute;
-    padding: 1em 5ch;
+    padding: 1.5em 6ch;
     box-sizing: border-box;
     width: 100%;
     .left {
@@ -65,9 +63,17 @@
   }
   .btn-group{
     text-align: right;
+    margin-top: 5px;
+    .el-button.create{
+      margin-right: 6px;
+    }
   }
-  h1{
-    margin-top: 0px;
-    text-align: center
+  .logo{
+    text-decoration: none;
+    color: white;
+    font-size: 2rem;
+  }
+  .logo:hover{
+    color:#20a0ff;
   }
 </style>
