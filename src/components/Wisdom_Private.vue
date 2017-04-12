@@ -99,12 +99,11 @@
     },
     created: function () {
       this.getUserData()
-      console.log(this.userId)
     }
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 .wisdom_private{
   .el-collapse-item__header {
     color: black;

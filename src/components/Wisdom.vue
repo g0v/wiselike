@@ -25,7 +25,7 @@
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
         hr(size='300', width='1')
-        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading")
+        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading", v-if="loadmore === true")
          | load more
       el-col(:span='4')
         h1
@@ -56,7 +56,8 @@
         lazyload: 0,
         lazyload_count: 0,
         Pubilc_Category: [],
-        loading: false
+        loading: false,
+        loadmore: true
       }
     },
     computed: {
@@ -75,12 +76,15 @@
         let length = this.Pubilc_Category.data.topic_list.topics.length
         let remain = length - this.lazyload_count
         remain === 1 ? ((this.lazyload_count += 1), (this.lazyload += 1), (standard = 1)) : ((this.lazyload_count += 2), (this.lazyload += 2), (standard = 2))
-        for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
-          let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
-          topic.push(topicdata)
+        if (this.loadmore === true) {
+          for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
+            let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
+            topic.push(topicdata)
+          }
         }
         await this.Data_Processing(topic, true);
-        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page))
+        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page));
+        (this.Pubilc_Category['data']['topic_list']['topics'].length === 0) && (this.loadmore = false)
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
