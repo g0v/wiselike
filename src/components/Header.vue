@@ -9,7 +9,7 @@
       el-col(:span='6')
         .btn-group
           el-button.create Create My Profile
-          span(v-if="username === ''")
+          span(v-if="username === null")
             el-button.login(@click.native="login") Login
           span(v-else)
             el-button {{username}}
@@ -37,12 +37,16 @@
       }
     },
     mounted: function () {
+      this.username = window.localStorage.getItem('username')
       window.addEventListener('message', (event) => {
         if (event.origin !== 'http://139.162.109.88:9000') { // FIXME
           console.log('Incorrect origin')
           return
         }
         this.username = event.data.username
+        window.localStorage.setItem('username', event.data.username)
+        window.localStorage.setItem('sso', event.data.sso)
+        window.localStorage.setItem('sig', event.data.sig)
       }, false)
     }
   }
