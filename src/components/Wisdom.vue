@@ -150,7 +150,6 @@
     created: function () {
       this.local_storage = window.localStorage.getItem('username');
       (this.local_storage === this.userId) && (this.self = true)
-      console.log(this.self)
       this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)

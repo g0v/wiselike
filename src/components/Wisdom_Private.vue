@@ -6,7 +6,7 @@
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
           el-collapse-item
             template(slot='title')
-                | {{wisdom_Private.title[contentindex]}}
+                span.test {{wisdom_Private.title[contentindex]}}
                 i.notifi.header-icon.el-icon-information
             img(:src='wisdom_Private.icon[contentindex][0]')
             span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
@@ -103,9 +103,9 @@
   }
 </script>
 
-<style lang="scss" >
+<style lang="scss" scoped>
 .wisdom_private{
-  .el-collapse-item__header {
+  .test {
     color: black;
     font-size: 1.2rem !important;
     .notifi{
