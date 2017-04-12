@@ -4,7 +4,7 @@
       el-col(:span='4')
         h1
       el-col(:span='16')
-        wisdomprivate(:userId="userId")
+        wisdomprivate(:userId="userId", v-if="self === true")
         p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
         div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload")
           el-card.box-card
@@ -57,7 +57,9 @@
         lazyload_count: 0,
         Pubilc_Category: [],
         loading: false,
-        loadmore: true
+        loadmore: true,
+        local_storage: '',
+        self: false
       }
     },
     computed: {
@@ -146,6 +148,9 @@
       }
     },
     created: function () {
+      this.local_storage = window.localStorage.getItem('username');
+      (this.local_storage === this.userId) && (this.self = true)
+      console.log(this.self)
       this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
