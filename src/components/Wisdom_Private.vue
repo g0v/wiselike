@@ -21,7 +21,7 @@
   import axios from 'axios'
   export default {
     name: 'hello',
-    props: ['userId'],
+    props: ['userId', 'LocalStorageUsername', 'self'],
     components: {
     },
     data () {
@@ -36,24 +36,29 @@
         },
         page: 0,
         Private_Category: [],
-        loadmore: ''
+        loadmore: '',
+        local_storage_username: '',
+        local_self: false
       }
     },
     computed: {
     },
     methods: {
-      profile_PrivateLink: function (categoryid) {
+      profile_PrivateLink: function (categoryid) {   // 收尋tag的url
         return 'https://talk.pdis.nat.gov.tw/tags/c/wiselike/profile-' + categoryid + '/尚未回覆.json'
       },
-      getUserData: async function () {
+      getUserData: async function () {   // 抓取user第一頁的category
         this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink(this.userId) + '?page=0')
         await this.Lazy_Private()
       },
       Lazy_Private: async function () { // lazyload
         let topic = []
+        // 一次抓取三十篇topic
         for (let i = 0, length = this.Private_Category.data.topic_list.topics.length; i < length; i++) {
           let topicdata = await this.getDiscussion_Topic(this.Private_Category, i)
-          topic.push(topicdata)
+          this.self === true // 顯示自己對別人提問的問題
+            ? topic.push(topicdata)
+            : (this.Private_Category.data.topic_list.topics[i].slug === this.local_storage_username) && (topic.push(topicdata))
         }
         await this.Data_Processing(topic.reverse())
         this.page += 1
@@ -75,7 +80,7 @@
           })
         })
       },
-      Data_Processing: function (topic) {
+      Data_Processing: function (topic) { // topic裡面的資料分析處理
         for (let i in topic) {
           let content = []
           let icon = []
@@ -98,6 +103,9 @@
       }
     },
     created: function () {
+      // 先判斷local_storage 裡面的資料
+      this.local_storage_username = window.localStorage.getItem('username');
+      (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
       this.getUserData()
     }
   }
@@ -107,10 +115,11 @@
 .wisdom_private{
   .test {
     color: black;
-    font-size: 1.2rem !important;
-    .notifi{
-      color: red !important;
-    }
+    font-size: 1.2rem;
+  }
+  .notifi{
+    color: red;
+    font-size: 1.2rem;
   }
   .el-collapse-item__content {
     padding: 1.5em;

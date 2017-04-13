@@ -4,9 +4,9 @@
       el-col(:span='4')
         h1
       el-col(:span='16')
-        wisdomprivate(:userId="userId", v-if="self === true")
+        wisdomprivate(:userId='userId')
         p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
-        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload")
+        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
           el-card.box-card
             .clearfix(slot='header')
               span(style='line-height: 36px;')
@@ -53,12 +53,10 @@
           time: []
         },
         page: 0,
-        lazyload: 0,
         lazyload_count: 0,
         Pubilc_Category: [],
         loading: false,
         loadmore: true,
-        local_storage: '',
         self: false
       }
     },
@@ -77,7 +75,9 @@
         let standard = Number
         let length = this.Pubilc_Category.data.topic_list.topics.length
         let remain = length - this.lazyload_count
-        remain === 1 ? ((this.lazyload_count += 1), (this.lazyload += 1), (standard = 1)) : ((this.lazyload_count += 2), (this.lazyload += 2), (standard = 2))
+        remain === 1
+          ? ((this.lazyload_count += 1), (standard = 1))
+          : ((this.lazyload_count += 2), (standard = 2))
         if (this.loadmore === true) {
           for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
             let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
@@ -92,6 +92,9 @@
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
             val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
+            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
+              return post.posts_count > 1
+            })
             resolve(val)
           })
         })
@@ -118,7 +121,7 @@
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          if (topic[i]['data']['posts_count'] > 0 && pubilc === true) {
+          if (pubilc === true) {
             this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
             this.wisdom_Pubilc.content.push(content)
             this.wisdom_Pubilc.aouther.push(aouther)
@@ -148,8 +151,6 @@
       }
     },
     created: function () {
-      this.local_storage = window.localStorage.getItem('username');
-      (this.local_storage === this.userId) && (this.self = true)
       this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
