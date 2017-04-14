@@ -1,11 +1,10 @@
 <template lang="pug">
   .profile
     .info
-      h2 {{ userId }}
-      p: img.avatar(v-if="users", :src="getAvatar")
+      h2 {{ $route.params.userId }}
+      p: img.avatar(v-if="users != null", :src="getAvatar")
       p: el-button(type="primary", size="large") 我要發問
-
-    wisdom(:userId = "userId")
+    wisdom(:userId = "getId")
 </template>
 
 <script>
@@ -18,7 +17,7 @@
     },
     data () {
       return {
-        userId: this.$route.params.userId || this.default,
+        // userId: this.$route.params.userId || this.default,
         icon: ''
       }
     },
@@ -27,7 +26,7 @@
         // let user = this.users.filter((o) => {
         //   return o.userId === this.userId
         // })
-        let pos = this.users.map(e => e.userId).indexOf(this.userId)
+        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId || this.default)
         let user = this.users[pos]
         // console.log(user)
         if (user === undefined) {
@@ -35,8 +34,20 @@
         } else {
           return user.userIcon
         }
+      },
+      getId: function () {
+        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId || this.default)
+        let user = this.users[pos]
+        if (user === undefined) {
+          return null
+        } else {
+          return user.userId
+        }
       }
     }
+    // created: function () {
+    //   this.getId
+    // }
   }
 
 </script>
