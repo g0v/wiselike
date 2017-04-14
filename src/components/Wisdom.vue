@@ -62,11 +62,27 @@
     },
     computed: {
       profileLink: function () {
-        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.id
+        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId
       }
     },
     methods: {
+      init: function () {
+        this.page = 0
+        this.lazyload_count = 0
+        this.Pubilc_Category = []
+        this.loading = false
+        this.loadmore = true
+        this.self = false
+        this.wisdom_Pubilc = {
+          title: [],
+          icon: [],
+          content: [],
+          aouther: [],
+          time: []
+        }
+      },
       getUserData: async function () {
+        this.init()
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
         await this.Lazy_Pubilc()
       },
@@ -101,7 +117,9 @@
       },
       getDiscussion_Topic: async function (url, i) { // 抓topic
         return new Promise((resolve, reject) => {
+          console.log(url)
           let id = url['data']['topic_list']['topics']
+          console.log(i)
           axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
             resolve(val)
           })
@@ -152,8 +170,16 @@
       post: function () {
       }
     },
+    watch: {
+      userId: function () {
+        console.log(this.userId)
+        this.getUserData()
+        // window.addEventListener('scroll', this.hitLoad)
+      }
+    },
     created: function () {
-      this.getUserData()
+      console.log(this.userId)
+      // this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }
