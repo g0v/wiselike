@@ -176,6 +176,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
+  formData += '&tags[]=尚未回覆'
   axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
     .then(response => {
       return res.json(response.data)
