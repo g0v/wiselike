@@ -125,10 +125,10 @@
     },
     created: function () {
       // 先判斷local_storage 裡面的資料
-      // this.local_storage_username = window.localStorage.getItem('username');
-      // (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
+      this.local_storage_username = window.localStorage.getItem('username');
+      (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
       // console.log(this.local_self)
-      // this.getUserData()
+      this.getUserData()
     }
   }
 </script>

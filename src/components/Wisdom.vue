@@ -179,7 +179,7 @@
     },
     created: function () {
       console.log(this.userId)
-      // this.getUserData()
+      this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }
