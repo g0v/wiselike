@@ -56,7 +56,7 @@
         this.Private_Category = []
       },
       profile_PrivateLink: function (categoryid) {   // 收尋tag的url
-        return 'https://talk.pdis.nat.gov.tw/tags/c/wiselike/profile-' + categoryid + '/尚未回覆.json'
+        return (categoryid !== null) && ('https://talk.pdis.nat.gov.tw/tags/c/wiselike/profile-' + categoryid + '/尚未回覆.json')
       },
       getUserData: async function () {   // 抓取user第一頁的category
         this.init()
@@ -116,19 +116,17 @@
     },
     watch: {
       userId: function () {
-        console.log(this.userId)
         this.local_storage_username = window.localStorage.getItem('username');
-        (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
-        console.log(this.local_self)
-        this.getUserData()
+        (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false);
+        (this.userId !== null) && (this.getUserData())
       }
     },
     created: function () {
       // 先判斷local_storage 裡面的資料
       this.local_storage_username = window.localStorage.getItem('username');
-      (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
+      (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false);
       // console.log(this.local_self)
-      this.getUserData()
+      (this.userId !== null) && (this.getUserData())
     }
   }
 </script>

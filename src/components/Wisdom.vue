@@ -62,7 +62,7 @@
     },
     computed: {
       profileLink: function () {
-        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId
+        return (this.userId !== null) && ('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId)
       }
     },
     methods: {
@@ -172,14 +172,12 @@
     },
     watch: {
       userId: function () {
-        console.log(this.userId)
-        this.getUserData()
+        (this.userId !== null) && (this.getUserData())
         // window.addEventListener('scroll', this.hitLoad)
       }
     },
     created: function () {
-      console.log(this.userId)
-      this.getUserData()
+      (this.userId !== null) && (this.getUserData())
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }

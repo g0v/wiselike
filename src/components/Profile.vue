@@ -3,17 +3,19 @@
     .info
       h2 {{ $route.params.userId }}
       p: img.avatar(v-if="users != null", :src="getAvatar")
-      p: el-button(type="primary", size="large") 我要發問
+      p: ask
     wisdom(:userId = "getId")
 </template>
 
 <script>
   import wisdom from './Wisdom.vue'
+  import ask from './Ask.vue'
   export default {
     name: 'profile',
     props: ['users', 'default'],
     components: {
-      wisdom
+      wisdom,
+      ask
     },
     data () {
       return {
