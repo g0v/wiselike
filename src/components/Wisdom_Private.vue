@@ -56,7 +56,7 @@
         // 一次抓取三十篇topic
         for (let i = 0, length = this.Private_Category.data.topic_list.topics.length; i < length; i++) {
           let topicdata = await this.getDiscussion_Topic(this.Private_Category, i)
-          this.self === true // 在別人的頁面顯示自己提的問題
+          this.local_self === true // 在別人的頁面顯示自己提的問題
             ? topic.push(topicdata)
             : (this.Private_Category.data.topic_list.topics[i].slug === this.local_storage_username) && (topic.push(topicdata))
         }
@@ -106,6 +106,7 @@
       // 先判斷local_storage 裡面的資料
       this.local_storage_username = window.localStorage.getItem('username');
       (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false)
+      console.log(this.local_self)
       this.getUserData()
     }
   }

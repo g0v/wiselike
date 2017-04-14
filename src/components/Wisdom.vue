@@ -148,6 +148,8 @@
             this.loading = false
           }, 1000)
         }
+      },
+      post: function () {
       }
     },
     created: function () {
