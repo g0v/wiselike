@@ -23,7 +23,8 @@
         "pug": "^2.0.0-beta11",
         "sass-loader": "^6.0.3",
         "vue": "^2.2.2",
-        "vue-router": "^2.2.0"
+        "vue-router": "^2.2.0",
+        "jquery": "^1.12.4"
     },
     "devDependencies": {
         "autoprefixer": "^6.7.2",

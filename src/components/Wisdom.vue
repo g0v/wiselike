@@ -117,9 +117,7 @@
       },
       getDiscussion_Topic: async function (url, i) { // 抓topic
         return new Promise((resolve, reject) => {
-          console.log(url)
           let id = url['data']['topic_list']['topics']
-          console.log(i)
           axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
             resolve(val)
           })
