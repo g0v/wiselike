@@ -13,7 +13,11 @@ yarn install
 # develop web
 yarn dev-web # port 8000
 
-# develop API proxy
+# .env
+cp .env.example .env
+# Then update .env for DISCOURSE_SSO_SECRET, DISCOURSE_API_KEY and DISCOURSE_API_USERNAME
+
+# develop API proxy (requires .env to be set)
 yarn dev-proxy # port 9000
 ```
 
