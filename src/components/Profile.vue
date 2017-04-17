@@ -1,10 +1,14 @@
 <template lang="pug">
-  .profile
+  .profile(v-if="user")
     .info
-      h2 {{ $route.params.userId }}
-      p: img.avatar(v-if="users != null", :src="getAvatar")
-      p: ask
-    wisdom(:userId = "getId")
+      p: img.avatar(:src="user.userIcon")
+      h1 {{ user.userId }}
+      p {{ user.userDesc }}
+      ask
+    wisdom(:userId = "user.userId")
+  .profile(v-else)
+    .info
+      h1 no such user
 </template>
 
 <script>
@@ -12,44 +16,25 @@
   import ask from './Ask.vue'
   export default {
     name: 'profile',
-    props: ['users', 'default'],
+    props: ['users'],
     components: {
       wisdom,
       ask
     },
     data () {
       return {
-        // userId: this.$route.params.userId || this.default,
-        icon: ''
       }
     },
     computed: {
-      getAvatar: function () {
-        // let user = this.users.filter((o) => {
-        //   return o.userId === this.userId
-        // })
-        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId || this.default)
-        let user = this.users[pos]
-        // console.log(user)
-        if (user === undefined) {
-          return 'http://placehold.it/300x300' // asset/avatar.png
+      user: function () {
+        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId)
+        if (pos < 0) {
+          return false
         } else {
-          return user.userIcon
-        }
-      },
-      getId: function () {
-        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId || this.default)
-        let user = this.users[pos]
-        if (user === undefined) {
-          return null
-        } else {
-          return user.userId
+          return this.users[pos]
         }
       }
     }
-    // created: function () {
-    //   this.getId
-    // }
   }
 
 </script>

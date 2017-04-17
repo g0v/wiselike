@@ -1,12 +1,12 @@
 <template lang="pug">
   .header
-    el-menu(theme='dark', mode='horizontal')
+    el-menu.menu(theme='dark', mode='horizontal')
       el-row.row-bg(type='flex', justify='space-between')
-       el-col.left(:span='8')
-        Search(:users="users")
-       el-col.center(:span='8')
-        router-link.logo(to='/', exact='') Wiselike
-       el-col.btn-group(:span='8')
+        el-col.left(:span='8')
+          Search(:users="users")
+        el-col.center(:span='8')
+          router-link.logo(to='/', exact='') Wiselike
+        el-col.right(:span='8')
           el-button.create Create My Profile
           span(v-if="username === null")
             el-button.login(@click.native="login") Login
@@ -56,12 +56,13 @@
 <style lang="scss" scoped>
   .header {
     position: fixed;
+    top: 0;
     z-index: 99;
     box-sizing: border-box;
     width: 100%;
-    // .el-menu{
-    //   height: 50px;
-    // }
+    .menu{
+      padding: .5em 1em;
+    }
     .left {
       margin: auto;
       text-align: left;
@@ -79,7 +80,7 @@
       }
     }
   }
-  .btn-group{
+  .right{
     text-align: right;
     margin: auto;
     .el-button.create{

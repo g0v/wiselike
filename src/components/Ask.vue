@@ -1,15 +1,16 @@
 <template lang="pug">
-  div
-    el-button(type='text', @click='dialogFormVisible = true, open') 提問
-    el-dialog(title='提問', v-model='dialogFormVisible', close-on-click-modal= false, close-on-press-escape= false)
-      template(attributes='close-on-press-escape= false')
+  .ask
+    el-button(@click='dialogFormVisible = true, open', icon='edit')
+      | 我要提問
+    el-dialog(title='提問', v-model='dialogFormVisible', close-on-click-modal='false', close-on-press-escape='false')
+      template(attributes='close-on-press-escape = false')
       el-form(:model='form')
-        el-input(type='textarea', autosize='', placeholder='请输入標題', v-model='textarea2')
-        el-input(type='textarea', autosize='', placeholder='请输入内容', v-model='textarea2')
+        el-input.title(type='textarea', autosize='', placeholder='請輸入標題', v-model='title')
+        el-input.content(type='textarea', :rows='2', placeholder='請輸入內容', v-model='content')
       .dialog-footer(slot='footer')
-        el-button(@click='dialogFormVisible = false') 取 消
-        el-button(type='primary', @click='dialogFormVisible = false') 确 定
-    
+        el-button(type='text', @click='dialogFormVisible = false') 取 消
+        el-button(type='primary', @click='dialogFormVisible = false') 確 定
+
 </template>
 
 <script>
@@ -70,4 +71,7 @@
 </script>
 
 <style lang="scss">
+.title {
+  margin: 1em 0;
+}
 </style>

@@ -1,7 +1,7 @@
 <template lang="pug">
   .hello
-    el-row
-      el-col.userList(:span='4', v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
+    el-row(justify='space-around')
+      el-col.userList(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId", :span='6')
         el-card.box-card(:body-style="{ padding: '0px' }")
           .clearfix(slot='header')
             img.icon(:src='o.userIcon')
@@ -32,17 +32,17 @@
 
 <style lang="scss" scoped>
 .hello{
-  padding: 2em 2ch;
+  max-width: 1120px;
+  margin: 5em auto;
 }
 .userList{
-  margin-top:60px;
-  // margin-left: 20px;
   .time {
     font-size: 13px;
     color: #999;
   }
   .box-card{
     width: 200px;
+    margin: 1em auto;
   }
   .bottom{
     margin-top:13px;

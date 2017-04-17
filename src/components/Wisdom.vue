@@ -20,11 +20,11 @@
 
               img(:src='wisdom_Pubilc.icon[contentindex][index]')
               span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
-              span 回應:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{wisdom_Pubilc.time[contentindex][index]}}
+              span 回應: {{wisdom_Pubilc.time[contentindex][index]}}
               span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-        hr(size='300', width='1')
+        hr(size='300', width='80%')
         el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading", v-if="loadmore === true")
          | load more
       el-col(:span='4')
