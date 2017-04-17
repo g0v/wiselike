@@ -1,8 +1,10 @@
 # wiselike
 
-> A Vue.js project
+> 自己的 wiselike 自己救
 
 ## Development
+
+### Getting start
 
 ``` bash
 # install dependencies
@@ -11,48 +13,52 @@ yarn install
 # develop web
 yarn dev-web # port 8000
 
-# develop API proxy
+# .env
+cp .env.example .env
+# Then update .env for DISCOURSE_SSO_SECRET, DISCOURSE_API_KEY and DISCOURSE_API_USERNAME
+
+# develop API proxy (requires .env to be set)
 yarn dev-proxy # port 9000
-
-### Dev only API
-
-> when not running `yarn dev-proxy`, you may use these API to develop web.
-
- - http://139.162.109.88:9000/login => {'sso': '{sso}', 'sig': '{sig}', 'username': '{username}'}
- - http://139.162.109.88:9000/users
- - http://139.162.109.88:9000/users/audreyt
- - http://139.162.109.88:9000/me?sso={sso}&sig={sig}
- - http://139.162.109.88:9000/whoami?sso={sso}&sig={sig}
- - http://139.162.109.88:9000/users/audreyt/wisdoms
 ```
 
-## Build Setup
+### Proxy Server Development
 
-``` bash
-# install dependencies
-yarn install
+#### Proxy APIs
 
-# build for production with minification
-yarn build
+With `yarn dev-proxy`, proxy server is serving on http://localhost:9000 by default.
+Or you might use the following APIs hosted on 139.162.109.88 (dev only, not always up-to-date)
 
-# build for production and view the bundle analyzer report
-yarn build --report
-```
+##### Login
+ - `GET http://139.162.109.88:9000/login`
+ - return json: `{'sso': '{sso}', 'sig': '{sig}', 'username': '{username}'}`
+ 
+##### List all users
+ - `GET http://139.162.109.88:9000/users`
+ 
+##### Get user profile
+ - `GET http://139.162.109.88:9000/users/{user}`
+ 
+##### Get my profile
+ - `GET http://139.162.109.88:9000/me?sso={sso}&sig={sig}`
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+##### Get my username
+ - `GET http://139.162.109.88:9000/whoami?sso={sso}&sig={sig}`
+ 
+##### Get wisdoms of a user
+ - `GET http://139.162.109.88:9000/users/{user}/wisdoms`
+ 
+##### Ask a question
+ - `POST http://139.162.109.88:9000/users/{user}/wisdoms?sso={sso}&sig={sig}`
+ - HTTP Body: `?title={title}&raw={raw}`
+  
+
+#### sso, sig and username
+
+ - `sso` and `sig` should keep private, after signing in through the proxy `/login` API, browser stores `sso` and `sig` in Localstroage. You should pass `sso` and `sig` to proxy APIs on all user-specific operations. 
+ - `username` was stored in localStorage too after signing in. However, please use `username` only for display purpose, never trust its value.
 
 
-## API
-
- - /users
- - /login
- - /logout
- - /users/{id}
- - /users/{id}/widdoms
- - /wisdoms/{id}
- - /search
-
-## Naming
+## Design - Naming
 
 ### Entities
 
@@ -69,7 +75,7 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
  - Subscribe
  - Appreciate
 
-## Stories
+## Design - User stories
 
  - As a guest, I can sign on by Discourse SSO
  - As a member, I can ask questions on s page, these unanswered questions prviate  are only accessible by the authors (askers) and the profile owner.

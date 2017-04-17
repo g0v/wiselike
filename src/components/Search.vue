@@ -53,8 +53,7 @@
       createFilter (queryString) {
         var reg = new RegExp(queryString, 'i')
         return (o) => {
-          // return (restaurant.value.indexOf(queryString) === 0)
-          return (reg.test(o.userId) || reg.test(o.title))
+          return (reg.test(o.userId))
         }
       },
       handleSelect (item) {

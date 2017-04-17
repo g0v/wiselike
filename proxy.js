@@ -3,10 +3,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
+const cors = require('cors')
 // const url = require('url')
 const querystring = require('querystring')
 // const request = require('request')
 const axios = require('axios')
+const config = require('./config')
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
@@ -40,6 +42,7 @@ function getUsername (sso, sig) {
 const app = express()
 
 app.use(bodyParser.json())
+app.use(cors())
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
@@ -65,10 +68,11 @@ app.get('/sso_done', (req, res) => {
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
+  let webHost = config.runtime.webHost
   let body = `
 Hello ${username}, you may close this window
 <script>
-window.opener.postMessage(${data}, 'http://localhost:8000'); // FIXME read from config
+window.opener.postMessage(${data}, "${webHost}"); // FIXME read from config
 </script>
 `
   res.send(body)
@@ -172,6 +176,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
+  formData += '&tags[]=尚未回覆'
   axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
     .then(response => {
       return res.json(response.data)

@@ -4,9 +4,9 @@
       el-col(:span='4')
         h1
       el-col(:span='16')
-        wisdomprivate(:userId="userId")
+        wisdomprivate(:userId='userId')
         p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
-        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content', v-if="contentindex<lazyload")
+        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
           el-card.box-card
             .clearfix(slot='header')
               span(style='line-height: 36px;')
@@ -53,20 +53,36 @@
           time: []
         },
         page: 0,
-        lazyload: 0,
         lazyload_count: 0,
         Pubilc_Category: [],
         loading: false,
-        loadmore: true
+        loadmore: true,
+        self: false
       }
     },
     computed: {
       profileLink: function () {
-        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.id
+        return (this.userId !== null) && ('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId)
       }
     },
     methods: {
+      init: function () {
+        this.page = 0
+        this.lazyload_count = 0
+        this.Pubilc_Category = []
+        this.loading = false
+        this.loadmore = true
+        this.self = false
+        this.wisdom_Pubilc = {
+          title: [],
+          icon: [],
+          content: [],
+          aouther: [],
+          time: []
+        }
+      },
       getUserData: async function () {
+        this.init()
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
         await this.Lazy_Pubilc()
       },
@@ -75,7 +91,9 @@
         let standard = Number
         let length = this.Pubilc_Category.data.topic_list.topics.length
         let remain = length - this.lazyload_count
-        remain === 1 ? ((this.lazyload_count += 1), (this.lazyload += 1), (standard = 1)) : ((this.lazyload_count += 2), (this.lazyload += 2), (standard = 2))
+        remain === 1
+          ? ((this.lazyload_count += 1), (standard = 1))
+          : ((this.lazyload_count += 2), (standard = 2))
         if (this.loadmore === true) {
           for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
             let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
@@ -90,6 +108,9 @@
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
             val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
+            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
+              return post.posts_count > 1
+            })
             resolve(val)
           })
         })
@@ -116,7 +137,7 @@
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          if (topic[i]['data']['posts_count'] > 0 && pubilc === true) {
+          if (pubilc === true) {
             this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
             this.wisdom_Pubilc.content.push(content)
             this.wisdom_Pubilc.aouther.push(aouther)
@@ -143,10 +164,18 @@
             this.loading = false
           }, 1000)
         }
+      },
+      post: function () {
+      }
+    },
+    watch: {
+      userId: function () {
+        (this.userId !== null) && (this.getUserData())
+        // window.addEventListener('scroll', this.hitLoad)
       }
     },
     created: function () {
-      this.getUserData()
+      (this.userId !== null) && (this.getUserData())
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }
