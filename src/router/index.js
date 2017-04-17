@@ -19,7 +19,7 @@ export default new Router({
       component: Me
     },
     {
-      path: '/profile/:userId',
+      path: '/user/:userId',
       name: 'profile',
       component: Profile
     }

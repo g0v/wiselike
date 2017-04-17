@@ -1,6 +1,6 @@
 <template lang="pug">
   .hello
-    el-row(justify='space-around')
+    el-row
       el-col.userList(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId", :span='6')
         el-card.box-card(:body-style="{ padding: '0px' }")
           .clearfix(slot='header')
@@ -8,7 +8,7 @@
           .detail
             .userId {{o.userId}}
             .bottom
-              router-link(:to="'/profile/'+o.userId") My Profile
+              router-link(:to="'/user/'+o.userId") Watch My Profile
 
 </template>
 
