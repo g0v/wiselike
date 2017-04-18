@@ -6,9 +6,7 @@
       custom-item="my-item-zh",
       :fetch-suggestions="querySearch",
       placeholder="搜尋用戶...",
-      :on-icon-click="handleIconClick",
-      :trigger-on-focus="false",
-      @select="handleSelect")
+      :trigger-on-focus="false")
 
 
 </template>
@@ -20,9 +18,13 @@
     render: function (h, ctx) {
       var item = ctx.props.item
       var route = '/user/' + item.userId
+      var userIcon = item.userIcon
       return h('li', ctx.data, [
-        h('router-link', { attrs: { class: 'name', to: route } }, [item.userId])
-        // h('span', { attrs: { class: 'addr' } }, [item.title])
+        h('router-link', { attrs: { class: 'userList', to: route } }, [
+          h('img', { attrs: { class: 'avatar', src: userIcon } }),
+          h('span', { attrs: { class: 'user' } }, [item.userId])
+        ])
+
       ])
     },
     props: {
@@ -39,8 +41,7 @@
     data () {
       return {
         userList: [],
-        state2: '',
-        sUser: []
+        state2: ''
       }
     },
     methods: {
@@ -55,18 +56,10 @@
         return (o) => {
           return (reg.test(o.userId))
         }
-      },
-      handleSelect (item) {
-        this.sUser = item
-        console.log(this.sUser)
-      },
-      handleIconClick (ev) {
-        console.log(ev)
       }
     },
     mounted () {
       this.userList = this.users
-      this.sUser = this.sUser
     }
   }
 </script>
@@ -74,25 +67,31 @@
 
 <style lang="scss">
 
-.Search{
-  margin: auto;
   .my-autocomplete{
     li {
       line-height: normal;
       padding: 7px;
-      .name {
-        text-overflow: ellipsis;
+      // border-bottom: 1px solid rgba(34,36,38,.1);
+      .userList {
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
         overflow: hidden;
-      }
-      .addr {
-        font-size: 12px;
-        color: #b4b4b4;
-      }
-      .highlighted .addr {
-        color: #ddd;
+        margin: auto;
+        .user {
+          position: relative;
+          bottom: 14px;
+          padding: 1em;
+          color: black;
+          font-size: 18px;
+        }
+        .avatar {
+          border-radius: 50%;
+          width: 40px;
+        }
       }
     }
   }
-}
+
 
 </style>
