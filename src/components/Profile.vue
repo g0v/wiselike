@@ -7,8 +7,7 @@
       ask
     wisdom(:userId = "user.userId")
   .profile(v-else)
-    .info
-      h1 no such user
+    h1 no such user
 </template>
 
 <script>

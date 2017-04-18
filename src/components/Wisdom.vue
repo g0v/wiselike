@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wisdom
+  .wisdom(v-if='userId')
     el-row
       el-col(:span='4')
         h1
@@ -25,10 +25,12 @@
 
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
         hr(size='300', width='80%')
-        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading", v-if="loadmore === true")
+        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
          | load more
       el-col(:span='4')
         h1
+  .wisdom(v-else)
+    h1 no such userId
 
 </template>
 
@@ -43,8 +45,8 @@
     },
     data () {
       return {
-        id: this.userId,
-        activeName: '1',
+        // id: this.userId,
+        // activeName: '1',
         wisdom_Pubilc: {
           title: [],
           icon: [],
@@ -56,33 +58,36 @@
         lazyload_count: 0,
         Pubilc_Category: [],
         loading: false,
-        loadmore: true,
-        self: false
+        loadmore: false
+        // self: false
       }
     },
     computed: {
       profileLink: function () {
-        return (this.userId !== null) && ('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId)
+        // return (this.userId !== null) && ('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId)
+        return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId
       }
     },
     methods: {
-      init: function () {
-        this.page = 0
-        this.lazyload_count = 0
-        this.Pubilc_Category = []
-        this.loading = false
-        this.loadmore = true
-        this.self = false
-        this.wisdom_Pubilc = {
-          title: [],
-          icon: [],
-          content: [],
-          aouther: [],
-          time: []
-        }
-      },
+      // init: function () {
+      //   this.wisdom_Pubilc = {
+      //     title: [],
+      //     icon: [],
+      //     content: [],
+      //     aouther: [],
+      //     time: []
+      //   }
+      //   this.page = 0
+      //   this.lazyload_count = 0
+      //   this.Pubilc_Category = []
+      //   this.loading = false
+      //   this.loadmore = true
+      //   // this.self = false
+      // },
       getUserData: async function () {
-        this.init()
+        // this.init()
+        /* reset init data like init() */
+        Object.assign(this.$data, this.$options.data())
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
         await this.Lazy_Pubilc()
       },
@@ -91,18 +96,28 @@
         let standard = Number
         let length = this.Pubilc_Category.data.topic_list.topics.length
         let remain = length - this.lazyload_count
+        /* determine if topics are all fetched */
+        this.loadmore = (length > 0)
+        /* check how many topics remain */
         remain === 1
           ? ((this.lazyload_count += 1), (standard = 1))
           : ((this.lazyload_count += 2), (standard = 2))
         if (this.loadmore === true) {
+          this.loading = true
           for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
             let topicdata = await this.getDiscussion_Topic(this.Pubilc_Category, i)
+          // setTimeout(() => {
             topic.push(topicdata)
+            this.loading = false
+          // }, 1000)
           }
         }
-        await this.Data_Processing(topic, true);
-        (this.lazyload_count === length) && (this.lazyload_count = 0, this.page += 1, this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page));
-        (this.Pubilc_Category['data']['topic_list']['topics'].length === 0) && (this.loadmore = false)
+        await this.Data_Processing(topic, true)
+        if (this.lazyload_count === length) {
+          this.lazyload_count = 0
+          this.page += 1
+          this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
+        }
       },
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
@@ -157,12 +172,7 @@
         )
         /* check if scroll to bottom */
         if (wBottom === dHeight) {
-          this.loading = true
-          /* pause for testing */
-          setTimeout(() => {
-            this.Lazy_Pubilc()
-            this.loading = false
-          }, 1000)
+          this.Lazy_Pubilc()
         }
       },
       post: function () {
@@ -170,12 +180,11 @@
     },
     watch: {
       userId: function () {
-        (this.userId !== null) && (this.getUserData())
-        // window.addEventListener('scroll', this.hitLoad)
+        this.getUserData()
       }
     },
     created: function () {
-      (this.userId !== null) && (this.getUserData())
+      this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
     }
