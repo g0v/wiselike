@@ -1,71 +1,80 @@
 <template lang="pug">
   .ask
-    el-button(@click='dialogFormVisible = true, open', icon='edit', size='large')
+    el-button(@click='dialogFormVisible = true', icon='edit', size='large')
       | 我要提問
-    el-dialog(title='提問', v-model='dialogFormVisible', close-on-click-modal='false', close-on-press-escape='false')
-      template(attributes='close-on-press-escape = false')
-      el-form(:model='form')
-        el-input.title(type='textarea', autosize='', placeholder='請輸入標題', v-model='title')
-        el-input.content(type='textarea', :rows='2', placeholder='請輸入內容', v-model='content')
+    el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false')
+      //- template(attributes='close-on-press-escape = false')
+      el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
+        el-form-item(prop='title', label='標題')
+          el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
+        el-form-item(prop='content', label='內容')
+          el-input(v-model='ruleForm.content', auto-complete='off',type='textarea', :autosize="{ minRows: 10, maxRows: 30}", placeholder='請輸入內容')
       .dialog-footer(slot='footer')
         el-button(type='text', @click='dialogFormVisible = false') 取 消
-        el-button(type='primary', @click='dialogFormVisible = false') 確 定
-
+        el-button(type='primary', @click="submit('ruleForm')") 確 定
 </template>
 
 <script>
   import axios from 'axios'
-  import querystring from 'querystring'
+  // import $ from 'jQuery'
   export default {
     name: 'ask',
+    props: ['userId'],
     data () {
-      return {
-        question: '',
-        dialogTableVisible: false,
-        dialogFormVisible: false,
-        form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        },
-        formLabelWidth: '120px'
+      var CheckContent = (rule, value, callback) => {
+        if (String(value).length < 15) {
+          callback(new Error('欄位長度需大於15個字'))
+        } else {
+          callback()
+        }
       }
-    },
-    computed: {
-      AskLink: function () {
-        return 'ht'
+      return {
+        ruleForm: {
+          title: '',
+          content: ''
+        },
+        rules: {
+          content: [
+            { validator: CheckContent, trigger: 'blur' }
+          ],
+          title: [
+            { validator: CheckContent, trigger: 'blur' }
+          ]
+        },
+        local_storage: {},
+        dialogTableVisible: false,
+        dialogFormVisible: false
       }
     },
     methods: {
-      key: function () {
+      AskLink: function (localstorage) {
+        return 'http://localhost:9000/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
-      submit: function () {
-        let bobydata = querystring.stringify({ 'title': '第一次測是使用vue post', 'raw': '第一次內容測試測是使用vue post' })
-        console.log(bobydata)
-        axios({
-          method: 'post',
-          url: this.AskLink,
-          data: {
-            title: '第二次測是使用vue post',
-            raw: '第二次內容測試測是使用vue post'
-          }
-        })
-        // axios.post(this.AskLink, querystring.stringify({ 'title': '第一次測是使用vue post', 'raw': '第一次內容測試測是使用vue post' }))
-        // .then(response => {})
-        // .catch(e => {
-        //   this.errors.push(e)
-        // })
+      submit: function (formName) {
+        this.local_storage = window.localStorage
+        if (this.local_storage.length === 3) {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.dialogFormVisible = false
+              axios({
+                method: 'post',
+                url: this.AskLink(this.local_storage),
+                data: {title: this.ruleForm.title, raw: this.ruleForm.content}
+              }).catch(function (error) {
+                console.log(error)
+                alert('標題或內容不清楚')
+              })
+            } else {
+              return false
+            }
+          })
+        } else {
+          this.dialogFormVisible = false
+          alert('請先登入')
+        }
       }
     },
     created: function () {
-      // $('.el-dialog').attributes({
-      //   size: 'full'
-      // })
     }
   }
 </script>

@@ -47,7 +47,7 @@
     methods: {
       querySearch (queryString, cb) {
         var users = this.userList
-        console.log(users)
+        // console.log(users)
         var results = queryString ? users.filter(this.createFilter(queryString)) : users
         cb(results)
       },

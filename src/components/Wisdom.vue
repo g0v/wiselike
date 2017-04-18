@@ -67,8 +67,6 @@
     },
     data () {
       return {
-        // id: this.userId,
-        // activeName: '1',
         wisdom_Pubilc: {
           title: [],
           icon: [],
@@ -91,23 +89,7 @@
       }
     },
     methods: {
-      // init: function () {
-      //   this.wisdom_Pubilc = {
-      //     title: [],
-      //     icon: [],
-      //     content: [],
-      //     aouther: [],
-      //     time: []
-      //   }
-      //   this.page = 0
-      //   this.lazyload_count = 0
-      //   this.Pubilc_Category = []
-      //   this.loading = false
-      //   this.loadmore = true
-      //   // this.self = false
-      // },
       getUserData: async function () {
-        // this.init()
         /* reset init data like init() */
         Object.assign(this.$data, this.$options.data())
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
