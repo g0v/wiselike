@@ -19,7 +19,7 @@
     functional: true,
     render: function (h, ctx) {
       var item = ctx.props.item
-      var route = '/profile/' + item.userId
+      var route = '/user/' + item.userId
       return h('li', ctx.data, [
         h('router-link', { attrs: { class: 'name', to: route } }, [item.userId])
         // h('span', { attrs: { class: 'addr' } }, [item.title])
