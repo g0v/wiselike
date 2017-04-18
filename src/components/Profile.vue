@@ -4,7 +4,7 @@
       p: img.avatar(:src="user.userIcon")
       h1 {{ user.userId }}
       p {{ user.userDesc }}
-      ask
+      ask(:userId = "user.userId")
     wisdom(:userId = "user.userId")
   .profile(v-else)
     h1 no such user
