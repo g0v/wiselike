@@ -1,6 +1,6 @@
 <template lang="pug">
   .ask
-    el-button(@click='dialogFormVisible = true, open', icon='edit')
+    el-button(@click='dialogFormVisible = true, open', icon='edit', size='large')
       | 我要提問
     el-dialog(title='提問', v-model='dialogFormVisible', close-on-click-modal='false', close-on-press-escape='false')
       template(attributes='close-on-press-escape = false')

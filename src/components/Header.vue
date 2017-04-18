@@ -54,45 +54,39 @@
 </script>
 
 <style lang="scss" scoped>
-  .header {
-    position: fixed;
-    top: 0;
-    z-index: 99;
-    box-sizing: border-box;
-    width: 100%;
-    .menu{
-      padding: .5em 1em;
-    }
-    .left {
-      margin: auto;
-      text-align: left;
-    }
-    .center{
-      text-align: center;
-      margin: auto;
-      .logo{
-        text-decoration: none;
-        color: white;
-        font-size: 2.2rem;
-      }
-      .logo:hover{
-        color:#20a0ff;
-      }
-    }
+@import url('https://fonts.googleapis.com/css?family=Kadwa');
+.header {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 100%;
+  .menu{
+    padding: .5em 1em;
   }
-  .right{
-    text-align: right;
+  .left {
     margin: auto;
-    .el-button.create{
-      margin-right: 6px;
+    text-align: left;
+  }
+  .center{
+    text-align: center;
+    margin: auto;
+    .logo{
+      font-family: 'Kadwa', serif;
+      text-decoration: none;
+      color: white;
+      font-size: 2.2rem;
+    }
+    .logo:hover{
+      color:#20a0ff;
     }
   }
-  // .logo{
-  //   text-decoration: none;
-  //   color: white;
-  //   font-size: 2rem;
-  // }
-  // .logo:hover{
-  //   color:#20a0ff;
-  // }
+}
+.right{
+  text-align: right;
+  margin: auto;
+  .el-button.create{
+    margin-right: 6px;
+  }
+}
 </style>

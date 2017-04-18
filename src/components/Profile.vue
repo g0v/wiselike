@@ -1,7 +1,7 @@
 <template lang="pug">
   .profile(v-if="user")
-    .info
-      p: img.avatar(:src="user.userIcon")
+    .info(:style="{ backgroundImage: `url(${user.userBg})` }")
+      img.avatar(:src="user.userIcon")
       h1 {{ user.userId }}
       p {{ user.userDesc }}
       ask
@@ -39,17 +39,38 @@
 </script>
 
 <style lang="scss" scoped>
+@import '../global.scss';
+.profile {
   .info {
+    position: relative;
+    color: white;
     text-align: center;
-    padding: 3em 0;
-    margin: 0 0 1em 0;
-    background: url("https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=");
+    padding: 5em 0 3em;
     background-size: cover;
-
+    * {
+      position: relative;
+      z-index: 100;
+    }
     .avatar {
       border-radius: 50%;
-      width: 250px;
-      height: 250px;
+      width: 200px;
+      height: 200px;
+      box-shadow: 0 3px 6px -1px black;
+    }
+    p, h1 {
+      padding: 0 calc((100% - #{$maxWidth}) / 2);
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 10;
+      background: rgba(black, 0.5);
     }
   }
+
+}
 </style>

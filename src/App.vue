@@ -25,6 +25,7 @@
           tmp['userId'] = val['username']
           tmp['userIcon'] = 'https://talk.pdis.nat.gov.tw' + val['avatar_template'].replace(/{size}/, '100')
           tmp['userDesc'] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra lobortis lectus, vel hendrerit nulla finibus in. Curabitur pharetra neque lectus.' // val['description']
+          tmp['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
           this.users.push(tmp)
         })
       })
