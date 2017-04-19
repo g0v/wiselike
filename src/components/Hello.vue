@@ -31,9 +31,10 @@
 </script>
 
 <style lang="scss" scoped>
+@import '../global.scss';
 .hello{
-  max-width: 1120px;
-  margin: 5em auto;
+  max-width: $maxWidth;
+  margin: 0 auto;
 }
 .userList{
   .card {

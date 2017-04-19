@@ -55,12 +55,15 @@
 
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
+@import '../global.scss';
 .header {
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  box-sizing: border-box;
-  width: 100%;
+  // position: fixed;
+  // top: 0;
+  // z-index: 1000;
+  // width: 100%;
+  flex: 0 0 3rem;
+  // box-sizing: border-box;
+  background: $lightblack;
   .menu{
     padding: .5em 1em;
   }
