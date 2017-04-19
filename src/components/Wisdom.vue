@@ -16,7 +16,7 @@
           span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
           span 回應: {{wisdom_Pubilc.time[contentindex][index]}}
           span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
-        el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
+        wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]')
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
       | load more
   .wisdom(v-else)
@@ -27,11 +27,13 @@
 <script>
   import axios from 'axios'
   import wisdomprivate from './Wisdom_Private.vue'
+  import wisdomreply from './Wisdom_Reply.vue'
   export default {
     name: 'hello',
     props: ['userId'],
     components: {
-      wisdomprivate
+      wisdomprivate,
+      wisdomreply
     },
     data () {
       return {
@@ -40,7 +42,8 @@
           icon: [],
           content: [],
           aouther: [],
-          time: []
+          time: [],
+          topicid: []
         },
         page: 0,
         lazyload_count: 0,
@@ -128,6 +131,7 @@
             this.wisdom_Pubilc.aouther.push(aouther)
             this.wisdom_Pubilc.time.push(time)
             this.wisdom_Pubilc.icon.push(icon)
+            this.wisdom_Pubilc.topicid.push(topic[i]['data']['id'])
           }
         }
       },

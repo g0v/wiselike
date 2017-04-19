@@ -12,17 +12,19 @@
             span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
             span &nbsp;&nbsp;提問:
             p(v-html='wisdom_Private.content[contentindex][0]')
-            el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
+            wisdomreply(:userId='userId', :topicid='wisdom_Private.topicid[contentindex]')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
         | 更多問題        
 </template>
 
 <script>
   import axios from 'axios'
+  import wisdomreply from './Wisdom_Reply.vue'
   export default {
     name: 'hello',
     props: ['userId', 'LocalStorageUsername', 'self'],
     components: {
+      wisdomreply
     },
     data () {
       return {
@@ -32,7 +34,8 @@
           icon: [],
           content: [],
           aouther: [],
-          time: []
+          time: [],
+          topicid: []
         },
         page: 0,
         Private_Category: [],
@@ -50,7 +53,8 @@
           icon: [],
           content: [],
           aouther: [],
-          time: []
+          time: [],
+          topicid: []
         }
         this.page = 0
         this.Private_Category = []
@@ -111,6 +115,7 @@
           this.wisdom_Private.aouther.push(aouther)
           this.wisdom_Private.time.push(time)
           this.wisdom_Private.icon.push(icon)
+          this.wisdom_Private.topicid.push(topic[i]['data']['id'])
         }
       }
     },
