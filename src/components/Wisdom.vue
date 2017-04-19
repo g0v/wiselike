@@ -1,7 +1,11 @@
 <template lang="pug">
   .wisdom(v-if='userId')
     wisdomprivate(:userId='userId')
-    p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
+    p(v-if="wisdom_Pubilc.content.length > 0")
+      | 歷史問題
+      span(style='float:right')
+        | Auto loading?
+        el-switch(on-text="on", off-text="off", v-model="autoload")
     .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
       el-card.box-card
         .clearfix(slot='header')
@@ -49,7 +53,8 @@
         lazyload_count: 0,
         Pubilc_Category: [],
         loading: false,
-        loadmore: false
+        loadmore: false,
+        autoload: true
         // self: false
       }
     },
@@ -145,7 +150,7 @@
           document.body.clientHeight, document.documentElement.clientHeight
         )
         /* check if scroll to bottom */
-        if (wBottom === dHeight) {
+        if (wBottom === dHeight && this.autoload) {
           this.Lazy_Pubilc()
         }
       }

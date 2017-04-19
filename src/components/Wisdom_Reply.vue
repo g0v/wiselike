@@ -2,8 +2,9 @@
   .wisdom_reply
     el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
       el-form-item(prop='content')
-        el-input(v-model='ruleForm.content', auto-complete='off',type='textarea', autosize='', placeholder='我要回應...')
-    el-button(type='primary', @click="submit('ruleForm')") 送 出
+        .reply
+          el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
+          el-button(type='primary', @click="submit('ruleForm')") 送 出
 
 </template>
 
@@ -72,5 +73,9 @@
 <style lang="scss">
 .title {
   margin: 1em 0;
+}
+.reply {
+  display: flex;
+  flex-flow: row nowrap;
 }
 </style>
