@@ -2,14 +2,13 @@
   .hello
     el-row
       el-col.userList(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId", :span='6')
-        router-link(:to="'/user/'+o.userId")
-          el-card.box-card(:body-style="{ padding: '0px' }")
-            .clearfix(slot='header')
-              img.icon(:src='o.userIcon')
-            .detail
-              .userId {{o.userId}}
-              //- .bottom
-                router-link(:to="'/user/'+o.userId") Watch My Profile
+        .card
+          router-link(:to="'/user/'+o.userId")
+            el-card.box-card(:body-style="{ padding: '0px' }")
+              .clearfix(slot='header')
+                img.icon(:src='o.userIcon')
+              .detail
+                .userId {{o.userId}}
 
 </template>
 
@@ -37,6 +36,9 @@
   margin: 5em auto;
 }
 .userList{
+  .card {
+    margin: 1.5em;
+  }
   .time {
     font-size: 13px;
     color: #999;
