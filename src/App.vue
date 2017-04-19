@@ -1,16 +1,18 @@
 <template lang="pug">
   #app
-    myHeader(:users="users")
-    router-view(:users="users")
+    Header(:users="users")
+    router-view.view(:users="users")
+    Footer
 </template>
-
 <script>
-  import myHeader from './components/Header.vue'
+  import Header from './components/Header.vue'
+  import Footer from './components/Footer.vue'
   import axios from 'axios'
   export default {
     name: 'app',
     components: {
-      myHeader
+      Header,
+      Footer
     },
     data () {
       return {
@@ -35,6 +37,12 @@
 
 <style lang="scss" scoped>
   #app {
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 100vh;
+    .view {
+      flex: 1 1 0;
+    }
   }
 </style>

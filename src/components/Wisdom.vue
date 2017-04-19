@@ -22,7 +22,7 @@
           span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
         wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]')
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
-      | load more
+      i.el-icon-arrow-down
   .wisdom(v-else)
     h1 no such userId
 

@@ -1,12 +1,8 @@
 <template lang="pug">
   .footer
-    a(href="https://www.facebook.com/vtaiwan.tw/" title="Fackbook" target="_blank")
-      i.fa.fa-facebook
-    a(href="https://www.youtube.com/channel/UChC85hbUuDAvFpc7Uuj69DA/" title="Youtube" target="_blank")
-      i.fa.fa-youtube
-    router-link(to='/', exact='', title="Home")
+    router-link.logo(to='/', exact='', title="Home")
       img(src='../assets/logo.png', alt='logo')
-    a(href="https://github.com/g0v/vue.vtaiwan.tw" title="Github" target="_blank")
+    a.github(href="https://github.com/g0v/wiselike" title="Github" target="_blank")
       i.fa.fa-github
 </template>
 
@@ -28,9 +24,21 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
+$fa-font-path:"../../node_modules/font-awesome/fonts";
+@import 'node_modules/font-awesome/scss/font-awesome';
 .footer {
   flex: 0 0 10rem;
   background: $lightblack;
   text-align: center;
+  .logo {
+    img {
+      max-width: 50px;
+      height: auto;
+    }
+  }
+  .github {
+    color: gray;
+    font-size: 50px;
+  }
 }
 </style>
