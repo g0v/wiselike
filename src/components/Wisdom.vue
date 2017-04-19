@@ -1,35 +1,5 @@
 <template lang="pug">
   .wisdom(v-if='userId')
-    //- el-row
-      el-col(:span='4')
-        h1
-      el-col(:span='16')
-        wisdomprivate(:userId='userId')
-        p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
-        div.pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
-          el-card.box-card
-            .clearfix(slot='header')
-              span(style='line-height: 36px;')
-              img(:src='wisdom_Pubilc.icon[contentindex][0]')
-              span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][0]}}
-              span 提問:
-              h2 {{wisdom_Pubilc.title[contentindex]}}
-              p(v-html='wisdom_Pubilc.content[contentindex][0]')
-
-            .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
-
-              img(:src='wisdom_Pubilc.icon[contentindex][index]')
-              span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
-              span 回應: {{wisdom_Pubilc.time[contentindex][index]}}
-              span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
-
-            el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
-        hr(size='300', width='80%')
-        el-button.loader(type="primary",v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
-         | load more
-      el-col(:span='4')
-        h1
-
     wisdomprivate(:userId='userId')
     p(v-if="wisdom_Pubilc.content.length > 0") 歷史問題
     .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
@@ -49,8 +19,6 @@
         el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
       | load more
-    //- hr(size='300', width='80%')
-
   .wisdom(v-else)
     h1 no such userId
 
@@ -176,8 +144,6 @@
         if (wBottom === dHeight) {
           this.Lazy_Pubilc()
         }
-      },
-      post: function () {
       }
     },
     watch: {
@@ -198,15 +164,7 @@
 .wisdom {
   margin: 3em auto;
   max-width: $maxWidth;
-//   .avatar {
-//     border-radius: 50%;
-//     width: 250px;
-//     height: 250px;
-//   }
 }
-// .item[data-v-30f76649] {
-//   padding: 0;
-// }
 .text {
   font-size: 14px;
 }
@@ -214,16 +172,6 @@
 .item {
   padding: 18px 0;
 }
-
-// .clearfix:before,
-// .clearfix:after {
-//   display: table;
-//   content: "";
-// }
-// .clearfix:after {
-//     clear: both
-// }
-
 .box-card {
   line-height: 2em;
   width: 100%;
@@ -248,16 +196,6 @@
     vertical-align: bottom;
   }
 }
-// .el-card__body {
-//   padding: 20px;
-//   background-color: beige !important;
-// }
-// .el-button--primary {
-//   color: #fff;
-//   font-size: 2rem;
-//   width: 100%;
-// }
-
 .loader {
   font-size: large;
   height: 3em;

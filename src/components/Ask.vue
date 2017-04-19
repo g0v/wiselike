@@ -2,7 +2,7 @@
   .ask
     el-button(@click='dialogFormVisible = true', icon='edit', size='large')
       | 我要提問
-    el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false')
+    el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       //- template(attributes='close-on-press-escape = false')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
         el-form-item(prop='title', label='標題')
