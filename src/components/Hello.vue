@@ -3,7 +3,7 @@
     el-row
       el-col.userList(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId", :span='6')
         .card
-          router-link(:to="'/user/'+o.userId")
+          router-link.user(:to="'/user/'+o.userId")
             el-card.box-card(:body-style="{ padding: '0px' }")
               .clearfix(slot='header')
                 img.icon(:src='o.userIcon')
@@ -37,7 +37,11 @@
 }
 .userList{
   .card {
-    margin: 1.5em;
+    margin: 2em;
+    .user {
+      text-decoration: none;
+      color: black;
+    }
   }
   .time {
     font-size: 13px;
@@ -46,13 +50,6 @@
   .box-card{
     width: 200px;
     margin: 1em auto;
-  }
-  .bottom{
-    margin-top:13px;
-    a{
-      text-decoration: none;
-      color:blue;
-    }
   }
   .detail{
     text-align: center;
@@ -74,8 +71,5 @@
   .clearfix:after {
       clear: both
   }
-}
-.el-col-offset-2 {
-  margin-left: 11%;
 }
 </style>
