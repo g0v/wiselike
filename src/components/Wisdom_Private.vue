@@ -1,6 +1,6 @@
 <template lang="pug">
   .wisdom_private
-    div(v-if="wisdom_Private.content.length > 0") 
+    div(v-if="wisdom_Private.content.length > 0")
       p 等待回答
       el-collapse(v-model='activeName', accordion='')
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
@@ -14,13 +14,13 @@
             p(v-html='wisdom_Private.content[contentindex][0]')
             el-input.sereply(type='textarea', autosize='', placeholder='我要回應...')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
-        | 更多問題        
+        | 更多問題
 </template>
 
 <script>
   import axios from 'axios'
   export default {
-    name: 'hello',
+    name: 'wisdom_private',
     props: ['userId', 'LocalStorageUsername', 'self'],
     components: {
     },
@@ -150,7 +150,7 @@
     }
     p {
       font-size: 1rem;
-    }    
+    }
   }
 }
 

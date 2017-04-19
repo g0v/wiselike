@@ -60,7 +60,7 @@
   import axios from 'axios'
   import wisdomprivate from './Wisdom_Private.vue'
   export default {
-    name: 'hello',
+    name: 'wisdom',
     props: ['userId'],
     components: {
       wisdomprivate
