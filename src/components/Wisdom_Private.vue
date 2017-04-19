@@ -1,6 +1,6 @@
 <template lang="pug">
   .wisdom_private
-    div(v-if="wisdom_Private.content.length > 0") 
+    div(v-if="wisdom_Private.content.length > 0")
       p 等待回答
       el-collapse(v-model='activeName', accordion='')
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
@@ -14,14 +14,14 @@
             p(v-html='wisdom_Private.content[contentindex][0]')
             wisdomreply(:userId='userId', :topicid='wisdom_Private.topicid[contentindex]')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
-        | 更多問題        
+        | 更多問題
 </template>
 
 <script>
   import axios from 'axios'
   import wisdomreply from './Wisdom_Reply.vue'
   export default {
-    name: 'hello',
+    name: 'wisdom_private',
     props: ['userId', 'LocalStorageUsername', 'self'],
     components: {
       wisdomreply
@@ -155,7 +155,7 @@
     }
     p {
       font-size: 1rem;
-    }    
+    }
   }
 }
 
