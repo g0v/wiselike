@@ -1,7 +1,7 @@
 <template lang="pug">
   #app
     Header(:users="users")
-    router-view.view(:users="users")
+    router-view.view(:users="users", :topics="topicList")
     Footer
 </template>
 <script>
@@ -16,7 +16,8 @@
     },
     data () {
       return {
-        users: []
+        users: [],
+        topicList: []
       }
     },
     mounted: function () {
@@ -30,6 +31,15 @@
           tmp['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
           this.users.push(tmp)
         })
+      })
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => {
+        var topics = response.data.topic_list.topics
+        for (var i = 0; i < 10; i++) {
+          var tmp = {}
+          tmp['title'] = topics[i]['title']
+          tmp['userName'] = topics[i]['last_poster_username']
+          this.topicList.push(tmp)
+        }
       })
     }
   }
