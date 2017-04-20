@@ -38,7 +38,6 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
     flex-flow: row wrap;
     align-items: center;
     justify-content: center;
-    // vertical-align: bottom;
     .logo {
       margin: 1ch;
       i {
