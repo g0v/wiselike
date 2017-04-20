@@ -2,7 +2,7 @@
   .wisdom_private
     div(v-if="wisdom_Private.content.length > 0")
       p 等待回答
-      el-collapse(v-model='activeName', accordion='')
+      el-collapse(accordion='')
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
           el-collapse-item
             template(slot='title')
@@ -12,7 +12,7 @@
             span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
             span &nbsp;&nbsp;提問:
             p(v-html='wisdom_Private.content[contentindex][0]')
-            wisdomreply(:userId='userId', :topicid='wisdom_Private.topicid[contentindex]')
+            wisdomreply(:userId='userId', :topicid='wisdom_Private.topicid[contentindex]', :slug='wisdom_Private.slug[contentindex]', :ProfileCategoryId='ProfileCategoryId')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
         | 更多問題
 </template>
@@ -22,20 +22,20 @@
   import wisdomreply from './Wisdom_Reply.vue'
   export default {
     name: 'wisdom_private',
-    props: ['userId', 'LocalStorageUsername', 'self'],
+    props: ['userId', 'LocalStorageUsername', 'ProfileCategoryId'],
     components: {
       wisdomreply
     },
     data () {
       return {
-        activeName: '1',
         wisdom_Private: {
           title: [],
           icon: [],
           content: [],
           aouther: [],
           time: [],
-          topicid: []
+          topicid: [],
+          slug: []
         },
         page: 0,
         Private_Category: [],
@@ -47,32 +47,19 @@
     computed: {
     },
     methods: {
-      init: function () {
-        this.wisdom_Private = {
-          title: [],
-          icon: [],
-          content: [],
-          aouther: [],
-          time: [],
-          topicid: []
-        }
-        this.page = 0
-        this.Private_Category = []
+      profile_PrivateLink: function (userId) {
+        return 'https://talk.pdis.nat.gov.tw/c/wiselike/inbox-' + userId + '.json'
       },
-      profile_PrivateLink: function (categoryid) {   // 收尋tag的url
-        return (categoryid !== null) && ('https://talk.pdis.nat.gov.tw/tags/c/wiselike/profile-' + categoryid + '/尚未回覆.json')
-      },
-      getUserData: async function () {   // 抓取user第一頁的category
-        this.init()
+      getUserData: async function () {   // find user category
         this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink(this.userId) + '?page=0')
         await this.Lazy_Private()
       },
       Lazy_Private: async function () { // lazyload
         let topic = []
-        // 一次抓取三十篇topic
+        // Gat thirty topic
         for (let i = 0, length = this.Private_Category.data.topic_list.topics.length; i < length; i++) {
           let topicdata = await this.getDiscussion_Topic(this.Private_Category, i)
-          this.local_self === true // 在別人的頁面顯示自己提的問題
+          this.local_self === true // Show my question
             ? topic.push(topicdata)
             : (this.Private_Category.data.topic_list.topics[i].slug === this.local_storage_username) && (topic.push(topicdata))
         }
@@ -81,14 +68,15 @@
         this.Private_Category = await this.getDiscussion_Category(this.profile_PrivateLink(this.userId) + '?page=' + this.page)
         this.loadmore = this.Private_Category.data.topic_list.topics.length
       },
-      getDiscussion_Category: function (url) { // 抓取作者全部的category
+      getDiscussion_Category: function (url) { // get user all category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
+            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
             resolve(val)
           })
         })
       },
-      getDiscussion_Topic: async function (url, i) { // 抓topic
+      getDiscussion_Topic: async function (url, i) { // get topic
         return new Promise((resolve, reject) => {
           let id = url['data']['topic_list']['topics']
           axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
@@ -96,7 +84,7 @@
           })
         })
       },
-      Data_Processing: function (topic) { // topic裡面的資料分析處理
+      Data_Processing: function (topic) { // topic data processing
         for (let i in topic) {
           let content = []
           let icon = []
@@ -116,6 +104,7 @@
           this.wisdom_Private.time.push(time)
           this.wisdom_Private.icon.push(icon)
           this.wisdom_Private.topicid.push(topic[i]['data']['id'])
+          this.wisdom_Private.slug.push(topic[i]['data']['slug'])
         }
       }
     },
@@ -127,10 +116,10 @@
       }
     },
     created: function () {
-      // 先判斷local_storage 裡面的資料
+      // if local_storage data
+      Object.assign(this.$data, this.$options.data())
       this.local_storage_username = window.localStorage.getItem('username');
       (this.local_storage_username === this.userId) ? (this.local_self = true) : (this.local_self = false);
-      // console.log(this.local_self)
       (this.userId !== null) && (this.getUserData())
     }
   }

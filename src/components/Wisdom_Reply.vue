@@ -13,7 +13,7 @@
   // import $ from 'jQuery'
   export default {
     name: 'ask',
-    props: ['userId', 'topicid'],
+    props: ['userId', 'topicid', 'slug', 'ProfileCategoryId'],
     data () {
       var CheckContent = (rule, value, callback) => {
         if (String(value).length < 10) {
@@ -40,7 +40,7 @@
         console.log(this.AskLink())
       },
       AskLink: function (localstorage) {
-        return 'http://localhost:9000/users/' + this.userId + '/wisdoms/' + this.topicid + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return 'http://localhost:9000/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&categoryid=' + this.ProfileCategoryId + '&slug=' + this.slug
       },
       submit: function (formName) {
         this.local_storage = window.localStorage

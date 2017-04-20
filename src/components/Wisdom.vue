@@ -1,6 +1,6 @@
 <template lang="pug">
   .wisdom(v-if='userId')
-    wisdomprivate(:userId='userId')
+    wisdomprivate(:userId='userId', :ProfileCategoryId='ProfileCategoryId')
     p(v-if="wisdom_Pubilc.content.length > 0")
       | 歷史問題
       span(style='float:right')
@@ -54,13 +54,12 @@
         Pubilc_Category: [],
         loading: false,
         loadmore: false,
-        autoload: true
-        // self: false
+        autoload: true,
+        ProfileCategoryId: ''
       }
     },
     computed: {
       profileLink: function () {
-        // return (this.userId !== null) && ('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId)
         return 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId
       }
     },
@@ -69,6 +68,7 @@
         /* reset init data like init() */
         Object.assign(this.$data, this.$options.data())
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
+        this.ProfileCategoryId = this.Pubilc_Category.data.topic_list.topics[0].category_id
         await this.Lazy_Pubilc()
       },
       Lazy_Pubilc: async function (val) { // lazyload
