@@ -176,42 +176,6 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  formData += '&tags[]=尚未回覆'
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
-    .then(response => {
-      return res.json(response.data)
-    })
-    .catch(error => {
-      console.log(error.response)
-      return res.status(error.response.status).json(error.response.data)
-    })
-
-  // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
-  //       a. Change the owner to "me" by PUT /t/-{topic_id}.json API
-  //        or
-  //       b. Use the POST /admin/users/{uid}/generate_api_key API to gen a API key for "me", and use that key to post the topic instead.
-  return null
-})
-
-app.post('/users/:user/wisdoms/:topicid', (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
-  }
-
-  let formData = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      category: `profile-${req.params.user}`,
-      topic_id: `${req.params.topicid}`,
-      raw: req.body.raw
-    }
-  )
-  formData += '&tags[]=[]'
   axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
     .then(response => {
       return res.json(response.data)
