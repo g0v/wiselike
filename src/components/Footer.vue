@@ -1,9 +1,12 @@
 <template lang="pug">
   .footer
-    router-link.logo(to='/', exact='', title="Home")
-      img(src='../assets/logo.png', alt='logo')
-    a.github(href="https://github.com/g0v/wiselike" title="Github" target="_blank")
-      i.fa.fa-github
+    .logos
+      router-link.logo(to='/', exact='', title="Home")
+        img(src='../assets/logo.png', alt='logo')
+      a.logo(href="https://github.com/g0v/wiselike" title="Github" target="_blank")
+        i.fa.fa-github
+    .license
+      p This license lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
 </template>
 
 <script>
@@ -30,15 +33,28 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
   flex: 0 0 10rem;
   background: $lightblack;
   text-align: center;
-  .logo {
-    img {
-      max-width: 50px;
-      height: auto;
+  .logos {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    // vertical-align: bottom;
+    .logo {
+      margin: 1ch;
+      i {
+      color: gray;
+      font-size: 5rem;
+      }
+      img {
+        max-width: 5rem;
+        height: auto;
+      }
     }
   }
-  .github {
-    color: gray;
-    font-size: 50px;
+  .license {
+    margin: 0 auto;
+    max-width: $maxWidth;
+    color: lightgray;
   }
 }
 </style>

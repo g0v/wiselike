@@ -1,27 +1,34 @@
 <template lang="pug">
   .hello
+
     el-row
+
       el-col.userList(:span="16")
         h3 Popular People
+
         el-col.user(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId", :span='4')
           .card
-            router-link.user(:to="'/user/'+o.userId")
+            router-link.user(:to="'/user/' + o.userId")
               el-card.box-card(:body-style="{ padding: '0px' }")
                 .clearfix(slot='header')
                   img.icon(:src='o.userIcon')
                 .detail
                   .userId {{o.userId}}
+
         el-col
           h3 Hot issue
           p(v-for="o in Lorem") {{o}}
+
       el-col.activity(:span="8")
         h3 Recent Activity
+
         el-col(v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
-          el-card.box-card
-            .text.item
-              h3 {{o.title}}
-              p {{o.userName}}
-      
+          router-link(:to="'#' + o.id")
+            el-card.box-card
+              .text.item
+                h3 {{o.title}}
+                p {{o.userName}}
+
 </template>
 
 <script>
@@ -62,10 +69,10 @@
 .user{
   .card {
     margin: 1em;
-    .user {
-      text-decoration: none;
-      color: black;
-    }
+    // .user {
+    //   text-decoration: none;
+    //   color: black;
+    // }
   }
   .time {
     font-size: 13px;

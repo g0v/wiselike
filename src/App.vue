@@ -38,6 +38,7 @@
           var tmp = {}
           tmp['title'] = topics[i]['title']
           tmp['userName'] = topics[i]['last_poster_username']
+          tmp['id'] = topics[i]['id']
           this.topicList.push(tmp)
         }
       })
