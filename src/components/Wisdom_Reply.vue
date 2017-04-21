@@ -51,9 +51,6 @@
                 method: 'post',
                 url: this.AskLink(this.local_storage),
                 data: {raw: this.ruleForm.content}
-              }).catch(function (error) {
-                console.log(error)
-                alert('內容不清楚')
               })
             } else {
               return false

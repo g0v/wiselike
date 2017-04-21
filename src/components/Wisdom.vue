@@ -20,7 +20,7 @@
           span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
           span 回應: {{wisdom_Pubilc.time[contentindex][index]}}
           span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
-        wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]')
+        wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
       i.el-icon-arrow-down
   .wisdom(v-else)
@@ -68,6 +68,7 @@
         /* reset init data like init() */
         Object.assign(this.$data, this.$options.data())
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
+        console.log(this.Pubilc_Category)
         this.ProfileCategoryId = this.Pubilc_Category.data.topic_list.topics[0].category_id
         await this.Lazy_Pubilc()
       },
@@ -100,10 +101,10 @@
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
-            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
-            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
-              return post.posts_count > 1
-            })
+            // val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
+            // val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
+            //   return post.posts_count > 1
+            // })
             resolve(val)
           })
         })

@@ -175,14 +175,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
-    .then(response => {
-      return res.json(response.data)
-    })
-    .catch(error => {
-      console.log(error.response)
-      return res.status(error.response.status).json(error.response.data)
-    })
+  post(`${process.env.DISCOURSE_HOST}/posts`, formData)
   // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
   //       a. Change the owner to "me" by PUT /t/-{topic_id}.json API
   //        or
@@ -196,11 +189,13 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let slug = req.query.slug
   let categoryid = req.query.categoryid
   let me = getUsername(sso, sig)
+  let posturl = `${process.env.DISCOURSE_HOST}/posts`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
   if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  let formData = querystring.stringify(
+  let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
       api_username: process.env.DISCOURSE_API_USERNAME,
@@ -209,26 +204,18 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
       raw: req.body.raw
     }
   )
-  let formData1 = querystring.stringify(
+  let putformData1 = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
       api_username: process.env.DISCOURSE_API_USERNAME,
       category_id: categoryid
     }
   )
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
-    .then(response => {
-      axios.put(`${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`, formData1)
-        .then(response => {
-          // return res.json(response.data)
-          console.log('moveOK')
-        })
-      return res.json(response.data)
-    })
-    .catch(error => {
-      console.log(error.response)
-      return res.status(error.response.status).json(error.response.data)
-    })
+  if (slug !== 'undefined' && categoryid !== 'undefined') {
+    main(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
+  } else {
+    main(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
+  }
   return null
 })
 
@@ -236,3 +223,45 @@ app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
+async function main (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+  let id = await post(PostUrl, PostformData)
+  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+  let ChangeNameformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      username: me,
+      'post_ids[]': id.data.id
+    }
+  )
+  if (reply === 'true') {
+    await put(PutUrl, PutformData)
+  }
+  await post(ChangeNameUrl, ChangeNameformData)
+}
+
+async function post (url, formData) {
+  return new Promise((resolve, reject) => {
+    axios.post(url, formData)
+    .then((val) => {
+      // console.log(val)
+      resolve(val)
+    })
+    .catch(error => {
+      console.log(error.response)
+      resolve(error.response)
+    })
+  })
+}
+async function put (url, formData) {
+  return new Promise((resolve, reject) => {
+    axios.put(url, formData)
+    .then((val) => {
+      resolve(val)
+    })
+    .catch(error => {
+      console.log(error.response)
+      resolve(error.response)
+    })
+  })
+}
