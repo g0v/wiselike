@@ -101,7 +101,7 @@
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
-            // val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
+            val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
             // val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
             //   return post.posts_count > 1
             // })

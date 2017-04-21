@@ -4,6 +4,7 @@
       | 我要提問
     el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       //- template(attributes='close-on-press-escape = false')
+      el-alert(v-if='loginalert === true', title='错误提示的文案', type='error', show-icon='')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
         el-form-item(prop='title', label='標題')
           el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
@@ -43,7 +44,8 @@
         },
         local_storage: {},
         dialogTableVisible: false,
-        dialogFormVisible: false
+        dialogFormVisible: false,
+        loginalert: false
       }
     },
     methods: {
