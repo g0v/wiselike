@@ -1,7 +1,7 @@
 <template lang="pug">
   #app
     Header(:users="users")
-    router-view.view(:users="users", :topics="topicList")
+    router-view.view(:users="users", :topics="topicList", :result="result", :test="test")
     Footer
 </template>
 <script>
@@ -21,18 +21,31 @@
       }
     },
     mounted: function () {
-      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => {
-        var user = response.data.users
-        user.forEach((val) => {
+      axios.get('http://localhost:9000/users').then((response) => { // get user list
+        var users = response.data
+        users.forEach((val) => {
           var tmp = {}
-          tmp['userId'] = val['username']
-          tmp['userIcon'] = 'https://talk.pdis.nat.gov.tw' + val['avatar_template'].replace(/{size}/, '100')
-          tmp['userDesc'] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra lobortis lectus, vel hendrerit nulla finibus in. Curabitur pharetra neque lectus.' // val['description']
-          tmp['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
-          this.users.push(tmp)
+          if (val['slug'].indexOf('profile-') > -1) {
+            tmp['Id'] = val['id']
+            tmp['userId'] = val['slug'].substring(8)
+            axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + tmp['Id'] + '.json').then((response) => {
+              var user = response.data.users
+              console.log(user)
+              user.forEach((o) => {
+                var tmp2 = {}
+                if (tmp['userId'] === o['username']) {
+                  tmp2['userId'] = o['username']
+                  tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + o['avatar_template'].replace(/{size}/, '100')
+                  tmp2['userDesc'] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra lobortis lectus, vel hendrerit nulla finibus in. Curabitur pharetra neque lectus.' // val['description']
+                  tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
+                  this.users.push(tmp2)
+                }
+              })
+            })
+          }
         })
       })
-      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => {
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
         var topics = response.data.topic_list.topics
         for (var i = 0; i < 10; i++) {
           var tmp = {}
