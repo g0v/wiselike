@@ -3,24 +3,24 @@
   .hello
     el-row
       el-col(:span="16")
-        h3 Popular People
-        .users
-          .user(v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
-            router-link(:to="'/user/' + o.userId")
-              el-card.box-card(:body-style="{ padding: '0px' }")
+        .people
+          h3 Popular People
+          .users
+            router-link.user(:to="'/user/' + o.userId", v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
+              el-card.box-card
                 .clearfix(slot='header')
                   img.icon(:src='o.userIcon')
                 .detail
                   .userId {{o.userId}}
-        h3 Hot issue
         .hot
+          h3 Hot issue
           p(v-for="o in Lorem") {{o}}
 
-      el-col.activity(:span="8")
-        h3 Recent Activity
-        el-col(v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
-          router-link(:to="'/qa/' + o.id + '#post_id'")
-            el-card.box-card
+      el-col(:span="8")
+        .activity
+          h3 Recent Activity
+          router-link.say(:to="'/say/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
+            el-card
               .text.item
                 h3 {{o.title}}
                 p {{o.userName}}
@@ -49,53 +49,40 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 .hello{
-  max-width: 2000px;
-  margin: 1em auto;
   h3 {
     text-align: center;
   }
   .users {
-    width: 100%;
+    margin: 1em auto;
+    max-width: $maxWidth;
     display: flex;
     flex-flow: row wrap;
-    // justify-content: space-around;
     .user {
-      margin: 0 1ch;
-      .time {
-        font-size: 13px;
-        color: #999;
-      }
-      .box-card{
-        width: 180px;
-        margin: 1em auto;
-      }
+      display: inline-block;
+      // width: 25%;
+      width: 180px;
+      margin: 0 auto;
       .detail{
         text-align: center;
-        padding: 14px;
       }
-
       .icon {
         border-radius: 50%;
         margin: auto;
         display: block;
       }
-
-      .clearfix:before,
-      .clearfix:after {
-          display: table;
-          content: "";
-      }
-
-      .clearfix:after {
-          clear: both
-      }
     }
   }
+  .hot {
+    padding: 0 1ch;
+  }
   .activity {
-    .box-card{
-      width: 500px;
+    max-width: 300px;
+    margin: 0 auto;
+    .say{
+      display: block;
+      // width: 500px;
       text-align: center;
-      margin: 1em auto;
+      margin: 1em 0;
     }
   }
 }
