@@ -1,7 +1,7 @@
 <template lang="pug">
   #app
     Header(:users="users")
-    router-view.view(:users="users", :topics="topicList", :result="result", :test="test")
+    router-view.view(:users="users", :topics="topicList")
     Footer
 </template>
 <script>
