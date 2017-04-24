@@ -30,7 +30,6 @@
             tmp['userId'] = val['slug'].substring(8)
             axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + tmp['Id'] + '.json').then((response) => {
               var user = response.data.users
-              console.log(user)
               user.forEach((o) => {
                 var tmp2 = {}
                 if (tmp['userId'] === o['username']) {

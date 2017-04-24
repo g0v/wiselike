@@ -170,7 +170,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
     {
       api_key: process.env.DISCOURSE_API_KEY,
       api_username: process.env.DISCOURSE_API_USERNAME,
-      category: `profile-${req.params.user}`,
+      category: `inbox-${req.params.user}`,
       title: req.body.title,
       raw: req.body.raw
     }

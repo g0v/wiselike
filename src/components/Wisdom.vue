@@ -68,21 +68,19 @@
         /* reset init data like init() */
         Object.assign(this.$data, this.$options.data())
         this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '.json?page=0')
-        console.log(this.Pubilc_Category)
-        this.ProfileCategoryId = this.Pubilc_Category.data.topic_list.topics[0].category_id
         await this.Lazy_Pubilc()
       },
       Lazy_Pubilc: async function (val) { // lazyload
         let topic = []
         let standard = Number
-        let length = this.Pubilc_Category.data.topic_list.topics.length
-        let remain = length - this.lazyload_count
-        /* determine if topics are all fetched */
-        this.loadmore = (length > 0)
+        let PubilcCategorylength = this.Pubilc_Category.data.topic_list.topics.length
+        let remain = PubilcCategorylength - this.lazyload_count
+        this.loadmore = (PubilcCategorylength > 0)
         /* check how many topics remain */
         remain === 1
           ? ((this.lazyload_count += 1), (standard = 1))
           : ((this.lazyload_count += 2), (standard = 2))
+        /* determine if topics are all fetched */
         if (this.loadmore === true) {
           this.loading = true
           for (let i = (this.lazyload_count - standard); i < this.lazyload_count; i++) {
@@ -91,8 +89,8 @@
             this.loading = false
           }
         }
-        await this.Data_Processing(topic, true)
-        if (this.lazyload_count === length) {
+        await this.Data_Processing(topic)
+        if (this.lazyload_count === PubilcCategorylength) {
           this.lazyload_count = 0
           this.page += 1
           this.Pubilc_Category = await this.getDiscussion_Category(this.profileLink + '/l/latest.json?page=' + this.page)
@@ -101,6 +99,7 @@
       getDiscussion_Category: function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
+            (val['data']['topic_list']['topics'].length > 0) && (this.ProfileCategoryId = val['data']['topic_list']['topics'][0]['category_id'])
             val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].slice(1)
             // val['data']['topic_list']['topics'] = val['data']['topic_list']['topics'].filter((post) => {
             //   return post.posts_count > 1
@@ -117,7 +116,7 @@
           })
         })
       },
-      Data_Processing: function (topic, pubilc) {
+      Data_Processing: function (topic) {
         for (let i in topic) {
           let content = []
           let icon = []
@@ -131,14 +130,12 @@
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          if (pubilc === true) {
-            this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
-            this.wisdom_Pubilc.content.push(content)
-            this.wisdom_Pubilc.aouther.push(aouther)
-            this.wisdom_Pubilc.time.push(time)
-            this.wisdom_Pubilc.icon.push(icon)
-            this.wisdom_Pubilc.topicid.push(topic[i]['data']['id'])
-          }
+          this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
+          this.wisdom_Pubilc.content.push(content)
+          this.wisdom_Pubilc.aouther.push(aouther)
+          this.wisdom_Pubilc.time.push(time)
+          this.wisdom_Pubilc.icon.push(icon)
+          this.wisdom_Pubilc.topicid.push(topic[i]['data']['id'])
         }
       },
       /* trigger 'load more' when window scroll to bottom */

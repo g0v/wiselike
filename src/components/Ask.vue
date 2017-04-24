@@ -3,8 +3,7 @@
     el-button(@click='dialogFormVisible = true', icon='edit', size='large')
       | 我要提問
     el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
-      //- template(attributes='close-on-press-escape = false')
-      el-alert(v-if='loginalert === true', title='错误提示的文案', type='error', show-icon='')
+      el-alert(v-if='loginalert === true', title='請先登入', type='error', show-icon='')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
         el-form-item(prop='title', label='標題')
           el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
@@ -55,6 +54,7 @@
       submit: function (formName) {
         this.local_storage = window.localStorage
         if (this.local_storage.length === 3) {
+          this.loginalert = false
           this.$refs[formName].validate((valid) => {
             if (valid) {
               this.dialogFormVisible = false
@@ -64,15 +64,15 @@
                 data: {title: this.ruleForm.title, raw: this.ruleForm.content}
               }).catch(function (error) {
                 console.log(error)
-                alert('標題或內容不清楚')
               })
             } else {
               return false
             }
           })
         } else {
-          this.dialogFormVisible = false
-          alert('請先登入')
+          this.loginalert = true
+          // this.dialogFormVisible = false
+          // alert('請先登入')
         }
       }
     },
