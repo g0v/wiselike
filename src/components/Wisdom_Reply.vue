@@ -52,6 +52,7 @@
                 url: this.AskLink(this.local_storage),
                 data: {raw: this.ruleForm.content}
               })
+              this.sucessful()
             } else {
               return false
             }
@@ -60,6 +61,14 @@
           this.dialogFormVisible = false
           alert('請先登入')
         }
+      },
+      sucessful () {
+        this.ruleForm.content = null
+        this.$message({
+          showClose: true,
+          message: '成功發送回覆!系統處理中...15秒後顯示',
+          type: 'success'
+        })
       }
     },
     created: function () {

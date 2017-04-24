@@ -65,6 +65,7 @@
               }).catch(function (error) {
                 console.log(error)
               })
+              this.sucessful()
             } else {
               return false
             }
@@ -74,6 +75,13 @@
           // this.dialogFormVisible = false
           // alert('請先登入')
         }
+      },
+      sucessful () {
+        this.$message({
+          showClose: true,
+          message: '成功發送提問!系統處理中...15秒後顯示',
+          type: 'success'
+        })
       }
     },
     created: function () {
