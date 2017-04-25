@@ -212,9 +212,9 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     }
   )
   if (slug !== 'undefined' && categoryid !== 'undefined') {
-    main(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
+    TopicPost(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
   } else {
-    main(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
+    TopicPost(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
   }
   return null
 })
@@ -223,7 +223,7 @@ app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
-async function main (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+async function TopicPost (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
   let id = await post(PostUrl, PostformData)
   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
   let ChangeNameformData = querystring.stringify(
@@ -239,6 +239,41 @@ async function main (PostUrl, PostformData, PutUrl, PutformData, me, topicid, re
   }
   await post(ChangeNameUrl, ChangeNameformData)
 }
+
+app.post('/users/:user/createprofile', (req, res) => {
+  // let sso = req.query.sso
+  // let sig = req.query.sig
+  // let me = getUsername(sso, sig)
+  let Url = `${process.env.DISCOURSE_HOST}/categories`
+  // if (me === undefined) {
+  //   res.status(403)
+  //   return res.json({'error': 'Please login'})
+  // }
+
+  let profileformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      name: `profile-${req.params.user}`,
+      color: `AB9364`,
+      text_color: `FFFFFF`,
+      parent_category_id: `21`
+    }
+  )
+  let inboxformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      name: `inbox-${req.params.user}`,
+      color: `b3b5b4`,
+      text_color: `FFFFFF`,
+      parent_category_id: `21`
+    }
+  )
+  post(Url, profileformData)
+  post(Url, inboxformData)
+  return null
+})
 
 async function post (url, formData) {
   return new Promise((resolve, reject) => {

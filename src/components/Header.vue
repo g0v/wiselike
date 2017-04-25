@@ -7,7 +7,7 @@
         el-col.center(:span='8')
           router-link.logo(to='/', exact='') Wiselike
         el-col.right(:span='8')
-          el-button.create Create My Profile
+          el-button.create(v-on:click="CreateProfile", v-if='checkprofile === true') Create My Profile
           span(v-if="username === null")
             el-button.login(@click.native="login") Login
           span(v-else)
@@ -18,7 +18,7 @@
 <script>
   import Search from './Search.vue'
   import config from '../../config'
-
+  import axios from 'axios'
   export default {
     name: 'header',
     props: ['users'],
@@ -28,12 +28,23 @@
     data () {
       return {
         myKey: '',
-        username: ''
+        username: '',
+        checkprofile: true
       }
     },
     methods: {
+      Link: function () {
+        return 'http://localhost:9000/users/' + this.username + '/createprofile'
+      },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
+      },
+      CreateProfile: function (event) {
+        axios({
+          method: 'post',
+          url: this.Link()
+        })
+        this.checkprofile = false
       }
     },
     mounted: function () {
@@ -49,6 +60,9 @@
         window.localStorage.setItem('sso', event.data.sso)
         window.localStorage.setItem('sig', event.data.sig)
       }, false)
+    },
+    updated: function () {
+      this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
     }
   }
 </script>
