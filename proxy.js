@@ -11,7 +11,7 @@ const axios = require('axios')
 const config = require('./config')
 const formData = require('form-data')
 const multer  = require('multer')
-let upload = multer({ dest: '/tmp/' })
+let upload = multer({ dest: 'upload/' })
 
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
