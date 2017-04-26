@@ -12,13 +12,13 @@
           span(style='line-height: 36px;')
           img(:src='wisdom_Pubilc.icon[contentindex][0]')
           span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][0]}}
-          span 提問:
+          span.h2 提問:
           h2 {{wisdom_Pubilc.title[contentindex]}}
           p(v-html='wisdom_Pubilc.content[contentindex][0]')
         .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
           img(:src='wisdom_Pubilc.icon[contentindex][index]')
           span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
-          span 回應: {{wisdom_Pubilc.time[contentindex][index]}}
+          span.h2 回應: {{wisdom_Pubilc.time[contentindex][index]}}
           span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
         wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
@@ -171,42 +171,50 @@
 .wisdom {
   margin: 3em auto;
   max-width: $maxWidth;
-}
-.text {
-  font-size: 1em;
-}
-
-.item {
-  padding: 18px 0;
-}
-.box-card {
-  line-height: 2em;
-  width: 100%;
-  margin-bottom: 2em;
-  img {
-    width: 5%;
-    vertical-align: middle;
-    margin-right: 1em;
+  .text {
+    font-size: 1em;
   }
-  .el-dialog__title{
-    margin-right: 1em;
+  .h2 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1f2d3d;
   }
-  .sereply{
-    margin-left:3em;
+  .item {
+    padding: 18px 0;
   }
-  .el-dialog__title{
-    font-size:1.5rem;
+  .el-card__body {
+      background-color: linen;
+      padding: 20px;
   }
-  .el-textarea {
-    display: inline-block;
-    width: 88%;
-    vertical-align: bottom;
+  .box-card {
+    line-height: 2em;
+    width: 100%;
+    margin-bottom: 2em;
+    img {
+      width: 5%;
+      vertical-align: middle;
+      margin-right: 1em;
+    }
+    .el-dialog__title{
+      margin-right: 1em;
+    }
+    .sereply{
+      margin-left:3em;
+    }
+    .el-dialog__title{
+      font-size:1.5rem;
+    }
+    .el-textarea {
+      display: inline-block;
+      width: 88%;
+      vertical-align: bottom;
+    }
   }
-}
-.loader {
-  font-size: large;
-  height: 3em;
-  width: 100%;
+  .loader {
+    font-size: large;
+    height: 3em;
+    width: 100%;
+  }
 }
 
 </style>

@@ -59,7 +59,11 @@
           })
         } else {
           this.dialogFormVisible = false
-          alert('請先登入')
+          this.$message({
+            showClose: true,
+            message: '請先登入',
+            type: 'warning'
+          })
         }
       },
       sucessful () {

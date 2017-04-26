@@ -7,7 +7,10 @@
         el-col.center(:span='8')
           router-link.logo(to='/', exact='') Wiselike
         el-col.right(:span='8')
-          el-button.create(v-on:click="CreateProfile", v-if='checkprofile === true') Create My Profile
+          span(v-if="checkprofile === true")
+            el-button.create(v-on:click="CreateProfile") Create My Profile
+          span(v-else)
+            el-button.create(v-on:click="router") My Profile
           span(v-if="username === null")
             el-button.login(@click.native="login") Login
           span(v-else)
@@ -35,11 +38,17 @@
       }
     },
     methods: {
+      warningmessage: function () {
+        this.$message({
+          showClose: true,
+          message: '請先登入',
+          type: 'warning'
+        })
+      },
       router: async function () {
         this.$router.push({
           path: '/user/' + this.username
         })
-        console.log('router')
       },
       Link: function (localstorage) {
         return 'http://localhost:9000/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
@@ -48,14 +57,18 @@
         window.open(config.runtime.proxyHost + '/login')
       },
       CreateProfile: async function (event) {
-        axios({
-          method: 'post',
-          url: this.Link(this.local_storage)
-        })
-        location.reload()
-        this.$router.push({
-          path: '/user/' + this.username
-        })
+        if (this.username === null) {
+          this.warningmessage()
+        } else {
+          axios({
+            method: 'post',
+            url: this.Link(this.local_storage)
+          })
+          location.reload()
+          this.$router.push({
+            path: '/user/' + this.username
+          })
+        }
       }
     },
     mounted: function () {
