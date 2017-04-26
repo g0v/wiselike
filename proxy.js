@@ -337,6 +337,10 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
+  if (req.params.user !== me) {
+    res.status(403)
+    return res.json({'error': `You cannot modify ${req.params.user}`})
+  }
 
   let form = new FormData()
   form.append('api_key', process.env.DISCOURSE_API_KEY)
@@ -352,7 +356,11 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       form.append('type', 'uploaded')
       form.append('upload_id', fileId)
       axios.put(`${process.env.DISCOURSE_HOST}/users/${me}/preferences/avatar/pick`, form)
-      return res.json({'status': 'ok'})
+        .then((val) => {
+          return res.json({'status': 'ok'})
+        }).catch(error => {
+          console.log(error)
+        })
     })
     .catch(error => {
       console.log(error.response)
