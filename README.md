@@ -51,7 +51,13 @@ Or you might use the following APIs hosted on 139.162.109.88 (dev only, not alwa
  - `POST http://139.162.109.88:9000/users/{user}/wisdoms?sso={sso}&sig={sig}`
  - HTTP Body: `?title={title}&raw={raw}`
   
+##### Replay question
+ - `POST http://localhost:9000/users/{user}/wisdoms/topic?sso={sso}&sig={sig}`
 
+##### Create Profile
+ - `POST http://localhost:9000/users/{user}/createprofile?sso={sso}&sig={sig}`
+ 
+ 
 #### sso, sig and username
 
  - `sso` and `sig` should keep private, after signing in through the proxy `/login` API, browser stores `sso` and `sig` in Localstroage. You should pass `sso` and `sig` to proxy APIs on all user-specific operations. 
