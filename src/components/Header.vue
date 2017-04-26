@@ -51,7 +51,7 @@
         })
       },
       Link: function (localstorage) {
-        return 'http://localhost:9000/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return config.runtime.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')

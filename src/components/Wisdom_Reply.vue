@@ -10,7 +10,7 @@
 
 <script>
   import axios from 'axios'
-  // import $ from 'jQuery'
+  import config from '../../config'
   export default {
     name: 'ask',
     props: ['userId', 'topicid', 'slug', 'ProfileCategoryId'],
@@ -35,12 +35,8 @@
       }
     },
     methods: {
-      key: function () {
-        console.log(this.topicid)
-        console.log(this.AskLink())
-      },
       AskLink: function (localstorage) {
-        return 'http://localhost:9000/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&categoryid=' + this.ProfileCategoryId + '&slug=' + this.slug
+        return config.runtime.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&categoryid=' + this.ProfileCategoryId + '&slug=' + this.slug
       },
       submit: function (formName) {
         this.local_storage = window.localStorage

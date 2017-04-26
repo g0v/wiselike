@@ -8,6 +8,7 @@
   import Header from './components/Header.vue'
   import Footer from './components/Footer.vue'
   import axios from 'axios'
+  import config from '../config'
   export default {
     name: 'app',
     components: {
@@ -21,7 +22,7 @@
       }
     },
     mounted: function () {
-      axios.get('http://localhost:9000/users').then((response) => { // get user list
+      axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
         var users = response.data
         users.forEach((val) => {
           var tmp = {}

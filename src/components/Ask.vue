@@ -16,7 +16,7 @@
 
 <script>
   import axios from 'axios'
-  // import $ from 'jQuery'
+  import config from '../../config'
   export default {
     name: 'ask',
     props: ['userId'],
@@ -49,7 +49,7 @@
     },
     methods: {
       AskLink: function (localstorage) {
-        return 'http://localhost:9000/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
