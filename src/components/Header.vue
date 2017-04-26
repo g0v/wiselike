@@ -29,12 +29,13 @@
       return {
         myKey: '',
         username: '',
-        checkprofile: true
+        checkprofile: true,
+        local_storage: ''
       }
     },
     methods: {
-      Link: function () {
-        return 'http://localhost:9000/users/' + this.username + '/createprofile'
+      Link: function (localstorage) {
+        return 'http://localhost:9000/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
@@ -42,13 +43,14 @@
       CreateProfile: function (event) {
         axios({
           method: 'post',
-          url: this.Link()
+          url: this.Link(this.local_storage)
         })
-        this.checkprofile = false
+        // this.checkprofile = false
       }
     },
     mounted: function () {
       this.username = window.localStorage.getItem('username')
+      this.local_storage = window.localStorage
       window.addEventListener('message', (event) => {
         console.log(event)
         if (event.origin !== config.runtime.proxyHost) {

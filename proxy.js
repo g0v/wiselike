@@ -40,6 +40,73 @@ function getUsername (sso, sig) {
 }
 const app = express()
 
+async function post (url, formData) {
+  return new Promise((resolve, reject) => {
+    axios.post(url, formData)
+    .then((val) => {
+      // console.log(val)
+      resolve(val)
+    })
+    .catch(error => {
+      console.log(error.response)
+      resolve(error.response)
+    })
+  })
+}
+
+async function put (url, formData) {
+  return new Promise((resolve, reject) => {
+    axios.put(url, formData)
+    .then((val) => {
+      resolve(val)
+    })
+    .catch(error => {
+      console.log(error.response)
+      resolve(error.response)
+    })
+  })
+}
+
+async function CreatProfile (UserName, Url, profileformData, inboxformData) {
+  for (let i = 0; i < 2; i++) {
+    let topicurl = ''
+    i === 0 ? (topicurl = await post(Url, profileformData)) : (topicurl = await post(Url, inboxformData))
+    axios.get(`${process.env.DISCOURSE_HOST}` + topicurl.data.category.topic_url + `.json`)
+    .then(response => {
+      let id = response.data.post_stream.posts[0].id
+      let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + response.data.post_stream.posts[0].topic_id + `/change-owner`
+      let ChangeNameformData = querystring.stringify(
+        {
+          api_key: process.env.DISCOURSE_API_KEY,
+          api_username: process.env.DISCOURSE_API_USERNAME,
+          username: UserName,
+          'post_ids[]': id
+        }
+      )
+      post(ChangeNameUrl, ChangeNameformData)
+    })
+  }
+}
+
+async function TopicPost (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+  let id = await post(PostUrl, PostformData)
+  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+  let ChangeNameformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      username: me,
+      'post_ids[]': id.data.id
+    }
+  )
+  if (reply === 'true') {
+    // change category
+    await put(PutUrl, PutformData)
+  }
+  // change owner
+  await post(ChangeNameUrl, ChangeNameformData)
+}
+
 app.use(bodyParser.json())
 app.use(cors())
 
@@ -223,32 +290,15 @@ app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
-async function TopicPost (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
-  let id = await post(PostUrl, PostformData)
-  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-  let ChangeNameformData = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      username: me,
-      'post_ids[]': id.data.id
-    }
-  )
-  if (reply === 'true') {
-    await put(PutUrl, PutformData)
-  }
-  await post(ChangeNameUrl, ChangeNameformData)
-}
-
 app.post('/users/:user/createprofile', (req, res) => {
-  // let sso = req.query.sso
-  // let sig = req.query.sig
-  // let me = getUsername(sso, sig)
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
   let Url = `${process.env.DISCOURSE_HOST}/categories`
-  // if (me === undefined) {
-  //   res.status(403)
-  //   return res.json({'error': 'Please login'})
-  // }
+  if (me === undefined) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
 
   let profileformData = querystring.stringify(
     {
@@ -270,33 +320,6 @@ app.post('/users/:user/createprofile', (req, res) => {
       parent_category_id: `21`
     }
   )
-  post(Url, profileformData)
-  post(Url, inboxformData)
+  CreatProfile(me, Url, profileformData, inboxformData)
   return null
 })
-
-async function post (url, formData) {
-  return new Promise((resolve, reject) => {
-    axios.post(url, formData)
-    .then((val) => {
-      // console.log(val)
-      resolve(val)
-    })
-    .catch(error => {
-      console.log(error.response)
-      resolve(error.response)
-    })
-  })
-}
-async function put (url, formData) {
-  return new Promise((resolve, reject) => {
-    axios.put(url, formData)
-    .then((val) => {
-      resolve(val)
-    })
-    .catch(error => {
-      console.log(error.response)
-      resolve(error.response)
-    })
-  })
-}
