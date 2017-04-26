@@ -9,6 +9,10 @@ const querystring = require('querystring')
 // const request = require('request')
 const axios = require('axios')
 const config = require('./config')
+const formData = require('form-data')
+const multer  = require('multer')
+let upload = multer({ dest: '/tmp/' })
+
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
@@ -322,4 +326,35 @@ app.post('/users/:user/createprofile', (req, res) => {
   )
   CreatProfile(me, Url, profileformData, inboxformData)
   return null
+})
+
+app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let profile = getProfile(sso, sig)
+  let me = profile.username
+  if (me === undefined) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
+
+  let form = new FormData()
+  form.append('api_key', process.env.DISCOURSE_API_KEY)
+  form.append('api_username', process.env.DISCOURSE_API_USERNAME)
+  form.append('files[]', req.file)
+  form.append('type', 'avatar')
+  form.append('user_id', profile.external_id)
+  form.append('synchronous', 'true')
+  axios.post(`${process.env.DISCOURSE_HOST}/uploads.json`, form)
+    .then((val) => {
+      let fileId = val.id
+      form = new FormData()
+      form.append('type', 'uploaded')
+      form.append('upload_id', fileId)
+      axios.put(`${process.env.DISCOURSE_HOST}/users/${me}/preferences/avatar/pick`, form)
+      return res.json({'status': 'ok'})
+    })
+    .catch(error => {
+      console.log(error.response)
+    })
 })
