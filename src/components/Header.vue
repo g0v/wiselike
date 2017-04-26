@@ -12,6 +12,7 @@
             el-button.login(@click.native="login") Login
           span(v-else)
             el-button {{username}}
+            //- (v-on:click="CreateProfile", v-if='checkprofile === true')
 
 </template>
 
@@ -34,18 +35,27 @@
       }
     },
     methods: {
+      router: async function () {
+        this.$router.push({
+          path: '/user/' + this.username
+        })
+        console.log('router')
+      },
       Link: function (localstorage) {
         return 'http://localhost:9000/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
       },
-      CreateProfile: function (event) {
+      CreateProfile: async function (event) {
         axios({
           method: 'post',
           url: this.Link(this.local_storage)
         })
-        // this.checkprofile = false
+        location.reload()
+        this.$router.push({
+          path: '/user/' + this.username
+        })
       }
     },
     mounted: function () {
