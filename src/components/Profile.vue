@@ -26,14 +26,20 @@
         introduce: ''
       }
     },
-    updated: function () {
-      console.log(this.user.userfirsttopicid)
-      if (this.user.userfirsttopicid !== undefined) {
-        axios.get('https://talk.pdis.nat.gov.tw/t/' + this.user.userfirsttopicid + '.json?include_raw=1').then((val) => {
-          this.introduce = val.data.post_stream.posts[0].cooked
-          console.log(val.data.post_stream.posts[0].cooked)
-        })
+    methods: {
+      ShowYourself: function () {
+        if (this.user.userfirsttopicid !== undefined) {
+          axios.get('https://talk.pdis.nat.gov.tw/t/' + this.user.userfirsttopicid + '.json?include_raw=1').then((val) => {
+            this.introduce = val.data.post_stream.posts[0].cooked
+          })
+        }
       }
+    },
+    updated: function () {
+      this.ShowYourself()
+    },
+    created: function () {
+      this.ShowYourself()
     },
     computed: {
       user: function () {
