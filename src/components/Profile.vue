@@ -3,7 +3,7 @@
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
       img.avatar(:src="user.userIcon")
       h1 {{ user.userId }}
-      p {{ user.userDesc }}
+      p(v-html='introduce')
       ask(:userId = "user.userId")
     wisdom(:userId = "user.userId")
   .profile(v-else)
@@ -13,6 +13,7 @@
 <script>
   import wisdom from './Wisdom.vue'
   import ask from './Ask.vue'
+  import axios from 'axios'
   export default {
     name: 'profile',
     props: ['users'],
@@ -22,6 +23,16 @@
     },
     data () {
       return {
+        introduce: ''
+      }
+    },
+    updated: function () {
+      console.log(this.user.userfirsttopicid)
+      if (this.user.userfirsttopicid !== undefined) {
+        axios.get('https://talk.pdis.nat.gov.tw/t/' + this.user.userfirsttopicid + '.json?include_raw=1').then((val) => {
+          this.introduce = val.data.post_stream.posts[0].cooked
+          console.log(val.data.post_stream.posts[0].cooked)
+        })
       }
     },
     computed: {

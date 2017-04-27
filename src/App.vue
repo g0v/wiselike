@@ -36,7 +36,7 @@
                 if (tmp['userId'] === o['username']) {
                   tmp2['userId'] = o['username']
                   tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + o['avatar_template'].replace(/{size}/, '100')
-                  tmp2['userDesc'] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra lobortis lectus, vel hendrerit nulla finibus in. Curabitur pharetra neque lectus.' // val['description']
+                  tmp2['userfirsttopicid'] = response.data.topic_list.topics[0].id // val['description']
                   tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
                   this.users.push(tmp2)
                 }
