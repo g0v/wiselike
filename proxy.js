@@ -377,3 +377,24 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       console.log(error.response)
     })
 })
+app.post('/users/:user/introduction', (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  let introductionUrl = `${process.env.DISCOURSE_HOST}/posts/` + req.body.id
+  if (me === undefined) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
+  let introduction = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      'post[raw]': req.body.raw
+    }
+  )
+  console.log('--------------')
+  console.log(introductionUrl)
+  console.log(introduction)
+  put(introductionUrl, introduction)
+})

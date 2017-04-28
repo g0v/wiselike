@@ -66,7 +66,7 @@
         this.ruleForm.content = null
         this.$message({
           showClose: true,
-          message: '成功發送回覆!系統處理中...15秒後顯示',
+          message: '成功發送回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
           type: 'success'
         })
       }
