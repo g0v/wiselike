@@ -79,6 +79,7 @@ async function CreatProfile (UserName, Url, profileformData, inboxformData) {
     .then(response => {
       let id = response.data.post_stream.posts[0].id
       let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + response.data.post_stream.posts[0].topic_id + `/change-owner`
+      let introductionUrl = `${process.env.DISCOURSE_HOST}/posts/` + id
       let ChangeNameformData = querystring.stringify(
         {
           api_key: process.env.DISCOURSE_API_KEY,
@@ -87,7 +88,17 @@ async function CreatProfile (UserName, Url, profileformData, inboxformData) {
           'post_ids[]': id
         }
       )
-      post(ChangeNameUrl, ChangeNameformData)
+      let introduction = querystring.stringify(
+        {
+          api_key: process.env.DISCOURSE_API_KEY,
+          api_username: process.env.DISCOURSE_API_USERNAME,
+          'post[raw]': '建立一個完整的「簡介」可以讓更多人瞭解你，內容嘗試保持在 200 個字元內！'
+        }
+      )
+      axios.post(ChangeNameUrl, ChangeNameformData)
+        .then((val) => {
+          put(introductionUrl, introduction)
+        })
     })
   }
 }
