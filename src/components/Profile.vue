@@ -2,7 +2,7 @@
   .profile(v-if="user")
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
       img.avatar(:src="user.userIcon")
-      h1 {{ user.userId }}
+      h1 {{ user.userName }}
       el-row(:gutter='20')
         el-col(:span='12', :offset='6')
           el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')

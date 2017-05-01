@@ -28,19 +28,18 @@
           var tmp = {}
           if (val['slug'].indexOf('profile-') > -1) {
             tmp['Id'] = val['id']
+            tmp['description'] = val['description']
             tmp['userId'] = val['slug'].substring(8)
-            axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + tmp['Id'] + '.json').then((response) => {
-              var user = response.data.users
-              user.forEach((o) => {
-                var tmp2 = {}
-                if (tmp['userId'] === o['username']) {
-                  tmp2['userId'] = o['username']
-                  tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + o['avatar_template'].replace(/{size}/, '100')
-                  tmp2['userfirsttopicid'] = response.data.topic_list.topics[0].id // val['description']
-                  tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg=' // val['background']
-                  this.users.push(tmp2)
-                }
-              })
+            axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
+              var user = response.data.user
+              console.log(user)
+              var tmp2 = {}
+              tmp2['userId'] = user['username'] // 英文名
+              tmp2['userName'] = (user['name'] !== null) ? user['name'] : user['username'] // 中文名
+              tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
+              tmp2['userDescription'] = tmp['description']
+              tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg='
+              this.users.push(tmp2)
             })
           }
         })

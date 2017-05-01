@@ -11,7 +11,7 @@
                 .clearfix(slot='header')
                   img.icon(:src='o.userIcon')
                 .detail
-                  .userId {{o.userId}}
+                  .userId {{o.userName}}
         .hot
           h3 Hot issue
           p(v-for="o in Lorem") {{o}}
