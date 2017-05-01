@@ -1,20 +1,31 @@
 <template lang="pug">
   .profile(v-if="user")
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
+      //- el-upload.avatar-uploader(action='https://jsonplaceholder.typicode.com/posts/', :show-file-list='false', :on-success='handleAvatarSuccess', :before-upload='beforeAvatarUpload')
+      //-   img.avatar(v-if='imageUrl', :src='imageUrl')
+      //-   i.el-icon-plus.avatar-uploader-icon(v-else='')
+
+      //- div(v-if='!image')
+      //-   h2 Select an image
+      //-   input(type='file', @change='onFileChange')
+      //- div(v-else='')
+      //-   img.avatar(v-if='image', :src='image')
+      //-   button(@click='removeImage') Remove image
+      
       img.avatar(:src="user.userIcon")
       h1 {{ user.userName }}
-      el-row(:gutter='20')
+      el-row(:gutter='20', v-if='edit === true')
         el-col(:span='12', :offset='6')
           el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
             el-form-item.acenter(prop='introduceraw')
-              el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}", v-if='edit === true')
+              el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
             div
-              el-button.button(type='primary', @click="EditIntroduction('ruleForm')", v-if='edit === true') 送 出
-              el-button.button(type='primary', @click='init', v-if='edit === true') 取 消
+              el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+              el-button.button(type='primary', @click='init') 取 消
       .reply
         el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
-        h3(v-html='introduce', v-if='edit === false')
-      ask(:userId = "user.userId", v-if='edit === false')
+        h3(v-if='edit === false') {{user.userDescription}}
+      ask.ask(:userId = "user.userId", v-if='edit === false')
     wisdom(:userId = "user.userId")
   .profile(v-else)
     h1 no such user
@@ -49,15 +60,34 @@
             { validator: CheckContent, trigger: 'blur' }
           ]
         },
-        introduce: '',
         edit: false,
         editbutton: false,
         errmessage: true,
         local_storage: '',
-        id: ''
+        id: '',
+        image: '',
+        imageUrl: ''
       }
     },
     methods: {
+      onFileChange (e) {
+        var files = e.target.files || e.dataTransfer.files
+        if (!files.length) return
+        this.createImage(files[0])
+      },
+      createImage (file) {
+        // var image = new Image()
+        var reader = new FileReader()
+        var vm = this
+        reader.onload = (e) => {
+          vm.image = e.target.result
+        }
+        reader.readAsDataURL(file)
+        console.log(reader)
+      },
+      removeImage: function (e) {
+        this.image = ''
+      },
       init: function () {
         this.edit = false
         this.errmessage = false
@@ -69,33 +99,31 @@
       EditIntroduction: function (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios({
-              method: 'post',
-              url: this.Link(this.local_storage),
-              data: {id: this.id, raw: this.ruleForm.introduceraw}
-            }).then(
-              this.edit = false,
-              this.sucessful(),
-              this.init()
-            )
-            .catch(function (error) {
-              console.log(error)
+            axios.get('https://talk.pdis.nat.gov.tw' + this.user.topic_url + '.json').then((val) => {
+              this.id = val.data.post_stream.posts[0].id
+              axios({
+                method: 'post',
+                url: this.Link(this.local_storage),
+                data: {id: this.id, raw: this.ruleForm.introduceraw}
+              }).then(
+                this.edit = false,
+                this.sucessful(),
+                this.init()
+              )
+              .catch(function (error) {
+                console.log(error)
+              })
             })
           }
         })
       },
       ShowYourself: function () {
         this.local_storage = window.localStorage
-        if (this.user.userfirsttopicid !== undefined) {
-          if (this.local_storage.username === this.user.userId) {
-            this.editbutton = true
-          }
-          axios.get('https://talk.pdis.nat.gov.tw/t/' + this.user.userfirsttopicid + '.json?include_raw=1').then((val) => {
-            this.introduce = val.data.post_stream.posts[0].cooked
-            this.ruleForm.introduceraw = val.data.post_stream.posts[0].raw
-            this.id = val.data.post_stream.posts[0].id
-          })
+        this.ruleForm.introduceraw = this.user.userDescription
+        if (this.local_storage.username === this.user.userId) {
+          this.editbutton = true
         }
+        console.log(this.local_storage)
       },
       sucessful () {
         this.$message({
@@ -183,6 +211,9 @@
   }
   .acenter {
     position: inherit !important;
+  }
+  .ask {
+    margin-top: 1em;
   }
 }
 </style>

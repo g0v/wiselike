@@ -30,15 +30,16 @@
             tmp['Id'] = val['id']
             tmp['description'] = val['description']
             tmp['userId'] = val['slug'].substring(8)
+            tmp['topic_url'] = val['topic_url']
             axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
               var user = response.data.user
-              console.log(user)
               var tmp2 = {}
               tmp2['userId'] = user['username'] // 英文名
               tmp2['userName'] = (user['name'] !== null) ? user['name'] : user['username'] // 中文名
               tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
               tmp2['userDescription'] = tmp['description']
               tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg='
+              tmp2['topic_url'] = tmp['topic_url']
               this.users.push(tmp2)
             })
           }
