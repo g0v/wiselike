@@ -1,5 +1,6 @@
 <template lang="pug">
   .footer
+    hr
     .logos
       router-link.logo(to='/', exact='', title="Home")
         img(src='../assets/logo.png', alt='logo')
@@ -27,12 +28,11 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
-$fa-font-path:"../../node_modules/font-awesome/fonts";
 @import 'node_modules/font-awesome/scss/font-awesome';
 .footer {
-  flex: 0 0 10rem;
-  background: $lightblack;
-  text-align: center;
+  hr {
+    width: 50%;
+  }
   .logos {
     display: flex;
     flex-flow: row wrap;
@@ -53,7 +53,7 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
   .license {
     margin: 0 auto;
     max-width: $maxWidth;
-    color: lightgray;
+    color: gray;
   }
 }
 </style>

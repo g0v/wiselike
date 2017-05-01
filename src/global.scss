@@ -1,10 +1,17 @@
+/* fontAwesome's font path */
+$fa-font-path:"../../node_modules/font-awesome/fonts";
 
 /* theme size */
 $maxWidth: 1120px;
 $breakpoint: 768px;
 
 /* theme color */
-$lightblack: #324057;
+$back-color: #fffef4;
+$card-color: #77bfc3;
+
+h1, h2, h3, h4, h5, h6, p {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+}
 
 a {
   text-decoration: none;

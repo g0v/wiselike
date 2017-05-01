@@ -1,11 +1,11 @@
 <template lang="pug">
   .header
-    el-menu.menu(theme='dark', mode='horizontal')
+    el-menu.menu(mode='horizontal')
       el-row.row-bg(type='flex', justify='space-between')
         el-col.left(:span='8')
           Search(:users="users")
         el-col.center(:span='8')
-          router-link.logo(to='/', exact='') Wiselike
+          router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
           span(v-if="checkprofile === true")
             el-button.create(v-on:click="CreateProfile") Create My Profile
@@ -94,17 +94,11 @@
 
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
-@import '../global.scss';
+// @import '../global.scss';
 .header {
-  // position: fixed;
-  // top: 0;
-  // z-index: 1000;
-  // width: 100%;
-  flex: 0 0 3rem;
-  // box-sizing: border-box;
-  background: $lightblack;
   .menu{
     padding: .5em 1em;
+    background: none;
   }
   .left {
     margin: auto;
@@ -116,11 +110,10 @@
     .logo{
       font-family: 'Kadwa', serif;
       text-decoration: none;
-      color: white;
+      // color: white;
       font-size: 2.2rem;
-    }
-    .logo:hover{
-      color:#20a0ff;
+      color: gold;
+      text-shadow: 1px 1px 0 lightgray;
     }
   }
 }

@@ -19,11 +19,11 @@
       el-col(:span="8")
         .activity
           h3 Recent Activity
-          router-link.say(:to="'/say/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
-            el-card
-              .text.item
-                h3 {{o.title}}
-                p {{o.userName}}
+          router-link.say(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
+            h3 {{o.title}}
+            p
+              i.fa.fa-retweet
+              |  {{o.userName}}
 
 </template>
 
@@ -48,13 +48,17 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
+@import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
-  h3 {
-    text-align: center;
+  // h3 {
+  //   text-align: center;
+  // }
+  .el-row {
+    max-width: $maxWidth;
+    margin: 0 auto;
+    padding: 3rem 0 0 0;
   }
   .users {
-    margin: 1em auto;
-    max-width: $maxWidth;
     display: flex;
     flex-flow: row wrap;
     .user {
@@ -72,17 +76,21 @@
       }
     }
   }
-  .hot {
-    padding: 0 1ch;
-  }
   .activity {
     max-width: 300px;
     margin: 0 auto;
-    .say{
+    .say {
       display: block;
       // width: 500px;
-      text-align: center;
+      // text-align: center;
       margin: 1em 0;
+      padding: .5em 1em;
+      color: white;
+      background: $card-color;
+      box-shadow: 0 5px 5px -2px lightgray;
+      &:hover {
+        transform: translate(1px, 1px)
+      }
     }
   }
 }

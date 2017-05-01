@@ -1,8 +1,8 @@
 <template lang="pug">
   #app
-    Header(:users="users")
+    Header.header(:users="users")
     router-view.view(:users="users", :topics="topicList")
-    Footer
+    Footer.footer
 </template>
 <script>
   import Header from './components/Header.vue'
@@ -60,13 +60,24 @@
 </script>
 
 <style lang="scss" scoped>
-  #app {
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
-    display: flex;
-    flex-flow: column nowrap;
-    min-height: 100vh;
-    .view {
-      flex: 1 1 0;
-    }
+@import 'global.scss';
+#app {
+  // font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+  display: flex;
+  flex-flow: column nowrap;
+  min-height: 100vh;
+  background: $back-color;
+  .header {
+    flex: 0 0 3rem;
+    // background: $lightblack;
   }
+  .view {
+    flex: 1 1 0;
+  }
+  .footer {
+    flex: 0 0 10rem;
+    // background: $lightblack;
+    text-align: center;
+  }
+}
 </style>
