@@ -13,17 +13,21 @@
     .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
       el-card.box-card
         .clearfix(slot='header')
-          span(style='line-height: 36px;')
-          img(:src='wisdom_Pubilc.icon[contentindex][0]')
-          span.el-dialog__title {{wisdom_Pubilc.auther[contentindex][0]}}
-          span.h2 提問:
           h2 {{wisdom_Pubilc.title[contentindex]}}
+          p
+            img.avatar(:src='wisdom_Pubilc.icon[contentindex][0]')
+            span.el-dialog__title
+              | {{wisdom_Pubilc.auther[contentindex][0]}}
+              |  提問
           p(v-html='wisdom_Pubilc.content[contentindex][0]')
         .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
-          img(:src='wisdom_Pubilc.icon[contentindex][index]')
-          span.el-dialog__title {{wisdom_Pubilc.auther[contentindex][index]}}
-          span.h2 回應: {{wisdom_Pubilc.time[contentindex][index]}}
-          span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
+          p
+            img.avatar(:src='wisdom_Pubilc.icon[contentindex][index]')
+            span.el-dialog__title
+              | {{wisdom_Pubilc.auther[contentindex][index]}}
+              |  回應
+              sup  {{wisdom_Pubilc.time[contentindex][index]}}
+          p.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
         wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
 
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
@@ -183,10 +187,11 @@
   .text {
     font-size: 1em;
   }
-  .h2 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: #1f2d3d;
+  h2 {
+    text-align: center;
+    // font-weight: 700;
+    // font-size: 1.5rem;
+    // color: #1f2d3d;
   }
   .item {
     padding: 18px 0;
@@ -199,10 +204,11 @@
     line-height: 2em;
     width: 100%;
     margin-bottom: 2em;
-    img {
+    img.avatar {
       width: 5%;
       vertical-align: middle;
       margin-right: 1em;
+      border-radius: 50%;
     }
     .el-dialog__title{
       margin-right: 1em;

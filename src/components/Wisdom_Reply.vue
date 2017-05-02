@@ -83,5 +83,9 @@
 .reply {
   display: flex;
   flex-flow: row nowrap;
+  align-items: baseline;
+  .el-button {
+    margin: 0 0 0 1ch;
+  }
 }
 </style>
