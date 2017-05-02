@@ -4,8 +4,8 @@
     p(v-if="wisdom_Pubilc.content.length > 0")
       | 歷史問題
       span(style='float:right')
-        | Auto loading?
         el-switch(on-text="on", off-text="off", v-model="autoload")
+        |  auto-load
     .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
       el-card.box-card
         .clearfix(slot='header')

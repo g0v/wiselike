@@ -113,15 +113,15 @@
       // color: white;
       font-size: 2.2rem;
       color: gold;
-      text-shadow: 1px 1px 0 lightgray;
+      // text-shadow: 1px 1px 0 lightgray;
     }
   }
-}
-.right{
-  text-align: right;
-  margin: auto;
-  .el-button.create{
-    margin-right: 6px;
+  .right{
+    text-align: right;
+    margin: auto;
+    .el-button.create{
+      margin-right: 6px;
+    }
   }
 }
 </style>

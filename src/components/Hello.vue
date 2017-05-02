@@ -1,17 +1,16 @@
 <template lang="pug">
 
   .hello
+    //- el-row
+      .test test
     el-row
       el-col(:span="16")
         .people
           h3 Popular People
           .users
             router-link.user(:to="'/user/' + o.userId", v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
-              el-card.box-card
-                .clearfix(slot='header')
-                  img.icon(:src='o.userIcon')
-                .detail
-                  .userId {{o.userName}}
+              img.avatar(:src='o.userIcon')
+              h4.name {{o.userName}}
         .hot
           h3 Hot issue
           p(v-for="o in Lorem") {{o}}
@@ -20,7 +19,7 @@
         .activity
           h3 Recent Activity
           router-link.say(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
-            h3 {{o.title}}
+            h4 {{o.title}}
             p
               i.fa.fa-retweet
               |  {{o.userName}}
@@ -56,7 +55,7 @@
   .el-row {
     max-width: $maxWidth;
     margin: 0 auto;
-    padding: 3rem 0 0 0;
+    padding: 5rem 0 0 0;
   }
   .users {
     display: flex;
@@ -66,13 +65,17 @@
       // width: 25%;
       width: 180px;
       margin: 0 auto;
-      .detail{
-        text-align: center;
-      }
-      .icon {
+      .avatar {
         border-radius: 50%;
         margin: auto;
         display: block;
+        box-shadow: 0 3px 6px -3px gray;
+      }
+      .name {
+        text-align: center;
+      }
+      &:hover {
+        transform: scale(1.05, 1.05)
       }
     }
   }

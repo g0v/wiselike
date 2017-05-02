@@ -11,7 +11,7 @@
       //- div(v-else='')
       //-   img.avatar(v-if='image', :src='image')
       //-   button(@click='removeImage') Remove image
-      
+
       img.avatar(:src="user.userIcon")
       h1 {{ user.userName }}
       el-row(:gutter='20', v-if='edit === true')
@@ -172,7 +172,7 @@
       border-radius: 50%;
       width: 200px;
       height: 200px;
-      box-shadow: 0 3px 6px -1px black;
+      box-shadow: 0 3px 6px -3px black;
     }
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
@@ -204,10 +204,8 @@
   .reply {
     display: flex;
     flex-flow: row nowrap;
-    -webkit-align-items: center;
-          align-items: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+    align-items: center;
+    justify-content: center;
   }
   .acenter {
     position: inherit !important;

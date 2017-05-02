@@ -68,16 +68,23 @@
   min-height: 100vh;
   background: $back-color;
   .header {
-    flex: 0 0 3rem;
-    // background: $lightblack;
+    // flex: 0 0 3rem;
+    position: absolute;
+    width: 100%;
+    // height: 3rem;
+    z-index: 1000;
+    // background: $back-color;
+    // border-bottom: 1px solid lightgray;
   }
   .view {
     flex: 1 1 0;
+    // padding: 0 0 0 0;
   }
   .footer {
     flex: 0 0 10rem;
     // background: $lightblack;
     text-align: center;
+    border-top: 1px solid lightgray;
   }
 }
 </style>

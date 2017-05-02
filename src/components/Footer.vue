@@ -1,6 +1,5 @@
 <template lang="pug">
   .footer
-    hr
     .logos
       router-link.logo(to='/', exact='', title="Home")
         img(src='../assets/logo.png', alt='logo')
