@@ -5,16 +5,25 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
 $maxWidth: 1120px;
 $breakpoint: 768px;
 
+/* theme font */
+$font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+
 /* theme color */
-$back-color: #fcfff8;
-$card-color: #3c9fa5;
+$bgcolor: #fcfff8;
+// $card-color: #3c9fa5;
+$card: #f9f9f9;
+$highlight: #1aabb3;
 
 h1, h2, h3, h4, h5, h6, p {
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+  font-family: $font;
   letter-spacing: 1px;
 }
 
 a {
   text-decoration: none;
   color: dimgray;
+}
+
+.shadow {
+  box-shadow: 0 5px 6px -5px gray;
 }

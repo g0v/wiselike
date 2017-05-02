@@ -1,15 +1,23 @@
 <template lang="pug">
 
   .hello
-    //- el-row
-      .test test
+    el-row
+      .slides.shadow
+        el-carousel(trigger='click', height='400px')
+          el-carousel-item(v-for='user in users', :key='user')
+            .user
+              img.avatar.shadow(:src='user.userIcon')
+              h4.name {{ user.userName }}
+              router-link.link.shadow(:to="'/user/' + user.userId")
+                i.fa.fa-edit
+                |  Ask me
     el-row
       el-col(:span="16")
         .people
           h3 Popular People
           .users
             router-link.user(:to="'/user/' + o.userId", v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
-              img.avatar(:src='o.userIcon')
+              img.avatar.shadow(:src='o.userIcon')
               h4.name {{o.userName}}
         .hot
           h3 Hot issue
@@ -18,7 +26,7 @@
       el-col(:span="8")
         .activity
           h3 Recent Activity
-          router-link.say(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
+          router-link.say.shadow(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
             h4 {{o.title}}
             p
               i.fa.fa-retweet
@@ -49,48 +57,62 @@
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
-  // h3 {
-  //   text-align: center;
-  // }
+  padding: 5rem 0 0 0;
   .el-row {
     max-width: $maxWidth;
     margin: 0 auto;
-    padding: 5rem 0 0 0;
+  }
+  .user {
+    .avatar {
+      width: 7em;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: block;
+      // box-shadow: 0 3px 6px -3px gray;
+    }
+    .name {
+      text-align: center;
+    }
+  }
+  .slides {
+    margin: 3em 0;
+    .user {
+      height: 100%;
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: center;
+      justify-content: center;
+      background: $card;
+      font-size: 150%;
+      .link {
+        background: $highlight;
+        color: white;
+        border-radius: 1em;
+        line-height: 2em;
+        padding: 0 5ch;
+      }
+    }
   }
   .users {
     display: flex;
     flex-flow: row wrap;
+    padding: 3em 0;
     .user {
       display: inline-block;
-      // width: 25%;
-      width: 180px;
       margin: 0 auto;
-      .avatar {
-        border-radius: 50%;
-        margin: auto;
-        display: block;
-        box-shadow: 0 3px 6px -3px gray;
-      }
-      .name {
-        text-align: center;
-      }
       &:hover {
         transform: scale(1.05, 1.05)
       }
     }
   }
   .activity {
-    max-width: 300px;
-    margin: 0 auto;
+    margin: 0 0 0 3ch;
     .say {
       display: block;
-      // width: 500px;
-      // text-align: center;
       margin: 1em 0;
-      padding: .5em 1em;
-      color: white;
-      background: $card-color;
-      box-shadow: 0 5px 5px -2px lightgray;
+      padding: 1px 1em;
+      background: $card;
+      // box-shadow: 0 5px 5px -2px lightgray;
       &:hover {
         transform: translate(1px, 1px)
       }

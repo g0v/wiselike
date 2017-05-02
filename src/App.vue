@@ -66,7 +66,7 @@
   display: flex;
   flex-flow: column nowrap;
   min-height: 100vh;
-  background: $back-color;
+  background: $bgcolor;
   .header {
     // flex: 0 0 3rem;
     position: absolute;
