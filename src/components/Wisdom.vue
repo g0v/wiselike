@@ -4,31 +4,34 @@
 
     wisdomprivate(:userId='userId', :ProfileCategoryId='ProfileCategoryId')
 
-    p(v-if="wisdom_Pubilc.content.length > 0")
+    p(v-if="wisdomPublic.content.length > 0")
       | 歷史問題
       span(style='float:right')
         el-switch(on-text="on", off-text="off", v-model="autoload")
         |  auto-load
 
-    .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
+    .public(v-if='!wisdomPublic.content.length')
+      h2 no public wisdom here...
+
+    .pubilc(v-for='(item, contentindex) in wisdomPublic.content')
       el-card.box-card
         .clearfix(slot='header')
-          h2 {{wisdom_Pubilc.title[contentindex]}}
+          h2 {{wisdomPublic.title[contentindex]}}
           p
-            img.avatar(:src='wisdom_Pubilc.icon[contentindex][0]')
+            img.avatar(:src='wisdomPublic.icon[contentindex][0]')
             span.el-dialog__title
-              | {{wisdom_Pubilc.auther[contentindex][0]}}
+              | {{wisdomPublic.auther[contentindex][0]}}
               |  提問
-          p(v-html='wisdom_Pubilc.content[contentindex][0]')
-        .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
+          p(v-html='wisdomPublic.content[contentindex][0]')
+        .text.item(v-for='(item, index) in wisdomPublic.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
           p
-            img.avatar(:src='wisdom_Pubilc.icon[contentindex][index]')
+            img.avatar(:src='wisdomPublic.icon[contentindex][index]')
             span.el-dialog__title
-              | {{wisdom_Pubilc.auther[contentindex][index]}}
+              | {{wisdomPublic.auther[contentindex][index]}}
               |  回應
-              sup  {{wisdom_Pubilc.time[contentindex][index]}}
-          p.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
-        wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
+              sup  {{wisdomPublic.time[contentindex][index]}}
+          p.sereply(v-html='wisdomPublic.content[contentindex][index]')
+        wisdomreply(:userId='userId', :topicid='wisdomPublic.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
 
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
       i.el-icon-arrow-down
@@ -51,7 +54,7 @@
     },
     data () {
       return {
-        wisdom_Pubilc: {
+        wisdomPublic: {
           title: [],
           icon: [],
           content: [],
@@ -140,12 +143,12 @@
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
             }
           }
-          this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
-          this.wisdom_Pubilc.content.push(content)
-          this.wisdom_Pubilc.auther.push(auther)
-          this.wisdom_Pubilc.time.push(time)
-          this.wisdom_Pubilc.icon.push(icon)
-          this.wisdom_Pubilc.topicid.push(topic[i]['data']['id'])
+          this.wisdomPublic.title.push(topic[i]['data']['title'])
+          this.wisdomPublic.content.push(content)
+          this.wisdomPublic.auther.push(auther)
+          this.wisdomPublic.time.push(time)
+          this.wisdomPublic.icon.push(icon)
+          this.wisdomPublic.topicid.push(topic[i]['data']['id'])
         }
       },
       /* trigger 'load more' when window scroll to bottom */

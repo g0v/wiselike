@@ -57,7 +57,7 @@
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
-  padding: 5rem 0 0 0;
+  padding: 3rem 0 0 0;
   .el-row {
     max-width: $maxWidth;
     margin: 0 auto;
