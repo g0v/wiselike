@@ -118,5 +118,13 @@
       }
     }
   }
+  @media all and (max-width: $breakpoint) {
+    .el-col {
+      width: 100%;
+    }
+    .people, .hot, .activity {
+      margin: 0 3ch;
+    }
+  }
 }
 </style>

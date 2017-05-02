@@ -1,28 +1,34 @@
 <template lang="pug">
+
   .wisdom(v-if='userId')
+
     wisdomprivate(:userId='userId', :ProfileCategoryId='ProfileCategoryId')
+
     p(v-if="wisdom_Pubilc.content.length > 0")
       | 歷史問題
       span(style='float:right')
         el-switch(on-text="on", off-text="off", v-model="autoload")
         |  auto-load
+
     .pubilc(v-for='(item, contentindex) in wisdom_Pubilc.content')
       el-card.box-card
         .clearfix(slot='header')
           span(style='line-height: 36px;')
           img(:src='wisdom_Pubilc.icon[contentindex][0]')
-          span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][0]}}
+          span.el-dialog__title {{wisdom_Pubilc.auther[contentindex][0]}}
           span.h2 提問:
           h2 {{wisdom_Pubilc.title[contentindex]}}
           p(v-html='wisdom_Pubilc.content[contentindex][0]')
         .text.item(v-for='(item, index) in wisdom_Pubilc.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
           img(:src='wisdom_Pubilc.icon[contentindex][index]')
-          span.el-dialog__title {{wisdom_Pubilc.aouther[contentindex][index]}}
+          span.el-dialog__title {{wisdom_Pubilc.auther[contentindex][index]}}
           span.h2 回應: {{wisdom_Pubilc.time[contentindex][index]}}
           span.sereply(v-html='wisdom_Pubilc.content[contentindex][index]')
         wisdomreply(:userId='userId', :topicid='wisdom_Pubilc.topicid[contentindex]', :slug='undefined', :ProfileCategoryId='undefined')
+
     el-button.loader(type="primary", v-on:click="Lazy_Pubilc", v-loading="loading", v-show="loadmore")
       i.el-icon-arrow-down
+
   .wisdom(v-else)
     h1 no such userId
 
@@ -45,7 +51,7 @@
           title: [],
           icon: [],
           content: [],
-          aouther: [],
+          auther: [],
           time: [],
           topicid: []
         },
@@ -120,11 +126,11 @@
         for (let i in topic) {
           let content = []
           let icon = []
-          let aouther = []
+          let auther = []
           let time = []
           for (let j in topic[i]['data']['post_stream']['posts']) {
             content.push(topic[i]['data']['post_stream']['posts'][j]['cooked'])
-            aouther.push(topic[i]['data']['post_stream']['posts'][j]['username'])
+            auther.push(topic[i]['data']['post_stream']['posts'][j]['username'])
             time.push(topic[i]['data']['post_stream']['posts'][j]['created_at'].replace(/T.*/, ''))
             if (topic[i]['data']['post_stream']['posts'][j]['avatar_template'].indexOf('https:') === -1) {
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
@@ -132,7 +138,7 @@
           }
           this.wisdom_Pubilc.title.push(topic[i]['data']['title'])
           this.wisdom_Pubilc.content.push(content)
-          this.wisdom_Pubilc.aouther.push(aouther)
+          this.wisdom_Pubilc.auther.push(auther)
           this.wisdom_Pubilc.time.push(time)
           this.wisdom_Pubilc.icon.push(icon)
           this.wisdom_Pubilc.topicid.push(topic[i]['data']['id'])
@@ -171,6 +177,9 @@
 .wisdom {
   margin: 3em auto;
   max-width: $maxWidth;
+  @media all and (max-width: $breakpoint) {
+    margin: 3em 3ch;
+  }
   .text {
     font-size: 1em;
   }
