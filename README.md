@@ -64,6 +64,18 @@ Or you might use the following APIs hosted on 139.162.109.88 (dev only, not alwa
  - `username` was stored in localStorage too after signing in. However, please use `username` only for display purpose, never trust its value.
 
 
+## Production
+
+`node build/build.js`
+
+`pm2 start $PROJECT_HOME/web.js --watch`
+
+
+`pm2 start $PROJECT_HOME/proxy.js --watch`
+
+
+
+
 ## Design - Naming
 
 ### Entities
