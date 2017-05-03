@@ -3,6 +3,7 @@
   .hello
     el-row
       .slides.shadow
+        h3 Who do you want to ask ?
         el-carousel(trigger='click', height='400px')
           el-carousel-item(v-for='user in users', :key='user')
             .user
@@ -15,10 +16,12 @@
       el-col(:span="16")
         .people
           h3 Popular People
-          .users
-            router-link.user(:to="'/user/' + o.userId", v-for='(o, index) in users', v-bind:data="o", v-bind:key="o.userId")
-              img.avatar.shadow(:src='o.userIcon')
-              h4.name {{o.userName}}
+          el-carousel(:interval='4000', type='card', height='200px')
+            el-carousel-item(v-for='o in users', :key='o', :data='o')
+              .users
+                router-link.user(:to="'/user/' + o.userId")
+                  img.avatar.shadow(:src='o.userIcon')
+                  h4.name {{o.userName}}
         .hot
           h3 Hot issue
           p(v-for="o in Lorem") {{o}}
@@ -62,16 +65,16 @@
     max-width: $maxWidth;
     margin: 0 auto;
   }
-  .user {
+  .user { 
     .avatar {
       width: 7em;
       border-radius: 50%;
       margin: 0 auto;
       display: block;
-      // box-shadow: 0 3px 6px -3px gray;
     }
     .name {
       text-align: center;
+      margin: 1em 0 0.5em 0;
     }
   }
   .slides {
@@ -93,15 +96,22 @@
       }
     }
   }
-  .users {
+  .users { // Popular People
     display: flex;
     flex-flow: row wrap;
-    padding: 3em 0;
+    // padding: 3em 0;
     .user {
       display: inline-block;
       margin: 0 auto;
       &:hover {
         transform: scale(1.05, 1.05)
+      }
+      .avatar {
+        margin: 1em 0 0.5em 0;
+      }
+      .name {
+        margin: 0;
+        color: black;
       }
     }
   }
@@ -117,6 +127,14 @@
         transform: translate(1px, 1px)
       }
     }
+  }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
   }
   @media all and (max-width: $breakpoint) {
     .el-col {
