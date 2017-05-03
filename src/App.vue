@@ -47,12 +47,19 @@
       })
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
         var topics = response.data.topic_list.topics
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 30; i++) {
+          if (topics[i]['posts_count'] < 2) {
+            // Skip topics without reply
+            continue
+          }
           var tmp = {}
           tmp['title'] = topics[i]['title']
           tmp['userName'] = topics[i]['last_poster_username']
           tmp['id'] = topics[i]['id']
           this.topicList.push(tmp)
+          if (this.topicList.length >= 10) {
+            break
+          }
         }
       })
     }
