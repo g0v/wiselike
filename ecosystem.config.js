@@ -9,7 +9,7 @@ module.exports = {
     {
       name      : 'PROXY',
       script    : 'proxy.js',
-      watch     : [],
+      watch     : ['proxy.js', 'config', '.env'],
       env_production : {
         NODE_ENV: 'production'
       }
@@ -19,7 +19,7 @@ module.exports = {
     {
       name      : 'WEB',
       script    : 'web.js',
-      watch     : ["dist"],
+      watch     : ['web.js', 'dist'],
       env_production : {
         NODE_ENV: 'production'
       }
