@@ -68,12 +68,7 @@ Or you might use the following APIs hosted on 139.162.109.88 (dev only, not alwa
 
 `node build/build.js`
 
-`pm2 start $PROJECT_HOME/web.js --watch`
-
-
-`pm2 start $PROJECT_HOME/proxy.js --watch`
-
-
+`pm2 start ./ecosystem.config.js`
 
 
 ## Design - Naming
