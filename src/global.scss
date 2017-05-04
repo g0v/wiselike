@@ -4,20 +4,20 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
 /* theme size */
 $maxWidth: 1120px;
 // $breakpoint: 768px;
-$breakpoint: 1120px;
+$breakpoint: 1200px;
 
 /* theme font */
 $font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
 
 /* theme color */
-$bgcolor: #fcfff8;
+$bgcolor: #fcfdf8;
 // $card-color: #3c9fa5;
-$card: #f9f9f9;
+$card: #ffffff;
 $highlight: #1aabb3;
 
 h1, h2, h3, h4, h5, h6, p {
   font-family: $font;
-  letter-spacing: 1px;
+  letter-spacing: .8px;
 }
 
 a {
@@ -27,4 +27,16 @@ a {
 
 .shadow {
   box-shadow: 0 5px 6px -5px gray;
+}
+
+// ********************** transition
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+.fade-leave-active,
+.fade-enter-active {
+  transition: opacity .3s ease;
 }

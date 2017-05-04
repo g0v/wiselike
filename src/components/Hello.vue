@@ -2,10 +2,10 @@
 
   .hello
     el-row
-      .slides.shadow
+      .slides
         h3 Who do you want to ask ?
-        el-carousel(trigger='click', height='400px')
-          el-carousel-item(v-for='user in users', :key='user')
+        el-carousel(trigger='click', height='400px', indicator-position="outside")
+          el-carousel-item.shadow(v-for='user in users', :key='user')
             .user
               img.avatar.shadow(:src='user.userIcon')
               h4.name {{ user.userName }}
@@ -13,7 +13,7 @@
                 i.fa.fa-edit
                 |  Ask me
     el-row
-      el-col(:span="16")
+      el-col(:lg="16", :sm='24')
         .people
           h3 Popular People
           el-carousel(:interval='4000', type='card', height='200px')
@@ -26,7 +26,7 @@
           h3 Hot issue
           p(v-for="o in Lorem") {{o}}
 
-      el-col(:span="8")
+      el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
           router-link.say.shadow(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
@@ -65,7 +65,7 @@
     max-width: $maxWidth;
     margin: 0 auto;
   }
-  .user { 
+  .user {
     .avatar {
       width: 7em;
       border-radius: 50%;
@@ -128,18 +128,18 @@
       }
     }
   }
-  
+
   .el-carousel__item:nth-child(2n) {
     background-color: #99a9bf;
   }
-  
+
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }
   @media all and (max-width: $breakpoint) {
-    .el-col {
-      width: 100%;
-    }
+    // .el-col {
+    //   width: 100%;
+    // }
     .people, .hot, .activity {
       margin: 0 3ch;
     }

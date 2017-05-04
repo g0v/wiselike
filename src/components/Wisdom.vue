@@ -219,9 +219,9 @@
     .sereply{
       margin-left:3em;
     }
-    .el-dialog__title{
-      font-size:1.5rem;
-    }
+    // .el-dialog__title{
+    //   font-size:1.5rem;
+    // }
     .el-textarea {
       display: inline-block;
       width: 88%;
