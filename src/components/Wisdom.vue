@@ -20,14 +20,14 @@
           p
             img.avatar(:src='wisdomPublic.icon[contentindex][0]')
             span.el-dialog__title
-              | {{wisdomPublic.auther[contentindex][0]}}
+              | {{wisdomPublic.author[contentindex][0]}}
               |  提問
           p(v-html='wisdomPublic.content[contentindex][0]')
         .text.item(v-for='(item, index) in wisdomPublic.content[contentindex]',v-if='index!=0',v-bind:class="{sereply: index>=2}")
           p
             img.avatar(:src='wisdomPublic.icon[contentindex][index]')
             span.el-dialog__title
-              | {{wisdomPublic.auther[contentindex][index]}}
+              | {{wisdomPublic.author[contentindex][index]}}
               |  回應
               sup  {{wisdomPublic.time[contentindex][index]}}
           p.sereply(v-html='wisdomPublic.content[contentindex][index]')
@@ -58,7 +58,7 @@
           title: [],
           icon: [],
           content: [],
-          auther: [],
+          author: [],
           time: [],
           topicid: []
         },
@@ -133,11 +133,11 @@
         for (let i in topic) {
           let content = []
           let icon = []
-          let auther = []
+          let author = []
           let time = []
           for (let j in topic[i]['data']['post_stream']['posts']) {
             content.push(topic[i]['data']['post_stream']['posts'][j]['cooked'])
-            auther.push(topic[i]['data']['post_stream']['posts'][j]['username'])
+            author.push(topic[i]['data']['post_stream']['posts'][j]['username'])
             time.push(topic[i]['data']['post_stream']['posts'][j]['created_at'].replace(/T.*/, ''))
             if (topic[i]['data']['post_stream']['posts'][j]['avatar_template'].indexOf('https:') === -1) {
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '100'))
@@ -145,7 +145,7 @@
           }
           this.wisdomPublic.title.push(topic[i]['data']['title'])
           this.wisdomPublic.content.push(content)
-          this.wisdomPublic.auther.push(auther)
+          this.wisdomPublic.author.push(author)
           this.wisdomPublic.time.push(time)
           this.wisdomPublic.icon.push(icon)
           this.wisdomPublic.topicid.push(topic[i]['data']['id'])
@@ -189,12 +189,6 @@
   }
   .text {
     font-size: 1em;
-  }
-  h2 {
-    text-align: center;
-    // font-weight: 700;
-    // font-size: 1.5rem;
-    // color: #1f2d3d;
   }
   .item {
     padding: 18px 0;

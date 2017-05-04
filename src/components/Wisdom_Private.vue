@@ -6,11 +6,12 @@
         .pan(v-for='(item, contentindex) in wisdom_Private.content')
           el-collapse-item
             template(slot='title')
-                span.test {{wisdom_Private.title[contentindex]}}
-                i.notifi.header-icon.el-icon-information
-            img(:src='wisdom_Private.icon[contentindex][0]')
-            span.el-dialog__title {{wisdom_Private.aouther[contentindex][0]}}
-            span &nbsp;&nbsp;提問:
+              span.test {{wisdom_Private.title[contentindex]}}
+              i.notifi.header-icon.el-icon-information
+            p
+              img(:src='wisdom_Private.icon[contentindex][0]')
+              span.el-dialog__title {{wisdom_Private.author[contentindex][0]}}
+                |  提問
             p(v-html='wisdom_Private.content[contentindex][0]')
             wisdomreply(:userId='userId', :topicid='wisdom_Private.topicid[contentindex]', :slug='wisdom_Private.slug[contentindex]', :ProfileCategoryId='ProfileCategoryId')
       el-button.loader(type="primary",v-on:click="Lazy_Private", v-if='loadmore > 0')
@@ -32,7 +33,7 @@
           title: [],
           icon: [],
           content: [],
-          aouther: [],
+          author: [],
           time: [],
           topicid: [],
           slug: []
@@ -88,11 +89,11 @@
         for (let i in topic) {
           let content = []
           let icon = []
-          let aouther = []
+          let author = []
           let time = []
           for (let j in topic[i]['data']['post_stream']['posts']) {
             content.push(topic[i]['data']['post_stream']['posts'][j]['cooked'])
-            aouther.push(topic[i]['data']['post_stream']['posts'][j]['name'])
+            author.push(topic[i]['data']['post_stream']['posts'][j]['name'])
             time.push(topic[i]['data']['post_stream']['posts'][j]['created_at'].replace(/T.*/, ''))
             if (topic[i]['data']['post_stream']['posts'][j]['avatar_template'].indexOf('https:') === -1) {
               icon.push('https://talk.pdis.nat.gov.tw' + topic[i]['data']['post_stream']['posts'][j]['avatar_template'].replace(/{size}/, '50'))
@@ -100,7 +101,7 @@
           }
           this.wisdom_Private.title.push(topic[i]['data']['title'])
           this.wisdom_Private.content.push(content)
-          this.wisdom_Private.aouther.push(aouther)
+          this.wisdom_Private.author.push(author)
           this.wisdom_Private.time.push(time)
           this.wisdom_Private.icon.push(icon)
           this.wisdom_Private.topicid.push(topic[i]['data']['id'])
@@ -126,6 +127,7 @@
 </script>
 
 <style lang="scss" scoped>
+@import '../global.scss';
 .wisdom_private{
   .test {
     color: black;

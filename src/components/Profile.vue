@@ -21,10 +21,10 @@
               el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
             div
               el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-              el-button.button(type='primary', @click='init') 取 消
-      .reply
+              el-button.button(@click='init') 取 消
+      .description
+        h3(v-if='edit === false') {{ newDesc || user.userDescription}}
         el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
-        h3(v-if='edit === false') {{user.userDescription}}
       ask.ask(:userId = "user.userId", v-if='edit === false')
     wisdom(:userId = "user.userId")
   .profile(v-else)
@@ -66,7 +66,8 @@
         local_storage: '',
         id: '',
         image: '',
-        imageUrl: ''
+        imageUrl: '',
+        newDesc: ''
       }
     },
     methods: {
@@ -131,6 +132,8 @@
           message: '成功更改簡介，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
           type: 'success'
         })
+        /* push mock data into profile */
+        this.newDesc = this.ruleForm.introduceraw
       }
     },
     watch: {
@@ -201,7 +204,9 @@
     line-height: 0.5 !important;
     font-size: 0.5em !important;
   }
-  .reply {
+  .description {
+    max-width: $maxWidth;
+    margin: 0 auto;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
