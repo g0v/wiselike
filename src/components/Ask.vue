@@ -62,7 +62,11 @@
                 method: 'post',
                 url: this.AskLink(this.local_storage),
                 data: {title: this.ruleForm.title, raw: this.ruleForm.content}
-              }).catch(function (error) {
+              })
+              .then(() => {
+                /* push mock data into wisdom */
+              })
+              .catch(function (error) {
                 console.log(error)
               })
               this.sucessful()

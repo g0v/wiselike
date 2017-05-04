@@ -48,6 +48,9 @@
                 url: this.AskLink(this.local_storage),
                 data: {raw: this.ruleForm.content}
               })
+              .then(() => {
+                /* push mock data into wisdom */
+              })
               this.sucessful()
             } else {
               return false

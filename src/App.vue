@@ -1,19 +1,20 @@
 <template lang="pug">
   #app
-    Header.header(:users="users")
-    router-view.view(:users="users", :topics="topicList")
-    Footer.footer
+    Navbar.header(:users="users")
+    transition(name='fade', mode='out-in')
+      router-view.view(:users="users", :topics="topicList")
+    Foot.footer
 </template>
 <script>
-  import Header from './components/Header.vue'
-  import Footer from './components/Footer.vue'
+  import Navbar from './components/Header.vue'
+  import Foot from './components/Footer.vue'
   import axios from 'axios'
   import config from '../config'
   export default {
     name: 'app',
     components: {
-      Header,
-      Footer
+      Navbar,
+      Foot
     },
     data () {
       return {

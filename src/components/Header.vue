@@ -7,15 +7,15 @@
         el-col.center(:span='8')
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
-          span(v-if="checkprofile === true")
-            el-button.create(v-on:click="CreateProfile") Create My Profile
-          span(v-else)
-            el-button.create(v-on:click="router") My Profile
-          span(v-if="username === null")
+          template(v-if="username === null")
             el-button.login(@click.native="login") Login
-          span(v-else)
-            el-button {{username}}
-            //- (v-on:click="CreateProfile", v-if='checkprofile === true')
+          template(v-else)
+            template(v-if="checkprofile === true")
+              el-button.create(@click="CreateProfile") Create My Profile
+            template(v-else)
+              //- el-button.create(@click="router") My Profile
+              router-link.el-button.create(:to="'/user/' + username") My Profile
+            | hello, {{username}}
 
 </template>
 
@@ -45,11 +45,11 @@
           type: 'warning'
         })
       },
-      router: async function () {
-        this.$router.push({
-          path: '/user/' + this.username
-        })
-      },
+      // router: async function () {
+      //   this.$router.push({
+      //     path: '/user/' + this.username
+      //   })
+      // },
       Link: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
@@ -94,7 +94,7 @@
 
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
-// @import '../global.scss';
+@import '../global.scss';
 .header {
   .menu{
     padding: .5em 1em;
@@ -121,6 +121,7 @@
     margin: auto;
     .el-button.create{
       margin-right: 6px;
+      // text-decoration: none;
     }
   }
 }
