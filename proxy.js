@@ -70,7 +70,6 @@ async function put (url, formData) {
     })
   })
 }
-
 async function CreatProfile (UserName, Url, profileformData, inboxformData) {
   for (let i = 0; i < 2; i++) {
     let topicurl = ''
@@ -102,7 +101,21 @@ async function CreatProfile (UserName, Url, profileformData, inboxformData) {
     })
   }
 }
-
+async function Ask (PostUrl, PostformData, me) {
+  let id = await post(PostUrl, PostformData)
+  console.log(id)
+  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + id.data.topic_id + `/change-owner`
+  let ChangeNameformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      username: me,
+      'post_ids[]': id.data.id
+    }
+  )
+  // change owner
+  await post(ChangeNameUrl, ChangeNameformData)
+}
 async function TopicPost (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
   let id = await post(PostUrl, PostformData)
   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
@@ -257,7 +270,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  post(`${process.env.DISCOURSE_HOST}/posts`, formData)
+  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, me)
   // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
   //       a. Change the owner to "me" by PUT /t/-{topic_id}.json API
   //        or
