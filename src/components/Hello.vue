@@ -5,7 +5,7 @@
       .slides.shadow
         h3 Popular Users
         el-carousel(trigger='click', height='400px')
-          el-carousel-item(v-for='o in popular', :key='o', :data='o')
+          el-carousel-item(v-for='o in getTop3', :key='o', :data='o')
             .user
               img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
@@ -50,17 +50,13 @@
     data () {
       return {
         currentDate: new Date(),
-        popular: [],
         Lorem: ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris euismod convallis leo, a volutpat enim pulvinar nec. Sed vel urna ante. Nulla consequat justo felis, a elementum dolor maximus sed. Ut vitae eros vitae neque venenatis condimentum. Nunc libero magna, fermentum in tellus non, tincidunt tempus lectus. Integer in massa feugiat, suscipit justo venenatis, scelerisque erat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed id metus magna. Duis quis ipsum fringilla turpis sodales consequat ut eget sem. Vestibulum ut ex eget ante varius laoreet. Fusce at luctus leo. Mauris ut nisi egestas diam eleifend facilisis eget vitae nunc. Integer consectetur tellus neque, nec condimentum enim consequat at. Maecenas neque metus, blandit eget dolor quis, pretium feugiat tellus.', 'Aenean eget viverra risus, nec tincidunt justo. Donec a nisl ac purus consequat tincidunt malesuada eget lacus. Nulla fringilla neque id nulla congue, id eleifend felis aliquam. Aliquam viverra auctor eros. Etiam congue libero vitae lacinia hendrerit. Nulla quis diam at tortor pulvinar maximus. Ut pharetra elit eu arcu pulvinar, nec suscipit eros euismod. Proin fringilla lectus ipsum, in accumsan ipsum aliquet fermentum. Proin nisi justo, feugiat sit amet nunc rutrum, vehicula ultrices est. Nullam pharetra malesuada orci, quis tincidunt arcu pulvinar nec.', 'Maecenas euismod consectetur metus. Phasellus consequat dictum pellentesque. Nulla sed ultrices magna. Fusce iaculis laoreet porta. Cras arcu diam, pulvinar ac molestie vitae, mollis in metus. Curabitur ac est blandit, sagittis nibh eu, vehicula enim. Quisque id neque eget risus efficitur ornare in sed urna. Donec id sollicitudin eros. Nunc nec nisi nisi. Duis semper, dolor in auctor iaculis, est mauris molestie odio, at pharetra leo turpis sit amet enim. Proin consectetur magna eu dui eleifend iaculis. Nunc et facilisis tellus. Nulla sagittis, velit vehicula dictum auctor, arcu nunc ullamcorper erat, quis maximus lacus mi hendrerit turpis. Morbi nunc quam, ultrices ut egestas quis, viverra vitae augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.']
       }
     },
-    methods: {
-      getTop3: function (e) {
-        this.popular = e.slice(0, 3)
+    computed: {
+      getTop3: function () {
+        return this.users.slice(0, 3)
       }
-    },
-    mounted () {
-      this.getTop3(this.users)
     }
   }
 </script>
