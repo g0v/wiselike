@@ -4,10 +4,11 @@
     el-row
       .slides.shadow
         h3 Popular Users
-        el-carousel(trigger='click', height='400px')
-          el-carousel-item(v-for='o in getTop3', :key='o', :data='o')
+        el-carousel(trigger='click', type='card', height='400px')
+          el-carousel-item(v-for='(o, idx) in getTop3', :key='o', :data='o')
             .user
-              img.avatar.shadow(:src='o.userIcon')
+              el-badge(:value='idx + 1')
+                img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
               router-link.link.shadow(:to="'/user/' + o.userId")
                 i.fa.fa-edit
@@ -16,7 +17,11 @@
       el-col(:lg="16", :sm='24')
         .people
           h3 All Users
-          el-carousel(:interval='4000', type='card', height='200px')
+          .users
+            router-link.user(:to="'/user/' + o.userId", v-for='o in users', :key='o', :data='o')
+              img.avatar.shadow(:src='o.userIcon')
+              h4.name {{o.userName}}
+          //- el-carousel(:interval='4000', type='card', height='200px')
             el-carousel-item(v-for='o in users', :key='o', :data='o')
               .users
                 router-link.user(:to="'/user/' + o.userId")
@@ -30,7 +35,9 @@
         .activity
           h3 Recent Activity
           router-link.say.shadow(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
-            h4 {{o.title}}
+            h4
+              i.el-icon-caret-right
+              | {{o.title}}
             p
               i.fa.fa-retweet
               |  {{o.userName}}
@@ -55,6 +62,8 @@
     },
     computed: {
       getTop3: function () {
+        /* sort base on wisdom numbers */
+        // sort()
         return this.users.slice(0, 3)
       }
     }
@@ -90,7 +99,7 @@
       flex-flow: column nowrap;
       align-items: center;
       justify-content: center;
-      background: $card;
+      // background: $card;
       font-size: 150%;
       .link {
         background: $highlight;
@@ -104,15 +113,16 @@
   .users { // Popular People
     display: flex;
     flex-flow: row wrap;
-    // padding: 3em 0;
+    padding: 3em 0;
     .user {
+      flex: 0 25%;
       display: inline-block;
-      margin: 0 auto;
+      // margin: 0 auto;
       &:hover {
         transform: scale(1.05, 1.05)
       }
       .avatar {
-        margin: 1em 0 0.5em 0;
+        margin: 1em auto 0.5em auto;
       }
       .name {
         margin: 0;

@@ -16,7 +16,9 @@
     .pubilc(v-for='(item, contentindex) in wisdomPublic.content')
       el-card.box-card
         .clearfix(slot='header')
-          h2 {{wisdomPublic.title[contentindex]}}
+          h2
+            i.el-icon-caret-right
+            | {{wisdomPublic.title[contentindex]}}
           p
             img.avatar(:src='wisdomPublic.icon[contentindex][0]')
             span.el-dialog__title
