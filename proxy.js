@@ -4,15 +4,22 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
 const cors = require('cors')
-// const url = require('url')
 const querystring = require('querystring')
-// const request = require('request')
 const axios = require('axios')
 const config = require('./config')
-const FormData = require('form-data')
+const Prequest = require('request-promise')
+const fs = require('fs')
 const multer = require('multer')
-let upload = multer({ dest: 'upload/' })
-
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      if (err) return cb(err)
+      cb(null, file.originalname)
+    })
+  }
+})
+const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
 // Discourse SSO
@@ -32,12 +39,19 @@ function getProfile (sso, sig) {
   }
 
   let profile = querystring.parse(new Buffer(sso, 'base64').toString('utf8'))
-
   // TODO check that profile.nonce should match the nonce from the login step.
   console.log(profile)
   return profile
 }
-
+function verification (req) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined || req.params.user !== me) {
+    return false
+  }
+  return true
+}
 function getUsername (sso, sig) {
   let profile = getProfile(sso, sig)
   return profile.username
@@ -116,7 +130,7 @@ async function Ask (PostUrl, PostformData, me) {
   // change owner
   await post(ChangeNameUrl, ChangeNameformData)
 }
-async function TopicPost (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+async function Reply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
   let id = await post(PostUrl, PostformData)
   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
   let ChangeNameformData = querystring.stringify(
@@ -140,10 +154,8 @@ app.use(cors())
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
-
   // source: https://github.com/edhemphill/passport-discourse/blob/master/lib/discourse-sso.js
   let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET)
-
   crypto.randomBytes(16, (err, buf) => {
     if (err) throw err
 
@@ -151,7 +163,6 @@ app.get('/login', (req, res) => {
     let payload = new Buffer(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
     let sig = hmac.update(payload).digest('hex')
     let urlRedirect = `${DISCOURSE_HOST}/session/sso_provider?sso=${encodeURIComponent(payload)}&sig=${sig}`
-
     res.redirect(urlRedirect)
   })
 })
@@ -243,20 +254,8 @@ app.get('/users/:user/wisdoms', (req, res) => {
     })
 })
 
-/**
- * Ask a question on someone's profile.
- *
- * Request Body: (application/json)
- * {
- *   "title": "{QUESTION_TITLE}",
- *   "raw": "{QUESTION_BODY}"
- * }
- */
 app.post('/users/:user/wisdoms', (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  if (me === undefined) {
+  if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
@@ -270,26 +269,19 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, me)
-  // TODO This is the most tricky part, the topic was now posted by the API_KEY user. We should either:
-  //       a. Change the owner to "me" by PUT /t/-{topic_id}.json API
-  //        or
-  //       b. Use the POST /admin/users/{uid}/generate_api_key API to gen a API key for "me", and use that key to post the topic instead.
+  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, `${req.params.user}`)
   return null
 })
 app.post('/users/:user/wisdoms/topic', (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let topicid = req.query.topicid
-  let slug = req.query.slug
-  let categoryid = req.query.categoryid
-  let me = getUsername(sso, sig)
-  let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
-  if (me === undefined) {
+  if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
+  let topicid = req.query.topicid
+  let slug = req.query.slug
+  let categoryid = req.query.categoryid
+  let posturl = `${process.env.DISCOURSE_HOST}/posts`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -307,9 +299,9 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     }
   )
   if (slug !== 'undefined' && categoryid !== 'undefined') {
-    TopicPost(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
+    Reply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'true') // fist reply need move category
   } else {
-    TopicPost(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
+    Reply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'false') // second reply
   }
   return null
 })
@@ -319,15 +311,12 @@ app.listen(PROXY_PORT, () => {
 })
 
 app.post('/users/:user/createprofile', (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  let Url = `${process.env.DISCOURSE_HOST}/categories`
-  if (me === undefined) {
+  if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
 
+  let Url = `${process.env.DISCOURSE_HOST}/categories`
   let profileformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -348,57 +337,60 @@ app.post('/users/:user/createprofile', (req, res) => {
       parent_category_id: `21`
     }
   )
-  CreatProfile(me, Url, profileformData, inboxformData)
+  CreatProfile(`${req.params.user}`, Url, profileformData, inboxformData)
   return null
 })
 
 app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let profile = getProfile(sso, sig)
-  let me = profile.username
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
-  }
-  if (req.params.user !== me) {
+  if (!verification(req)) {
     res.status(403)
     return res.json({'error': `You cannot modify ${req.params.user}`})
   }
-
-  let form = new FormData()
-  form.append('api_key', process.env.DISCOURSE_API_KEY)
-  form.append('api_username', process.env.DISCOURSE_API_USERNAME)
-  form.append('files[]', req.file)
-  form.append('type', 'avatar')
-  form.append('user_id', profile.external_id)
-  form.append('synchronous', 'true')
-  axios.post(`${process.env.DISCOURSE_HOST}/uploads.json`, form)
-    .then((val) => {
-      let fileId = val.id
-      form = new FormData()
-      form.append('type', 'uploaded')
-      form.append('upload_id', fileId)
-      axios.put(`${process.env.DISCOURSE_HOST}/users/${me}/preferences/avatar/pick`, form)
-        .then((val) => {
-          return res.json({'status': 'ok'})
-        }).catch(error => {
-          console.log(error)
-        })
+  let profile = getProfile(req.query.sso, req.query.sig)
+  let form = {
+    api_key: process.env.DISCOURSE_API_KEY,
+    api_username: process.env.DISCOURSE_API_USERNAME,
+    type: 'avatar',
+    user_id: profile.external_id,
+    'files[]': fs.createReadStream('./uploads/' + req.file.originalname),
+    synchronous: 'true'
+  }
+  Prequest.post({
+    url: `${process.env.DISCOURSE_HOST}/uploads.json`,
+    formData: form
+  })
+  .then(function (val) {
+    val = JSON.parse(val)
+    let id = val.id
+    let pickform = {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      type: 'uploaded',
+      upload_id: id
+    }
+    res.send(val)
+    Prequest.put({
+      url: `${process.env.DISCOURSE_HOST}/users/${req.params.user}/preferences/avatar/pick`,
+      formData: pickform
     })
-    .catch(error => {
-      console.log(error.response)
+    .then(function (val) {
+      // delete local image
+      fs.unlink('./uploads/' + req.file.originalname, (err) => {
+        if (err) {
+          console.log('failed to delete local image')
+        } else {
+          console.log('successfully deleted local image')
+        }
+      })
     })
+  })
 })
 app.post('/users/:user/introduction', (req, res) => {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  let introductionUrl = `${process.env.DISCOURSE_HOST}/posts/` + req.body.id
-  if (me === undefined) {
+  if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
+  let Url = `${process.env.DISCOURSE_HOST}/posts/` + req.body.id
   let introduction = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -406,8 +398,6 @@ app.post('/users/:user/introduction', (req, res) => {
       'post[raw]': req.body.raw
     }
   )
-  console.log('--------------')
-  console.log(introductionUrl)
-  console.log(introduction)
-  put(introductionUrl, introduction)
+  put(Url, introduction)
 })
+

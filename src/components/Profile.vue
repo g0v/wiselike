@@ -1,9 +1,6 @@
 <template lang="pug">
   .profile(v-if="user")
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
-      //- el-upload.avatar-uploader(action='https://jsonplaceholder.typicode.com/posts/', :show-file-list='false', :on-success='handleAvatarSuccess', :before-upload='beforeAvatarUpload')
-      //-   img.avatar(v-if='imageUrl', :src='imageUrl')
-      //-   i.el-icon-plus.avatar-uploader-icon(v-else='')
 
       //- div(v-if='!image')
       //-   h2 Select an image
@@ -11,6 +8,7 @@
       //- div(v-else='')
       //-   img.avatar(v-if='image', :src='image')
       //-   button(@click='removeImage') Remove image
+      //-   button(@click='test') test
 
       img.avatar(:src="user.userIcon")
       h1 {{ user.userName }}
@@ -67,13 +65,26 @@
         id: '',
         image: '',
         imageUrl: '',
-        newDesc: ''
+        newDesc: '',
+        imagefile: ''
       }
     },
     methods: {
+      imageLink: function (localstorage) {
+        return config.runtime.proxyHost + '/users/' + this.user.userId + '/avatar?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+      },
+      test () {
+        let form = new FormData()
+        form.append('avatar', this.imagefile)
+        axios.post(this.imageLink(this.local_storage), form)
+          .then((val) => {
+            console.log(val)
+          })
+      },
       onFileChange (e) {
         var files = e.target.files || e.dataTransfer.files
         if (!files.length) return
+        this.imagefile = files[0]
         this.createImage(files[0])
       },
       createImage (file) {
@@ -84,7 +95,6 @@
           vm.image = e.target.result
         }
         reader.readAsDataURL(file)
-        console.log(reader)
       },
       removeImage: function (e) {
         this.image = ''
@@ -124,7 +134,6 @@
         if (this.local_storage.username === this.user.userId) {
           this.editbutton = true
         }
-        console.log(this.local_storage)
       },
       sucessful () {
         this.$message({
