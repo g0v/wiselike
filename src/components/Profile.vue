@@ -133,6 +133,9 @@
         this.ruleForm.introduceraw = this.user.userDescription
         if (this.local_storage.username === this.user.userId) {
           this.editbutton = true
+        } else {
+          /* to overwrite init() setting this to true */
+          this.editbutton = false
         }
       },
       sucessful () {
