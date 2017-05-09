@@ -81,6 +81,7 @@
   .user {
     .avatar {
       width: 7em;
+      height: 7em;
       border-radius: 50%;
       margin: 0 auto;
       display: block;
