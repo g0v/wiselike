@@ -1,28 +1,32 @@
 <template lang="pug">
   .profile(v-if="user")
+    input.hide_input(type='file', @change='onFileChange', v-if='!editimage')
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
-
-      //- div(v-if='!image')
-      //-   h2 Select an image
-      //-   input(type='file', @change='onFileChange')
-      //- div(v-else='')
-      //-   img.avatar(v-if='image', :src='image')
-      //-   button(@click='removeImage') Remove image
-      //-   button(@click='test') test
-
-      img.avatar(:src="user.userIcon")
-      h1 {{ user.userName }}
-      el-row(:gutter='20', v-if='edit === true')
-        el-col(:span='12', :offset='6')
-          el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
-            el-form-item.acenter(prop='introduceraw')
-              el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-            div
-              el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-              el-button.button(@click='init') 取 消
-      .description
-        h3(v-if='edit === false') {{ newDesc || user.userDescription}}
-        el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
+      .avatar
+        div(v-if='!editimage')
+          div(v-if='!image')
+            .el-icon-plus.avatar-uploader-icon
+            div: button.avatar_button(@click='editimage = true, image = false') 取消
+          div(v-else='')
+            div: img.avatar_image(:src='image')
+            button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
+            button.avatar_button(@click='editimage = true, image = false') 取消
+        div(v-if='editimage')
+          img.avatar_image(:src="user.userIcon")
+          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='editbutton === true')
+      .introduction
+        h1 {{ user.userName }}
+        el-row(:gutter='20', v-if='edit === true')
+          el-col(:span='12', :offset='6')
+            el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
+              el-form-item.acenter(prop='introduceraw')
+                el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
+              div
+                el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+                el-button.button(@click='init') 取 消
+        .description
+          h3(v-if='edit === false') {{ newDesc || user.userDescription}}
+          el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
       ask.ask(:userId = "user.userId", v-if='edit === false')
     wisdom(:userId = "user.userId")
   .profile(v-else)
@@ -64,31 +68,47 @@
         local_storage: '',
         id: '',
         image: '',
-        imageUrl: '',
+        errimage: true,
         newDesc: '',
-        imagefile: ''
+        imagefile: '',
+        editimage: true
       }
     },
     methods: {
+      open () {
+        this.editimage = false
+        this.$message('頭像請使用 JPG 格式，上限 2MB')
+      },
       imageLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.user.userId + '/avatar?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
-      test () {
+      Editimage () {
         let form = new FormData()
         form.append('avatar', this.imagefile)
         axios.post(this.imageLink(this.local_storage), form)
-          .then((val) => {
-            console.log(val)
-          })
+        .then((val) => {
+          this.user.userIcon = this.image
+          this.editimage = true
+          this.image = false
+          this.$message.success('頭像更改成功!')
+        })
       },
       onFileChange (e) {
         var files = e.target.files || e.dataTransfer.files
         if (!files.length) return
         this.imagefile = files[0]
         this.createImage(files[0])
+        const isJPG = this.imagefile.type === 'image/jpeg'
+        const isLt2M = this.imagefile.size / 1024 / 1024 < 2
+        if (!isJPG) {
+          this.$message.error('頭像圖片請使用 JPG 格式!')
+          this.errimage = false
+        } else if (!isLt2M) {
+          this.$message.error('頭像大小上限 2MB!')
+          this.errimage = false
+        } else this.errimage = true
       },
       createImage (file) {
-        // var image = new Image()
         var reader = new FileReader()
         var vm = this
         reader.onload = (e) => {
@@ -173,6 +193,22 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 .profile {
+  .hide_input {
+    border: 1px solid red;
+    height: 11em;
+    opacity: 0;
+    width: 11em;
+    filter: alpha(opacity=0);
+    width: 220px9;
+    position: absolute;
+    z-index: 999;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: 5em;
+  }
   .info {
     position: relative;
     color: white;
@@ -183,11 +219,28 @@
       position: relative;
       z-index: 100;
     }
-    .avatar {
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #ffffff;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+      border: 3px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar_image {
       border-radius: 50%;
       width: 200px;
       height: 200px;
       box-shadow: 0 3px 6px -3px black;
+      vertical-align: top;
+    }
+    .avatar_button {
+      margin-top: 2em;
     }
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
@@ -215,6 +268,9 @@
     margin-right: 0.5em;
     line-height: 0.5 !important;
     font-size: 0.5em !important;
+  }
+  .absolute {
+    position: absolute;
   }
   .description {
     max-width: $maxWidth;
