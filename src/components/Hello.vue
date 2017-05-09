@@ -34,7 +34,7 @@
       el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
-          router-link.say.shadow(v-for='o in slice(topics, 10)', :to="'/wisdom/' + o.category + '#' + o.id", :data="o", :key="o.title")
+          router-link.say.shadow(v-for='o in slice(topics, 10)', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
             h4
               //- i.el-icon-caret-right
               i.fa.fa-retweet

@@ -59,34 +59,36 @@
         })
       },
       getActivity: function () {
-        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
-          var topics = response.data.topic_list.topics
-          var tags = response.data.topic_list.tags
-          this.tags = tags
-          let newTopics = topics.map((topic) => {
-            let newTopic = {}
-            newTopic.title = topic.title
-            newTopic.userName = topic.last_poster_username
-            newTopic.id = topic.id
-            newTopic.category = topic.category_id
-            return newTopic
-          })
-          this.topicList = newTopics
-          // for (var i = 0; i < 30; i++) {
-          //   if (topics[i]['posts_count'] < 2) {
-          //     // Skip topics without reply
-          //     continue
-          //   }
-          //   var tmp = {}
-          //   tmp['title'] = topics[i]['title']
-          //   tmp['userName'] = topics[i]['last_poster_username']
-          //   tmp['id'] = topics[i]['id']
-          //   this.topicList.push(tmp)
-          //   if (this.topicList.length >= 10) {
-          //     break
-          //   }
-          // }
-        })
+        /* get recent activity */
+        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
+          .then((response) => {
+            /* get a list of topics under one category */
+            var topics = response.data.topic_list.topics
+            var tags = response.data.topic_list.tags
+            this.tags = tags
+            let newTopics = topics.map((topic) => {
+              let newTopic = {}
+              newTopic.title = topic.title
+              newTopic.userName = topic.last_poster_username
+              newTopic.id = topic.id
+              newTopic.category = topic.category_id
+              return newTopic
+            })
+            /* drop first topic which is actually meta */
+            newTopics = newTopics.slice(1)
+            this.topicList = newTopics
+            /* find the profile owner by category id from each topic */
+            return Promise.all(newTopics.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
+          }).then((responses) => {
+            let i = 0
+            for (let res of responses) {
+              /* sort the topics and then get the oldest one */
+              let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
+              /* split profile-username -> username */
+              let user = first.slug.split('-')[1]
+              this.topicList[i++].profile = user
+            }
+          }).catch(err => console.log('app error: ' + err))
       }
     },
     mounted: function () {
