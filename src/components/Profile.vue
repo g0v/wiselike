@@ -13,7 +13,7 @@
             button.avatar_button(@click='editimage = true, image = false') 取消
         div(v-if='editimage')
           img.avatar_image(:src="user.userIcon")
-          el-button.button(@click='open', icon='edit', size='large', v-if='editbutton === true')
+          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='editbutton === true')
       .introduction
         h1 {{ user.userName }}
         el-row(:gutter='20', v-if='edit === true')
@@ -268,6 +268,9 @@
     margin-right: 0.5em;
     line-height: 0.5 !important;
     font-size: 0.5em !important;
+  }
+  .absolute {
+    position: absolute;
   }
   .description {
     max-width: $maxWidth;
