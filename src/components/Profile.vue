@@ -8,8 +8,8 @@
           .el-icon-plus.avatar-uploader-icon
         div(v-else='')
           div: img.avatar(:src='image')
-          button(@click='Editimage', v-if='errimage === true') 送 出
-          button(@click='editimage = true, image = false') 取消
+          button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
+          button.avatar_button(@click='editimage = true, image = false') 取消
       div(v-if='editimage')
         img.avatar(:src="user.userIcon")
         el-button.button(@click='editimage = false', icon='edit', size='large', v-if='editbutton === true')
@@ -233,7 +233,10 @@
       height: 200px;
       box-shadow: 0 3px 6px -3px black;
       vertical-align: top;
-    }    
+    }
+    .avatar_button {
+      margin-top: 2em;
+    }
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
     }
