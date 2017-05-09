@@ -2,7 +2,7 @@
   #app
     Navbar.header(:users="users")
     transition(name='fade', mode='out-in')
-      router-view.view(:users="users", :topics="topicList")
+      router-view.view(:users="users", :topics="topicList", :tags="tags")
     Foot.footer
 </template>
 <script>
@@ -19,7 +19,8 @@
     data () {
       return {
         users: [],
-        topicList: []
+        topicList: [],
+        tags: []
       }
     },
     mounted: function () {
@@ -33,6 +34,10 @@
             tmp['userId'] = val['slug'].substring(8)
             tmp['topic_url'] = val['topic_url']
             tmp['topic_count'] = val['topic_count']
+            axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
+              var tags = response.data.topic_list
+              tmp['userCategory'] = tags['tags'][0]
+            })
             axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
               var user = response.data.user
               var tmp2 = {}
@@ -41,6 +46,7 @@
               tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
               tmp2['userDescription'] = tmp['description']
               tmp2['topic_count'] = tmp['topic_count']
+              tmp2['userCategory'] = tmp['userCategory']
               tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg='
               tmp2['topic_url'] = tmp['topic_url']
               this.users.push(tmp2)
@@ -53,6 +59,8 @@
       })
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
         var topics = response.data.topic_list.topics
+        var tags = response.data.topic_list.tags
+        this.tags = tags
         for (var i = 0; i < 30; i++) {
           if (topics[i]['posts_count'] < 2) {
             // Skip topics without reply
