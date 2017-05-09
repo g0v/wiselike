@@ -55,7 +55,6 @@
           }
         })
         this.test = this.users.slice(0, 3)
-        console.log(this.test)
       })
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
         var topics = response.data.topic_list.topics

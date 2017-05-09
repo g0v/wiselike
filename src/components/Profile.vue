@@ -2,30 +2,31 @@
   .profile(v-if="user")
     input.hide_input(type='file', @change='onFileChange', v-if='!editimage')
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
-
-      div(v-if='!editimage')
-        div(v-if='!image')
-          .el-icon-plus.avatar-uploader-icon
-        div(v-else='')
-          div: img.avatar(:src='image')
-          button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
-          button.avatar_button(@click='editimage = true, image = false') 取消
-      div(v-if='editimage')
-        img.avatar(:src="user.userIcon")
-        el-button.button(@click='editimage = false', icon='edit', size='large', v-if='editbutton === true')
-
-      h1 {{ user.userName }}
-      el-row(:gutter='20', v-if='edit === true')
-        el-col(:span='12', :offset='6')
-          el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
-            el-form-item.acenter(prop='introduceraw')
-              el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-            div
-              el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-              el-button.button(@click='init') 取 消
-      .description
-        h3(v-if='edit === false') {{ newDesc || user.userDescription}}
-        el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
+      .avatar
+        div(v-if='!editimage')
+          div(v-if='!image')
+            .el-icon-plus.avatar-uploader-icon
+            div: button.avatar_button(@click='editimage = true, image = false') 取消
+          div(v-else='')
+            div: img.avatar_image(:src='image')
+            button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
+            button.avatar_button(@click='editimage = true, image = false') 取消
+        div(v-if='editimage')
+          img.avatar_image(:src="user.userIcon")
+          el-button.button(@click='open', icon='edit', size='large', v-if='editbutton === true')
+      .introduction
+        h1 {{ user.userName }}
+        el-row(:gutter='20', v-if='edit === true')
+          el-col(:span='12', :offset='6')
+            el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
+              el-form-item.acenter(prop='introduceraw')
+                el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
+              div
+                el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+                el-button.button(@click='init') 取 消
+        .description
+          h3(v-if='edit === false') {{ newDesc || user.userDescription}}
+          el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
       ask.ask(:userId = "user.userId", v-if='edit === false')
     wisdom(:userId = "user.userId")
   .profile(v-else)
@@ -74,6 +75,10 @@
       }
     },
     methods: {
+      open () {
+        this.editimage = false
+        this.$message('頭像請使用 JPG 格式，上限 2MB')
+      },
       imageLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.user.userId + '/avatar?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
@@ -227,7 +232,7 @@
       position: relative;
       overflow: hidden;
     }
-    .avatar {
+    .avatar_image {
       border-radius: 50%;
       width: 200px;
       height: 200px;
