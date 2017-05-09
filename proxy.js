@@ -130,7 +130,7 @@ async function Ask (PostUrl, PostformData, me) {
   // change owner
   await post(ChangeNameUrl, ChangeNameformData)
 }
-async function Reply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
   let id = await post(PostUrl, PostformData)
   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
   let ChangeNameformData = querystring.stringify(
@@ -273,7 +273,10 @@ app.post('/users/:user/wisdoms', (req, res) => {
   return null
 })
 app.post('/users/:user/wisdoms/topic', (req, res) => {
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
@@ -299,9 +302,9 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     }
   )
   if (slug !== 'undefined' && categoryid !== 'undefined') {
-    Reply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'true') // fist reply need move category
+    TopicReply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'true') // fist reply need move category
   } else {
-    Reply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'false') // second reply
+    TopicReply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'false') // second reply
   }
   return null
 })
