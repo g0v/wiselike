@@ -10,14 +10,23 @@ $breakpoint: 1200px;
 $font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
 
 /* theme color */
-$bgcolor: #fcfdf8;
-// $card-color: #3c9fa5;
+$bgcolor: #f1f1f1;
 $card: #ffffff;
 $highlight: #1aabb3;
 
 h1, h2, h3, h4, h5, h6, p {
   font-family: $font;
   letter-spacing: .8px;
+  div.meta {
+    font-weight: 400;
+  }
+  span.meta {
+    font-size: 80%;
+    font-weight: 400;
+    &::before {
+      content: ' - ';
+    }
+  }
 }
 
 a {

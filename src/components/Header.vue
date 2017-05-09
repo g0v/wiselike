@@ -75,7 +75,7 @@
       this.username = window.localStorage.getItem('username')
       this.local_storage = window.localStorage
       window.addEventListener('message', (event) => {
-        console.log(event)
+        // console.log(event)
         if (event.origin !== config.runtime.proxyHost) {
           console.log('Incorrect origin')
           return

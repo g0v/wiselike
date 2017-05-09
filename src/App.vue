@@ -24,7 +24,8 @@
       }
     },
     mounted: function () {
-      axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
+      /* get user list */
+      axios.get(config.runtime.proxyHost + '/users').then((response) => {
         var users = response.data
         users.forEach((val) => {
           var tmp = {}
@@ -51,30 +52,40 @@
               tmp2['topic_url'] = tmp['topic_url']
               this.users.push(tmp2)
             })
-            this.users.sort(function (a, b) { return a.topic_count - b.topic_count })
+            // this.users.sort(function (a, b) { return a.topic_count - b.topic_count })
           }
         })
-        this.test = this.users.slice(0, 3)
-        console.log(this.test)
+        // this.test = this.users.slice(0, 3)
+        // console.log(this.test)
       })
-      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => { // get recent activity
+      /* get recent activity */
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json').then((response) => {
         var topics = response.data.topic_list.topics
         var tags = response.data.topic_list.tags
         this.tags = tags
-        for (var i = 0; i < 30; i++) {
-          if (topics[i]['posts_count'] < 2) {
-            // Skip topics without reply
-            continue
-          }
-          var tmp = {}
-          tmp['title'] = topics[i]['title']
-          tmp['userName'] = topics[i]['last_poster_username']
-          tmp['id'] = topics[i]['id']
-          this.topicList.push(tmp)
-          if (this.topicList.length >= 10) {
-            break
-          }
-        }
+        let newTopics = topics.map((topic) => {
+          let newTopic = {}
+          newTopic.title = topic.title
+          newTopic.userName = topic.last_poster_username
+          newTopic.id = topic.id
+          newTopic.category = topic.category_id
+          return newTopic
+        })
+        this.topicList = newTopics
+        // for (var i = 0; i < 30; i++) {
+        //   if (topics[i]['posts_count'] < 2) {
+        //     // Skip topics without reply
+        //     continue
+        //   }
+        //   var tmp = {}
+        //   tmp['title'] = topics[i]['title']
+        //   tmp['userName'] = topics[i]['last_poster_username']
+        //   tmp['id'] = topics[i]['id']
+        //   this.topicList.push(tmp)
+        //   // if (this.topicList.length >= 10) {
+        //   //   break
+        //   // }
+        // }
       })
     }
   }

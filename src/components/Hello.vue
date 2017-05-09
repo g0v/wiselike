@@ -2,12 +2,12 @@
 
   .hello
     el-row
-      .slides.shadow
+      .slides
         h3 Popular Users
         el-carousel(trigger='click', type='card', height='400px')
-          el-carousel-item(v-for='(o, idx) in getTop3', :key='o', :data='o')
+          el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
             .user
-              el-badge(:value='idx + 1')
+              el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
               router-link.link.shadow(:to="'/user/' + o.userId")
@@ -20,7 +20,7 @@
           .users
             router-link.user(:to="'/user/' + o.userId", v-for='o in users', :key='o', :data='o')
               img.avatar.shadow(:src='o.userIcon')
-              h4.name {{o.userName}}
+              p.name {{o.userName}}
         .hot
           h3 Category
           el-tabs
@@ -28,19 +28,19 @@
               .users
                 router-link.user(:to="'/user/' + o.userId", v-for='o in users', v-if='o.userCategory == t', :key='o', :data='o')
                   img.avatar.shadow(:src='o.userIcon')
-                  h4.name {{o.userName}}
+                  p.name {{o.userName}}
 
 
       el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
-          router-link.say.shadow(:to="'/wisdom/' + o.id + '#post_id'", v-for='o in topics', v-bind:data="o", v-bind:key="o.title")
+          router-link.say.shadow(v-for='o in slice(topics, 10)', :to="'/wisdom/' + o.category + '#' + o.id", :data="o", :key="o.title")
             h4
-              i.el-icon-caret-right
-              | {{o.title}}
-            p
+              //- i.el-icon-caret-right
               i.fa.fa-retweet
-              |  {{o.userName}}
+              |  {{o.title}}
+              span.meta
+                | {{o.userName}}
 
 </template>
 
@@ -60,10 +60,22 @@
       }
     },
     computed: {
-      getTop3: function () {
+      sortedUsers: function () {
         /* sort base on wisdom numbers */
-        // sort()
-        return this.users.slice(0, 3)
+        return this.users.sort((a, b) => b.topic_count - a.topic_count)
+      }
+    },
+    methods: {
+      // sortby (array, type) {
+      //   if (type === 'user') {
+      //     console.log(array)
+      //     return array.sort((a, b) => b.topic_count - a.topic_count)
+      //   } else {
+      //     return array
+      //   }
+      // },
+      slice (array, number) {
+        return array.slice(0, number)
       }
     }
   }
