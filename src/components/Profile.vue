@@ -50,7 +50,7 @@
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
-  const cityOptions = ['【資訊領域】', '【科學領域】', '【教育領域】', '【服務領域】', '【農學領域】', '【公共行政領域】', '【人文及藝術領域】', '【商業及法律領域】', '【醫藥衛生及社福領域】', '【設計領域】']
+  const cityOptions = ['wiselike-資訊領域', 'wiselike-科學領域', 'wiselike-教育領域', 'wiselike-服務領域', 'wiselike-農學領域', 'wiselike-公共行政領域', 'wiselike-人文及藝術領域', 'wiselike-商業及法律領域', 'wiselike-醫藥衛生及社福領域', 'wiselike-設計領域']
   export default {
     name: 'profile',
     props: ['users'],
