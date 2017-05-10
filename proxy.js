@@ -255,7 +255,10 @@ app.get('/users/:user/wisdoms', (req, res) => {
 })
 
 app.post('/users/:user/wisdoms', (req, res) => {
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
@@ -269,7 +272,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, `${req.params.user}`)
+  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, me)
   return null
 })
 app.post('/users/:user/wisdoms/topic', (req, res) => {
