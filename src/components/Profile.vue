@@ -24,7 +24,7 @@
                   el-checkbox-group(v-model='checkList', :min="0", :max="4")
                     el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
                     h3 【領域選項，最多勾選四項】
-                el-button.button(type='primary' ) 送 出
+                el-button.button(type='primary' @click='EditCategory') 送 出
                 el-button.button(@click='CateEdit = true') 取 消
               div(v-if='CateEdit && selfkey')
                 el-tag(v-for='List in checkList',type='warning',:key="List") {{List}}
@@ -91,6 +91,23 @@
       }
     },
     methods: {
+      CategoryLink: function (localstorage) {
+        return config.runtime.proxyHost + '/users/' + this.user.userId + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+      },
+      EditCategory: function () {
+        this.CateEdit = true
+        axios({
+          method: 'post',
+          url: this.CategoryLink(this.local_storage),
+          data: {categoryUrl: this.user.topic_url, tag: this.checkList}
+        })
+        .then(() => {
+          /* push mock data into wisdom */
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+      },
       open () {
         this.ImageEdit = false
         this.$message('頭像請使用 JPG 格式，上限 2MB')

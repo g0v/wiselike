@@ -407,4 +407,30 @@ app.post('/users/:user/introduction', (req, res) => {
   )
   put(Url, introduction)
 })
-
+app.post('/users/:user/category', (req, res) => { // set user category
+  if (!verification(req)) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
+  let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
+  axios.get(Url + `.json`)
+    .then(response => {
+      let title = response.data.title
+      let categoryid = response.data.category_id
+      let category = querystring.stringify(
+        {
+          api_key: process.env.DISCOURSE_API_KEY,
+          api_username: process.env.DISCOURSE_API_USERNAME,
+          title: title,
+          category_id: categoryid,
+          'tags[]': req.body.tag,
+          featuredLink: ''
+        }
+      )
+      put(Url, category)
+    })
+    .catch(error => {
+      console.log(error.response)
+      return res.status(error.response.status).json(error.response.data)
+    })
+})
