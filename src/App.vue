@@ -38,7 +38,7 @@
               tmp['topic_count'] = val['topic_count']
               axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
                 var tags = response.data.topic_list
-                tmp['userCategory'] = tags['tags'][0]
+                tmp['userCategory'] = tags['tags']
               })
               axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
                 var user = response.data.user

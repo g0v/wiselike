@@ -26,9 +26,9 @@
                     h3 【領域選項，最多勾選四項】
                 el-button.button(type='primary' @click='EditCategory') 送 出
                 el-button.button(@click='CateEdit = true') 取 消
-              div(v-if='CateEdit && selfkey')
-                el-tag(v-for='List in checkList',type='warning',:key="List") {{List}}
-                el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if='Introedit')
+              div(v-if='CateEdit')
+                el-tag.checkbox(v-for='List in checkList',type='warning',:key="List") {{List}}
+                el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
             .introduction
               el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
                 el-form-item.acenter(prop='introduceraw')
@@ -50,7 +50,7 @@
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
-  const cityOptions = ['【資訊領域】', '【科學領域】', '【教育領域】', '【服務領域】', '【農學領域】', '【公共行政領域】', '【人文及藝術領域】', '【商業及法律領域】', '【醫藥衛生及社福領域】']
+  const cityOptions = ['【資訊領域】', '【科學領域】', '【教育領域】', '【服務領域】', '【農學領域】', '【公共行政領域】', '【人文及藝術領域】', '【商業及法律領域】', '【醫藥衛生及社福領域】', '【設計領域】']
   export default {
     name: 'profile',
     props: ['users'],
@@ -96,14 +96,16 @@
       },
       EditCategory: function () {
         this.CateEdit = true
+        // console.log(this.user.userCategory)
         axios({
           method: 'post',
           url: this.CategoryLink(this.local_storage),
           data: {categoryUrl: this.user.topic_url, tag: this.checkList}
         })
-        .then(() => {
+        .then(
           /* push mock data into wisdom */
-        })
+          this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+        )
         .catch(function (error) {
           console.log(error)
         })
@@ -175,6 +177,12 @@
       ShowYourself: function () {
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
+        if (this.user.userCategory.length === 0) {
+          this.checkList[0] = '尚未選擇領域'
+        } else {
+          this.checkList = this.user.userCategory
+        }
+        console.log(this.user.userCategory)
         if (this.local_storage.username === this.user.userId) {
           this.selfkey = true
         } else {
@@ -228,6 +236,9 @@
 .profile {
   .box-card {
     color: black;
+  }
+  .checkbox {
+    margin:1em;
   }
   .hide_input {
     border: 1px solid red;
