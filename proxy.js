@@ -327,7 +327,9 @@ app.post('/users/:user/createprofile', (req, res) => {
       name: `profile-${req.params.user}`,
       color: `AB9364`,
       text_color: `FFFFFF`,
-      parent_category_id: `21`
+      parent_category_id: `21`,
+      'permissions[admins]': `1`,
+      'permissions[everyone]': `3`
     }
   )
   let inboxformData = querystring.stringify(
@@ -337,7 +339,9 @@ app.post('/users/:user/createprofile', (req, res) => {
       name: `inbox-${req.params.user}`,
       color: `b3b5b4`,
       text_color: `FFFFFF`,
-      parent_category_id: `21`
+      parent_category_id: `21`,
+      'permissions[admins]': `1`,
+      'permissions[everyone]': `3`
     }
   )
   CreatProfile(`${req.params.user}`, Url, profileformData, inboxformData)

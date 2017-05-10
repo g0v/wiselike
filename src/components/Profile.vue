@@ -1,33 +1,45 @@
 <template lang="pug">
   .profile(v-if="user")
-    input.hide_input(type='file', @change='onFileChange', v-if='!editimage')
+    input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
       .avatar
-        div(v-if='!editimage')
+        div(v-if='!ImageEdit')
           div(v-if='!image')
             .el-icon-plus.avatar-uploader-icon
-            div: button.avatar_button(@click='editimage = true, image = false') 取消
+            div: button.avatar_button(@click='ImageEdit = true, image = false') 取消
           div(v-else='')
             div: img.avatar_image(:src='image')
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
-            button.avatar_button(@click='editimage = true, image = false') 取消
-        div(v-if='editimage')
+            button.avatar_button(@click='ImageEdit = true, image = false') 取消
+        div(v-if='ImageEdit')
           img.avatar_image(:src="user.userIcon")
-          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='editbutton === true')
-      .introduction
+          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey')
+
         h1 {{ user.userName }}
-        el-row(:gutter='20', v-if='edit === true')
+        el-row(:gutter='20')
           el-col(:span='12', :offset='6')
-            el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='errmessage')
-              el-form-item.acenter(prop='introduceraw')
-                el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-              div
-                el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-                el-button.button(@click='init') 取 消
+            .category
+              el-card.box-card(v-if='!CateEdit')
+                template
+                  el-checkbox-group(v-model='checkList', :min="0", :max="4")
+                    el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
+                    h3 【領域選項，最多勾選四項】
+                el-button.button(type='primary' ) 送 出
+                el-button.button(@click='CateEdit = true') 取 消
+              div(v-if='CateEdit && selfkey')
+                el-tag(v-for='List in checkList',type='warning',:key="List") {{List}}
+                el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if='Introedit')
+            .introduction
+              el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
+                el-form-item.acenter(prop='introduceraw')
+                  el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
+                div
+                  el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+                  el-button.button(@click='Introedit = true') 取 消
         .description
-          h3(v-if='edit === false') {{ newDesc || user.userDescription}}
-          el-button.button(@click='edit = true, editbutton = false, errmessage = true', icon='edit', size='large', v-if='editbutton === true')
-      ask.ask(:userId = "user.userId", v-if='edit === false')
+          h3(v-if='Introedit') {{ newDesc || user.userDescription}}
+          el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
+      ask.ask(:userId = "user.userId", v-if='Introedit')
     wisdom(:userId = "user.userId")
   .profile(v-else)
     h1 no such user
@@ -38,6 +50,7 @@
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
+  const cityOptions = ['【資訊領域】', '【科學領域】', '【教育領域】', '【服務領域】', '【農學領域】', '【公共行政領域】', '【人文及藝術領域】', '【商業及法律領域】', '【醫藥衛生及社福領域】']
   export default {
     name: 'profile',
     props: ['users'],
@@ -54,6 +67,8 @@
         }
       }
       return {
+        cities: cityOptions,
+        checkList: [],
         ruleForm: {
           introduceraw: ''
         },
@@ -62,21 +77,22 @@
             { validator: CheckContent, trigger: 'blur' }
           ]
         },
-        edit: false,
-        editbutton: false,
-        errmessage: true,
         local_storage: '',
         id: '',
         image: '',
-        errimage: true,
         newDesc: '',
         imagefile: '',
-        editimage: true
+        Introedit: true,
+        errimage: true,
+        ImageEdit: true,
+        CateEdit: true,
+        List: '',
+        selfkey: false
       }
     },
     methods: {
       open () {
-        this.editimage = false
+        this.ImageEdit = false
         this.$message('頭像請使用 JPG 格式，上限 2MB')
       },
       imageLink: function (localstorage) {
@@ -88,7 +104,7 @@
         axios.post(this.imageLink(this.local_storage), form)
         .then((val) => {
           this.user.userIcon = this.image
-          this.editimage = true
+          this.ImageEdit = true
           this.image = false
           this.$message.success('頭像更改成功!')
         })
@@ -109,20 +125,12 @@
         } else this.errimage = true
       },
       createImage (file) {
-        var reader = new FileReader()
-        var vm = this
+        let reader = new FileReader()
+        let vm = this
         reader.onload = (e) => {
           vm.image = e.target.result
         }
         reader.readAsDataURL(file)
-      },
-      removeImage: function (e) {
-        this.image = ''
-      },
-      init: function () {
-        this.edit = false
-        this.errmessage = false
-        this.editbutton = true
       },
       Link: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.user.userId + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
@@ -137,9 +145,8 @@
                 url: this.Link(this.local_storage),
                 data: {id: this.id, raw: this.ruleForm.introduceraw}
               }).then(
-                this.edit = false,
-                this.sucessful(),
-                this.init()
+                this.Introedit = true,
+                this.sucessful()
               )
               .catch(function (error) {
                 console.log(error)
@@ -152,10 +159,10 @@
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
         if (this.local_storage.username === this.user.userId) {
-          this.editbutton = true
+          this.selfkey = true
         } else {
           /* to overwrite init() setting this to true */
-          this.editbutton = false
+          this.selfkey = false
         }
       },
       sucessful () {
@@ -176,6 +183,9 @@
     created: function () {
       this.ShowYourself()
     },
+    mounted: function () {
+      this.List = this.checkList
+    },
     computed: {
       user: function () {
         let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId)
@@ -192,7 +202,16 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
+.el-checkbox {
+  font-size: 1em !important;
+  font-weight: 700;
+  color: black;
+  margin: 0.5em;
+}
 .profile {
+  .box-card {
+    color: black;
+  }
   .hide_input {
     border: 1px solid red;
     height: 11em;
