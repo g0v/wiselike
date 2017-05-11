@@ -53,7 +53,11 @@
                 tmp2['userDescription'] = tmp['description']
                 tmp2['topic_count'] = tmp['topic_count']
                 tmp2['userCategory'] = tmp['userCategory']
-                tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                if (user.profile_background === undefined) {
+                  tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                } else {
+                  tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
+                }
                 tmp2['topic_url'] = tmp['topic_url']
                 this.users.push(tmp2)
               })

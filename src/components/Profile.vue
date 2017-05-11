@@ -274,7 +274,11 @@
     margin: 0 auto;
   }
   .checkbox {
+    background-color: rgba(0, 0, 0, 0.47);
+    color: #ffc233;
+    font-weight: 700;
     margin:1em;
+    font-size: 1rem;
   }
   .hide_input {
     border: 1px solid red;
