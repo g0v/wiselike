@@ -6,13 +6,13 @@
         h3 Popular Users
         el-carousel(trigger='click', type='card', height='400px')
           el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
-            .user
+            router-link.user(:to="'/user/' + o.userId")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
-              router-link.link.shadow(:to="'/user/' + o.userId")
+              .link.shadow
                 i.fa.fa-edit
-                |  Ask me
+                |  inside wisdom
     el-row
       el-col(:lg="16", :sm='24')
         .people
@@ -152,6 +152,9 @@
       // box-shadow: 0 5px 5px -2px lightgray;
       &:hover {
         transform: translate(1px, 1px)
+      }
+      h4 {
+        line-height: 1.5em;
       }
     }
   }
