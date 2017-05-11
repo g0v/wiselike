@@ -37,8 +37,11 @@
               tmp['topic_url'] = val['topic_url']
               tmp['topic_count'] = val['topic_count']
               axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
-                var tags = response.data.topic_list
-                tmp['userCategory'] = tags['tags']
+                var tags = response.data.topic_list.tags
+                for (var i in tags) {
+                  tags[i] = tags[i].split('-')[1]
+                }
+                tmp['userCategory'] = tags
               })
               axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
                 var user = response.data.user
@@ -50,7 +53,11 @@
                 tmp2['userDescription'] = tmp['description']
                 tmp2['topic_count'] = tmp['topic_count']
                 tmp2['userCategory'] = tmp['userCategory']
-                tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                if (user.profile_background === undefined) {
+                  tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                } else {
+                  tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
+                }
                 tmp2['topic_url'] = tmp['topic_url']
                 this.users.push(tmp2)
               })
@@ -66,6 +73,11 @@
             /* get a list of topics under one category */
             var topics = response.data.topic_list.topics
             var tags = response.data.topic_list.tags
+            var all = '全部'
+            for (var i in tags) {
+              tags[i] = tags[i].split('-')[1]
+            }
+            tags.unshift(all)
             this.tags = tags
             let newTopics = topics.map((topic) => {
               let newTopic = {}
