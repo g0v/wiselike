@@ -37,8 +37,11 @@
               tmp['topic_url'] = val['topic_url']
               tmp['topic_count'] = val['topic_count']
               axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
-                var tags = response.data.topic_list
-                tmp['userCategory'] = tags['tags']
+                var tags = response.data.topic_list.tags
+                for (var i in tags) {
+                  tags[i] = tags[i].split('-')[1]
+                }
+                tmp['userCategory'] = tags
               })
               axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
                 var user = response.data.user
@@ -66,6 +69,11 @@
             /* get a list of topics under one category */
             var topics = response.data.topic_list.topics
             var tags = response.data.topic_list.tags
+            var all = '全部'
+            for (var i in tags) {
+              tags[i] = tags[i].split('-')[1]
+            }
+            tags.unshift(all)
             this.tags = tags
             let newTopics = topics.map((topic) => {
               let newTopic = {}

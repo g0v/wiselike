@@ -15,22 +15,13 @@
                 |  Ask me
     el-row
       el-col(:lg="16", :sm='24')
-        .people
-          h3 All Users
-          .users
-            router-link.user(:to="'/user/' + o.userId", v-for='o in users', :key='o', :data='o')
-              img.avatar.shadow(:src='o.userIcon')
-              p.name {{o.userName}}
         .hot
           h3 Category
-          el-tabs
-            el-tab-pane(v-for='t in tags', :label= 't', :key="t", :data='t')
-              .users
-                router-link.user(:to="'/user/' + o.userId", v-for='o in users', v-if='o.userCategory == t', :key='o', :data='o')
-                  img.avatar.shadow(:src='o.userIcon')
-                  p.name {{o.userName}}
-
-
+          el-button(type='primary', v-for='tag in tags', :key='tag', :data='tag', @click='show(tag)') {{tag}}
+          .users
+            router-link.user(:to="'/user/' + o.userId", v-for='o in selectedUsers', :key='o', :data='o')
+              img.avatar.shadow(:src='o.userIcon')
+              p.name {{o.userName}}
       el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
@@ -56,7 +47,8 @@
     },
     data () {
       return {
-        currentDate: new Date()
+        currentDate: new Date(),
+        selectedUsers: []
       }
     },
     computed: {
@@ -64,18 +56,45 @@
         /* sort base on wisdom numbers */
         return this.users.sort((a, b) => b.topic_count - a.topic_count)
       }
+      // getUsers: function () {
+      //   this.selectedUsers = this.users
+      //   return this.selectedUsers
+      // }
     },
     methods: {
-      // sortby (array, type) {
-      //   if (type === 'user') {
-      //     console.log(array)
-      //     return array.sort((a, b) => b.topic_count - a.topic_count)
-      //   } else {
-      //     return array
-      //   }
-      // },
+      show: function (t) {
+        this.selectedUsers = []
+        if (t !== '全部') {
+          for (var i in this.users) {
+            var category = this.users[i].userCategory
+            for (var j in category) {
+              if (category[j] === t) {
+                var tmp = {}
+                tmp['userId'] = this.users[i]['userId']
+                tmp['userName'] = this.users[i]['userName']
+                tmp['userIcon'] = this.users[i]['userIcon']
+                this.selectedUsers.push(tmp)
+              }
+            }
+          }
+          return this.selectedUsers
+        }
+        if (t === '全部') {
+          this.selectedUsers = this.users
+          // return this.selectedUsers
+        }
+      },
       slice (array, number) {
         return array.slice(0, number)
+      }
+    },
+    mounted () {
+      this.selectedUsers = this.users
+    },
+    watch: {
+      users: function () {
+        this.selectedUsers = this.users
+        // return this.selectedUsers
       }
     }
   }
