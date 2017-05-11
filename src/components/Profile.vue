@@ -21,13 +21,13 @@
             .category
               el-card.box-card(v-if='!CateEdit')
                 template
-                  el-checkbox-group(v-model='checkList', :min="0", :max="4")
+                  el-checkbox-group(v-model='checkList', :min="1", :max="4")
                     el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
                     h3 【領域選項，最多勾選四項】
                 el-button.button(type='primary' @click='EditCategory') 送 出
                 el-button.button(@click='CateEdit = true') 取 消
               div(v-if='CateEdit')
-                el-tag.checkbox(v-for='List in checkList',type='warning',:key="List") {{List}}
+                el-tag.checkbox(v-for='List in categoryList',type='warning',:key="List") {{List}}
                 el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
             .introduction
               el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
@@ -69,6 +69,7 @@
       return {
         cities: cityOptions,
         checkList: [],
+        categoryList: [],
         ruleForm: {
           introduceraw: ''
         },
@@ -97,6 +98,14 @@
       EditCategory: function () {
         this.CateEdit = true
         // console.log(this.user.userCategory)
+        if (this.checkList[0].indexOf('尚未選擇領域') > -1) {
+          this.checkList = this.checkList.slice(1)
+        }
+        this.categoryList = []
+        for (let i in this.checkList) {
+          this.categoryList[i] = this.checkList[i].replace(/wiselike-/, '')
+          console.log(this.categoryList[i])
+        }
         axios({
           method: 'post',
           url: this.CategoryLink(this.local_storage),
@@ -177,18 +186,15 @@
       ShowYourself: function () {
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
-        if (this.user.userCategory.length === 0) {
+        if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         } else {
           this.checkList = this.user.userCategory
         }
-        console.log(this.user.userCategory)
-        if (this.local_storage.username === this.user.userId) {
-          this.selfkey = true
-        } else {
-          /* to overwrite init() setting this to true */
-          this.selfkey = false
+        for (let i in this.checkList) {
+          this.categoryList[i] = this.checkList[i].replace(/wiselike-/, '')
         }
+        this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
       },
       sucessful () {
         this.$message({

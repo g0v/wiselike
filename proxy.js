@@ -394,6 +394,7 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       })
     })
   })
+  return null
 })
 app.post('/users/:user/introduction', (req, res) => {
   if (!verification(req)) {
@@ -409,6 +410,7 @@ app.post('/users/:user/introduction', (req, res) => {
     }
   )
   put(Url, introduction)
+  return null
 })
 app.post('/users/:user/category', (req, res) => { // set user category
   if (!verification(req)) {
@@ -436,4 +438,5 @@ app.post('/users/:user/category', (req, res) => { // set user category
       console.log(error.response)
       return res.status(error.response.status).json(error.response.data)
     })
+  return null
 })
