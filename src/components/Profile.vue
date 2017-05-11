@@ -2,6 +2,7 @@
   .profile(v-if="user")
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
     .info(:style="{ backgroundImage: `url(${user.userBg})` }")
+
       .avatar
         div(v-if='!ImageEdit')
           div(v-if='!image')
@@ -15,31 +16,34 @@
           img.avatar_image(:src="user.userIcon")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey')
 
-        h1 {{ user.userName }}
-        el-row(:gutter='20')
-          el-col(:span='12', :offset='6')
-            .category
-              el-card.box-card(v-if='!CateEdit')
-                template
-                  el-checkbox-group(v-model='checkList', :min="1", :max="4")
-                    el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
-                    h3 【領域選項，最多勾選四項】
-                el-button.button(type='primary' @click='EditCategory') 送 出
-                el-button.button(@click='CateEdit = true') 取 消
-              div(v-if='CateEdit')
-                el-tag.checkbox(v-for='List in categoryList',type='warning',:key="List") {{List}}
-                el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
-            .introduction
-              el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
-                el-form-item.acenter(prop='introduceraw')
-                  el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-                div
-                  el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-                  el-button.button(@click='Introedit = true') 取 消
-        .description
-          h3(v-if='Introedit') {{ newDesc || user.userDescription}}
-          el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
+      h1 {{ user.userName }}
+
+      .category
+        el-card.box-card(v-if='!CateEdit')
+          h3 【領域選項，最多勾選四項】
+          el-checkbox-group(v-model='checkList', :min="0", :max="4")
+            el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
+          hr
+          el-button.button(type='primary' @click='EditCategory') 送 出
+          el-button.button(@click='CateEdit = true') 取 消
+        div(v-if='CateEdit')
+          el-tag.checkbox(v-for='List in categoryList',type='warning',:key="List") {{List}}
+          el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
+
+      .introduction
+        el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
+          el-form-item.acenter(prop='introduceraw')
+            el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
+          div
+            el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+            el-button.button(@click='Introedit = true') 取 消
+
+      .description
+        h3(v-if='Introedit') {{ newDesc || user.userDescription}}
+        el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
+
       ask.ask(:userId = "user.userId", v-if='Introedit')
+
     wisdom(:userId = "user.userId")
   .profile(v-else)
     h1 no such user
@@ -242,6 +246,12 @@
 .profile {
   .box-card {
     color: black;
+    max-width: $maxWidth;
+    margin: 0 auto;
+  }
+  .introduction {
+    max-width: $maxWidth;
+    margin: 0 auto;
   }
   .checkbox {
     margin:1em;
@@ -306,7 +316,7 @@
       top: 0;
       bottom: 0;
       z-index: 10;
-      background: rgba(black, 0.5);
+      background: rgba(gray, 0.5);
     }
   }
   .input {
