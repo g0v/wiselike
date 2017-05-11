@@ -7,11 +7,11 @@
         div(v-if='!ImageEdit')
           div(v-if='!image')
             .el-icon-plus.avatar-uploader-icon
-            div: button.avatar_button(@click='ImageEdit = true, image = false') 取消
+            div: button.avatar_button(@click='ImageEdit = true, image = false') 取 消
           div(v-else='')
             div: img.avatar_image(:src='image')
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
-            button.avatar_button(@click='ImageEdit = true, image = false') 取消
+            button.avatar_button(@click='ImageEdit = true, image = false') 取 消
         div(v-if='ImageEdit')
           img.avatar_image(:src="user.userIcon")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey')
@@ -20,14 +20,17 @@
 
       .category
         el-card.box-card(v-if='!CateEdit')
-          h3 【領域選項，最多勾選四項】
-          el-checkbox-group(v-model='checkList', :min="0", :max="4")
+          h3 【領域選項，最多勾選五項】
+          el-checkbox-group(v-model='checkList', :min="1", :max="5")
             el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
+          span 新增領域：
+          el-input.catagoryInput(v-model='addcategory', placeholder='请输入内容')
+          el-button.button(type='primary' @click='AddCategory') 新 增
           hr
           el-button.button(type='primary' @click='EditCategory') 送 出
           el-button.button(@click='CateEdit = true') 取 消
         div(v-if='CateEdit')
-          el-tag.checkbox(v-for='List in categoryList',type='warning',:key="List") {{List}}
+          el-tag.checkbox(v-for='List in checkList',type='warning',:key="List") {{List}}
           el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
 
       .introduction
@@ -54,7 +57,6 @@
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
-  const cityOptions = ['wiselike-資訊領域', 'wiselike-科學領域', 'wiselike-教育領域', 'wiselike-服務領域', 'wiselike-農學領域', 'wiselike-公共行政領域', 'wiselike-人文及藝術領域', 'wiselike-商業及法律領域', 'wiselike-醫藥衛生及社福領域', 'wiselike-設計領域']
   export default {
     name: 'profile',
     props: ['users'],
@@ -71,9 +73,8 @@
         }
       }
       return {
-        cities: cityOptions,
+        cities: [],
         checkList: [],
-        categoryList: [],
         ruleForm: {
           introduceraw: ''
         },
@@ -92,10 +93,25 @@
         ImageEdit: true,
         CateEdit: true,
         List: '',
-        selfkey: false
+        selfkey: false,
+        addcategory: ''
       }
     },
     methods: {
+      AddCategory: function () {
+        this.cities.push(this.addcategory)
+        this.checkList.push(this.addcategory)
+      },
+      category: function () {
+        axios.get('https://talk.pdis.nat.gov.tw/tags.json').then((val) => {
+          let tags = val.data.tags
+          tags.filter((tag) => {
+            if (tag.id.indexOf('wiselike-') > -1) {
+              this.cities.push(tag.id.replace(/wiselike-/, ''))
+            }
+          })
+        })
+      },
       CategoryLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.user.userId + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
@@ -105,21 +121,20 @@
         if (this.checkList[0].indexOf('尚未選擇領域') > -1) {
           this.checkList = this.checkList.slice(1)
         }
-        this.categoryList = []
+        let list = []
         for (let i in this.checkList) {
-          this.categoryList[i] = this.checkList[i].replace(/wiselike-/, '')
-          console.log(this.categoryList[i])
+          list[i] = 'wiselike-' + this.checkList[i]
         }
         axios({
           method: 'post',
           url: this.CategoryLink(this.local_storage),
-          data: {categoryUrl: this.user.topic_url, tag: this.checkList}
+          data: {categoryUrl: this.user.topic_url, tag: list}
         })
         .then(
-          /* push mock data into wisdom */
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         )
         .catch(function (error) {
+          this.$message.error('成功失敗，請稍後重試。')
           console.log(error)
         })
       },
@@ -190,15 +205,15 @@
       ShowYourself: function () {
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
+        this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
         if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         } else {
           this.checkList = this.user.userCategory
         }
         for (let i in this.checkList) {
-          this.categoryList[i] = this.checkList[i].replace(/wiselike-/, '')
+          this.checkList[i] = this.checkList[i].replace(/wiselike-/, '')
         }
-        this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
       },
       sucessful () {
         this.$message({
@@ -217,6 +232,7 @@
     },
     created: function () {
       this.ShowYourself()
+      this.category()
     },
     mounted: function () {
       this.List = this.checkList
@@ -248,6 +264,10 @@
     color: black;
     max-width: $maxWidth;
     margin: 0 auto;
+  }
+  .catagoryInput {
+    max-width: 30%;
+    margin: 2em 0 1em 0;
   }
   .introduction {
     max-width: $maxWidth;
