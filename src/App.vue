@@ -50,7 +50,7 @@
                 tmp2['userDescription'] = tmp['description']
                 tmp2['topic_count'] = tmp['topic_count']
                 tmp2['userCategory'] = tmp['userCategory']
-                tmp2['userBg'] = 'https://images.unsplash.com/photo-1440397699230-0a8b8943a7bd?dpr=1&auto=compress,format&fit=crop&w=767&h=512&q=80&cs=tinysrgb&crop=&bg='
+                tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
                 tmp2['topic_url'] = tmp['topic_url']
                 this.users.push(tmp2)
               })
@@ -76,6 +76,8 @@
               return newTopic
             })
             /* drop first topic which is actually meta */
+            console.log('Dropped topic:')
+            console.log(newTopics[0])
             newTopics = newTopics.slice(1)
             this.topicList = newTopics
             /* find the profile owner by category id from each topic */
@@ -83,13 +85,13 @@
           }).then((responses) => {
             let i = 0
             for (let res of responses) {
-              /* sort the topics and then get the oldest one */
+              /* sort the topics and then get the oldest one(meta) */
               let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
               /* split profile-username -> username */
               let user = first.slug.split('-')[1]
               this.topicList[i++].profile = user
             }
-          }).catch(err => console.log('app error: ' + err))
+          }).catch(err => console.log('getActivity error: ' + err))
       }
     },
     mounted: function () {
