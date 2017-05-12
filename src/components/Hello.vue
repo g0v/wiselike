@@ -17,17 +17,17 @@
       el-col(:lg="16", :sm='24')
         .hot
           h3 Category
-          el-button(type='primary', v-for='tag in tags', :key='tag', :data='tag', @click='show(tag)') {{tag}}
+          el-button.category(type='warning', :plain="true", v-for='tag in tags', :key='tag', :data='tag', @click='showCategory(tag)') 
+            h6 {{tag}}
           .users
-            router-link.user(:to="'/user/' + o.userId", v-for='o in selectedUsers', :key='o', :data='o')
-              img.avatar.shadow(:src='o.userIcon')
-              p.name {{o.userName}}
+            router-link.user(:to="'/user/' + user.userId", v-for='user in selectedUsers', :key='o', :data='o')
+              img.avatar.shadow(:src='user.userIcon')
+              p.name {{user.userName}}
       el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
           router-link.say.shadow(v-for='o in slice(topics, 10)', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
             h4
-              //- i.el-icon-caret-right
               i.fa.fa-retweet
               |  {{o.title}}
               span.meta
@@ -56,13 +56,9 @@
         /* sort base on wisdom numbers */
         return this.users.sort((a, b) => b.topic_count - a.topic_count)
       }
-      // getUsers: function () {
-      //   this.selectedUsers = this.users
-      //   return this.selectedUsers
-      // }
     },
     methods: {
-      show: function (t) {
+      showCategory: function (t) {
         this.selectedUsers = []
         if (t !== '全部') {
           for (var i in this.users) {
@@ -81,7 +77,6 @@
         }
         if (t === '全部') {
           this.selectedUsers = this.users
-          // return this.selectedUsers
         }
       },
       slice (array, number) {
@@ -94,7 +89,6 @@
     watch: {
       users: function () {
         this.selectedUsers = this.users
-        // return this.selectedUsers
       }
     }
   }
@@ -130,7 +124,6 @@
       flex-flow: column nowrap;
       align-items: center;
       justify-content: center;
-      // background: $card;
       font-size: 150%;
       .link {
         background: $highlight;
@@ -148,7 +141,6 @@
     .user {
       flex: 0 25%;
       display: inline-block;
-      // margin: 0 auto;
       &:hover {
         transform: scale(1.05, 1.05)
       }
@@ -168,7 +160,6 @@
       margin: 1em 0;
       padding: 1px 1em;
       background: $card;
-      // box-shadow: 0 5px 5px -2px lightgray;
       &:hover {
         transform: translate(1px, 1px)
       }
@@ -185,10 +176,14 @@
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }
+
+  .category {
+    border-radius: 1em;
+    h6 {
+      margin: 0
+    }
+  }
   @media all and (max-width: $breakpoint) {
-    // .el-col {
-    //   width: 100%;
-    // }
     .people, .hot, .activity {
       margin: 0 3ch;
     }
