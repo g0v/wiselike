@@ -17,7 +17,7 @@
       el-col(:lg="16", :sm='24')
         .hot
           h3 Category
-          el-button(type='primary', v-for='tag in tags', :key='tag', :data='tag', @click='show(tag)') {{tag}}
+          el-button(:type="(idx === activeCate)?'primary':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='show(tag); activeCate = idx') {{tag}}
           .users
             router-link.user(:to="'/user/' + o.userId", v-for='o in selectedUsers', :key='o', :data='o')
               img.avatar.shadow(:src='o.userIcon')
@@ -48,7 +48,8 @@
     data () {
       return {
         currentDate: new Date(),
-        selectedUsers: []
+        selectedUsers: [],
+        activeCate: 0
       }
     },
     computed: {

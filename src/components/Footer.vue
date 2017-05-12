@@ -6,7 +6,10 @@
       a.logo(href="https://github.com/g0v/wiselike", title="Github", target="_blank")
         i.fa.fa-github
       a.el-button(href="https://github.com/g0v/wiselike/issues", title="Issue", target="_blank")
-        | 錯誤回報
+        p
+          | 網頁錯誤
+          br
+          | 回報建議
     el-col.license(:lg='16', :sm='24')
       p This license lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
 </template>
