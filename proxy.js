@@ -305,9 +305,9 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     }
   )
   if (slug !== 'undefined' && categoryid !== 'undefined') {
-    TopicReply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'true') // fist reply need move category
+    TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
   } else {
-    TopicReply(posturl, postformData, puturl, putformData1, `${req.params.user}`, topicid, 'false') // second reply
+    TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
   }
   return null
 })
