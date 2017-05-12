@@ -1,7 +1,8 @@
 <template lang="pug">
   .profile(v-if="user")
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
-    .info(:style="{ backgroundImage: `url(${user.userBg})` }")
+    
+    .info(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
 
       .avatar
         div(v-if='!ImageEdit')
@@ -14,9 +15,14 @@
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
         div(v-if='ImageEdit')
           img.avatar_image(:src="user.userIcon")
-          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey')
+          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
+          el-button.button.backgroundimage(@click='open', icon='edit', size='large', v-if='selfkey') 變更背景
+          el-button.background_button(type='primary' @click='Editimage', v-if='background') 送 出
+          el-button.background_button(@click='cancelBackground', v-if='background') 取 消
 
       h1 {{ user.userName }}
+      .profile_background
+        input.hide_input_background(type='file', @change='onbackgroundChange', v-if='selfkey')
 
       .category
         el-card.box-card(v-if='!CateEdit')
@@ -94,10 +100,17 @@
         CateEdit: true,
         List: '',
         selfkey: false,
-        addcategory: ''
+        addcategory: '',
+        backgroundimage: '',
+        background: false,
+        ProfileBackroundImage: ''
       }
     },
     methods: {
+      cancelBackground: function () {
+        this.background = false
+        this.ProfileBackroundImage = this.user.userBg
+      },
       AddCategory: function () {
         this.cities.push(this.addcategory)
         this.checkList.push(this.addcategory)
@@ -142,22 +155,37 @@
         this.ImageEdit = false
         this.$message('頭像請使用 JPG 格式，上限 2MB')
       },
-      imageLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.user.userId + '/avatar?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+      imageLink: function (localstorage, type) {
+        return config.runtime.proxyHost + '/users/' + this.user.userId + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       Editimage () {
+        this.background = false
         let form = new FormData()
-        form.append('avatar', this.imagefile)
-        axios.post(this.imageLink(this.local_storage), form)
+        let url = ''
+        this.imagefile ? (form.append('avatar', this.imagefile), url = this.imageLink(this.local_storage, 'avatar')) : (form.append('profile_background', this.backgroundimage), url = this.imageLink(this.local_storage, 'background'))
+        axios.post(url, form)
         .then((val) => {
-          this.user.userIcon = this.image
+          ((this.imagefile) && (this.user.userIcon = this.image))
           this.ImageEdit = true
           this.image = false
-          this.$message.success('頭像更改成功!')
+          this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         })
       },
+      onbackgroundChange (e) {
+        let files = e.target.files || e.dataTransfer.files
+        if (!files.length) return
+        this.backgroundimage = files[0]
+        this.background = true
+        let reader = new FileReader()
+        let vm = this
+        reader.onload = (e) => {
+          vm.ProfileBackroundImage = e.target.result
+          console.log(vm.ProfileBackroundImage)
+        }
+        reader.readAsDataURL(files[0])
+      },
       onFileChange (e) {
-        var files = e.target.files || e.dataTransfer.files
+        let files = e.target.files || e.dataTransfer.files
         if (!files.length) return
         this.imagefile = files[0]
         this.createImage(files[0])
@@ -206,6 +234,7 @@
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
         this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
+        this.ProfileBackroundImage = this.user.userBg
         if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         } else {
@@ -286,7 +315,6 @@
     opacity: 0;
     width: 11em;
     filter: alpha(opacity=0);
-    width: 220px9;
     position: absolute;
     z-index: 999;
     margin: auto;
@@ -295,6 +323,17 @@
     right: 0;
     bottom: 0;
     margin-top: 5em;
+  }
+  .hide_input_background {
+    opacity: 0;
+    border: 1px solid red;
+    height: 2em;
+    width: 6.5em;
+    filter: alpha(opacity=0);
+    position: absolute !important;
+    z-index: 999;
+    top: -17.39em;
+    right: 1.1em;
   }
   .info {
     position: relative;
@@ -350,6 +389,12 @@
     text-align: right !important;
     margin-right: 10em;
   }
+  .background_button {
+    right: -37em !important;
+    top: 4em !important;
+    line-height: 0.5 !important;
+    font-size: 0.5em !important;
+  }
   .button {
     margin-left: 1em;
     margin-right: 0.5em;
@@ -372,6 +417,10 @@
   }
   .ask {
     margin-top: 1em;
+  }
+  .backgroundimage {
+    position: absolute;
+    right: 1em;
   }
 }
 </style>
