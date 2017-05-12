@@ -21,7 +21,7 @@
           el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
             h6 {{tag}}
           .users
-            router-link.user(:to="'/user/' + user.userId", v-for='user in selectedUsers', :key='o', :data='o')
+            router-link.user(:to="'/user/' + user.userId", v-for='user in selectedUsers', :key='user', :data='user')
               img.avatar.shadow(:src='user.userIcon')
               p.name {{user.userName}}
       el-col(:lg="8", :sm='24')
