@@ -135,7 +135,7 @@
     // padding: 0 0 0 0;
   }
   .footer {
-    flex: 0 0 10rem;
+    flex: 0 0 7rem;
     // background: $lightblack;
     text-align: center;
     border-top: 1px solid lightgray;
