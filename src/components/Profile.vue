@@ -47,13 +47,15 @@
 
       ask.ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdom(:userId = "user.userId")
+    wisdomWrapper(:type = '"private"', :userId = "user.userId")
+    wisdomWrapper(:type = '"public"', :userId = "user.userId")
+
   .profile(v-else)
     h1 no such user
 </template>
 
 <script>
-  import wisdom from './Wisdom.vue'
+  import wisdomWrapper from './wisdom_wrapper.vue'
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
@@ -61,7 +63,7 @@
     name: 'profile',
     props: ['users'],
     components: {
-      wisdom,
+      wisdomWrapper,
       ask
     },
     data () {
