@@ -352,9 +352,12 @@ app.post('/users/:user/createprofile', (req, res) => {
 })
 
 app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
-    return res.json({'error': `You cannot modify ${req.params.user}`})
+    return res.json({'error': 'Please login'})
   }
   let profile = getProfile(req.query.sso, req.query.sig)
   let form = {
@@ -380,7 +383,7 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
     }
     res.send(val)
     Prequest.put({
-      url: `${process.env.DISCOURSE_HOST}/users/${req.params.user}/preferences/avatar/pick`,
+      url: `${process.env.DISCOURSE_HOST}/users/` + me + `/preferences/avatar/pick`,
       formData: pickform
     })
     .then(function (val) {
@@ -438,5 +441,54 @@ app.post('/users/:user/category', (req, res) => { // set user category
       console.log(error.response)
       return res.status(error.response.status).json(error.response.data)
     })
+  return null
+})
+
+app.post('/users/:user/background', upload.single('profile_background'), (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
+  console.log(me)
+  let profile = getProfile(req.query.sso, req.query.sig)
+  let form = {
+    api_key: process.env.DISCOURSE_API_KEY,
+    api_username: process.env.DISCOURSE_API_USERNAME,
+    type: 'profile_background',
+    user_id: profile.external_id,
+    'files[]': fs.createReadStream('./uploads/' + req.file.originalname),
+    synchronous: 'true'
+  }
+  Prequest.post({
+    url: `${process.env.DISCOURSE_HOST}/uploads.json`,
+    formData: form
+  })
+  .then(function (val) {
+    val = JSON.parse(val)
+    console.log(val)
+    let pickform = {
+      api_key: process.env.DISCOURSE_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      profile_background: val.url
+    }
+    Prequest.put({
+      url: `${process.env.DISCOURSE_HOST}/users/` + me + `.json`,
+      formData: pickform
+    })
+    .then(function (val) {
+      res.send('success upload profile background')
+      console.log('success upload profile background')
+      fs.unlink('./uploads/' + req.file.originalname, (err) => {
+        if (err) {
+          console.log('failed to delete local image')
+        } else {
+          console.log('successfully deleted local image')
+        }
+      })
+    })
+  })
   return null
 })
