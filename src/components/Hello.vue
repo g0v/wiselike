@@ -6,13 +6,15 @@
         h3 Popular Users
         el-carousel(trigger='click', type='card', height='400px')
           el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
-            router-link.user(:to="'/user/' + o.userId")
+            router-link.user(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
               .link.shadow
                 i.fa.fa-edit
                 |  inside wisdom
+              //- .info(v-bind:style="{ backgroundImage: `url(${o.userBg})`}")
+                
     el-row
       el-col(:lg="16", :sm='24')
         .hot
@@ -90,6 +92,7 @@
     },
     watch: {
       users: function () {
+        console.log(this.users)
         this.selectedUsers = this.users
       }
     }
@@ -116,11 +119,14 @@
     .name {
       text-align: center;
       margin: 1em 0 0.5em 0;
+      color: white;
+      font-weight: 700
     }
   }
   .slides {
     margin: 3em 0;
     .user {
+      background-size: cover !important;
       height: 100%;
       display: flex;
       flex-flow: column nowrap;
