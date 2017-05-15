@@ -56,10 +56,13 @@
       getUserData: async function () {
         /* reset init data like init() */
         Object.assign(this.$data, this.$options.data())
+        /* check user */
+        this.local_storage = window.localStorage
+        if (this.type !== 'public' && this.local_storage.username !== this.userId) return
         /* get all topics of user except meta */
         this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
         await this.loadWisdom()
-        this.privateTopics = await this.getDiscussionCategory(this.inboxLink + this.page)
+        // this.privateTopics = await this.getDiscussionCategory(this.inboxLink + this.page)
       },
       loadWisdom: async function (val) { // lazyload
         let topics = []
@@ -79,6 +82,7 @@
           }
         }
         await this.topic2wisdom(topics)
+        // console.log(this.publicWisdoms)
         this.loading = false
         /* get topic list from next page of category */
         if (this.loadBegin === total) {
@@ -95,8 +99,8 @@
               this.categoryId = topics[0]['category_id']
             }
             /* drop first meta topic */
-            console.log('Dropped:')
-            console.log(topics[0])
+            // console.log('Dropped:')
+            // console.log(topics[0])
             topics = topics.slice(1)
             resolve(topics)
           })
