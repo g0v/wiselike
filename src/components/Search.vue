@@ -22,9 +22,8 @@
       return h('li', ctx.data, [
         h('router-link', { attrs: { class: 'userList', to: route } }, [
           h('img', { attrs: { class: 'avatar', src: userIcon } }),
-          h('span', { attrs: { class: 'user' } }, [item.userId])
+          h('span', { attrs: { class: 'user' } }, [item.userName])
         ])
-
       ])
     },
     props: {
@@ -47,19 +46,23 @@
     methods: {
       querySearch (queryString, cb) {
         var users = this.userList
-        // console.log(users)
         var results = queryString ? users.filter(this.createFilter(queryString)) : users
         cb(results)
       },
       createFilter (queryString) {
         var reg = new RegExp(queryString, 'i')
         return (o) => {
-          return (reg.test(o.userId))
+          return (reg.test(o.userName))
         }
       }
     },
     mounted () {
       this.userList = this.users
+    },
+    watch: {
+      users: function () {
+        this.userList = this.users
+      }
     }
   }
 </script>

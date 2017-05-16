@@ -104,6 +104,9 @@
 @import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
   padding: 3rem 0 0 0;
+  h3 {
+    font-family: 'Kadwa', serif;
+  }
   .el-row {
     max-width: $maxWidth;
     margin: 0 auto;
