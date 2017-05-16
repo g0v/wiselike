@@ -182,7 +182,7 @@
         let vm = this
         reader.onload = (e) => {
           vm.ProfileBackroundImage = e.target.result
-          console.log(vm.ProfileBackroundImage)
+          // console.log(vm.ProfileBackroundImage)
         }
         reader.readAsDataURL(files[0])
       },
@@ -237,6 +237,7 @@
         this.ruleForm.introduceraw = this.user.userDescription
         this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
         this.ProfileBackroundImage = this.user.userBg
+        console.log(this.user)
         if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         } else {

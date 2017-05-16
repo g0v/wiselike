@@ -92,7 +92,7 @@
     },
     watch: {
       users: function () {
-        console.log(this.users)
+        // console.log(this.users)
         this.selectedUsers = this.users
       }
     }

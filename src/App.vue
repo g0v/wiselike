@@ -42,24 +42,24 @@
                   tags[i] = tags[i].split('-')[1]
                 }
                 tmp['userCategory'] = tags
-              })
-              axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
-                var user = response.data.user
-                var tmp2 = {}
-                tmp2['Id'] = tmp['userId']
-                tmp2['userId'] = user['username'] // 英文名
-                tmp2['userName'] = (user['name'] !== null) ? user['name'] : user['username'] // 中文名
-                tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
-                tmp2['userDescription'] = tmp['description']
-                tmp2['topic_count'] = tmp['topic_count']
-                tmp2['userCategory'] = tmp['userCategory']
-                if (user.profile_background === undefined) {
-                  tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
-                } else {
-                  tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
-                }
-                tmp2['topic_url'] = tmp['topic_url']
-                this.users.push(tmp2)
+                axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
+                  var user = response.data.user
+                  var tmp2 = {}
+                  tmp2['Id'] = tmp['userId']
+                  tmp2['userId'] = user['username'] // 英文名
+                  tmp2['userName'] = (user['name'] !== null) ? user['name'] : user['username'] // 中文名
+                  tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
+                  tmp2['userDescription'] = tmp['description']
+                  tmp2['topic_count'] = tmp['topic_count']
+                  tmp2['userCategory'] = tmp['userCategory']
+                  if (user.profile_background === undefined) {
+                    tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                  } else {
+                    tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
+                  }
+                  tmp2['topic_url'] = tmp['topic_url']
+                  this.users.push(tmp2)
+                })
               })
               // this.users.sort(function (a, b) { return a.topic_count - b.topic_count })
             }
@@ -88,8 +88,8 @@
               return newTopic
             })
             /* drop first topic which is actually meta */
-            console.log('Dropped topic:')
-            console.log(newTopics[0])
+            // console.log('Dropped topic:')
+            // console.log(newTopics[0])
             newTopics = newTopics.slice(1)
             this.topicList = newTopics
             /* find the profile owner by category id from each topic */
