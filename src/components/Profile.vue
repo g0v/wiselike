@@ -16,7 +16,7 @@
         div(v-if='ImageEdit')
           img.avatar_image(:src="user.userIcon")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
-          el-button.button.backgroundimage(@click='open', icon='edit', size='large', v-if='selfkey') 變更背景
+          el-button.button.backgroundimage(@click='open', icon='picture', size='large', v-if='selfkey') 變更背景
           el-button.background_button(type='primary' @click='Editimage', v-if='background') 送 出
           el-button.background_button(@click='cancelBackground', v-if='background') 取 消
 
@@ -237,7 +237,6 @@
         this.ruleForm.introduceraw = this.user.userDescription
         this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
         this.ProfileBackroundImage = this.user.userBg
-        console.log(this.user)
         if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         } else {
@@ -399,6 +398,8 @@
     font-size: 0.5em !important;
   }
   .button {
+    background-color: rgba(247, 239, 239, 0.49);
+    border: 0;
     margin-left: 1em;
     margin-right: 0.5em;
     line-height: 0.5 !important;
