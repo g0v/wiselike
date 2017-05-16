@@ -19,6 +19,11 @@ const storage = multer.diskStorage({
     })
   }
 })
+const corsOptions = {
+  origin: 'https://proxy.wiselike.tw'
+}
+
+// app.use(cors(corsOptions))
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
@@ -150,8 +155,8 @@ async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topic
 }
 
 app.use(bodyParser.json())
-app.use(cors())
-
+app.use(cors(corsOptions))
+// app.use(cors())
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
   // source: https://github.com/edhemphill/passport-discourse/blob/master/lib/discourse-sso.js
