@@ -19,11 +19,11 @@ const storage = multer.diskStorage({
     })
   }
 })
-const corsOptions = {
-  origin: '*'
-}
-
+// const corsOptions = {
+//   origin: '*'
+// }
 // app.use(cors(corsOptions))
+
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
@@ -155,8 +155,8 @@ async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topic
 }
 
 app.use(bodyParser.json())
-app.use(cors(corsOptions))
-// app.use(cors())
+// app.use(cors(corsOptions))
+app.use(cors())
 // app.use(function (req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*')
 //   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
