@@ -18,7 +18,7 @@
             sup  {{post.time}}
       p.sereply(v-html='post.content')
 
-    wisdomreply(:userId='userId', :topicid='content.topicid', :slug='undefined', :categoryId='undefined')
+    wisdomreply(:userId='userId', :topicid='content.topicId', :type='content.category')
 
 </template>
 
@@ -51,6 +51,9 @@
         autoload: true,
         ProfileCategoryId: ''
       }
+    },
+    created: function () {
+      console.log(this.content)
     }
     // computed: {
     //   profileLink: function () {
@@ -152,11 +155,7 @@
     //     this.getUserData()
     //   }
     // },
-    // created: function () {
-    //   this.getUserData()
-    //   /* bind event 'scroll' to window */
-    //   window.addEventListener('scroll', this.hitLoad)
-    // }
+    //
   }
 </script>
 

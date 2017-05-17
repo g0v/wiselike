@@ -10,7 +10,7 @@
       p(v-else) 歷史問題
         span(style='float:right')
           el-switch(on-text="on", off-text="off", v-model="autoload")  auto-load
-      wisdom(v-for='(wisdom, idx) of publicWisdoms', :content='wisdom', :key='idx', :userId='userId', :categoryId='categoryId')
+      wisdom(v-for='(wisdom, idx) of publicWisdoms', :content='wisdom', :key='idx', :userId='userId')
 
     //- load more button
     el-button.loader(type="primary", v-on:click="loadWisdom", v-loading="loading", v-show="loadmore")
@@ -21,6 +21,8 @@
 </template>
 
 <script>
+  import es6promise from 'es6-promise'
+  // require('es6-promise').polyfill()
   import axios from 'axios'
   import wisdom from './Wisdom.vue'
   import wisdomprivate from './Wisdom_Private.vue'
@@ -41,8 +43,7 @@
         loadBegin: 0,
         loading: false,
         loadmore: false,
-        autoload: true,
-        categoryId: 0
+        autoload: true
       }
     },
     computed: {
@@ -95,12 +96,7 @@
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
             let topics = val['data']['topic_list']['topics']
-            if (topics.length > 0) {
-              this.categoryId = topics[0]['category_id']
-            }
             /* drop first meta topic */
-            // console.log('Dropped:')
-            // console.log(topics[0])
             topics = topics.slice(1)
             resolve(topics)
           })
@@ -120,7 +116,8 @@
           let wisdom = {
             posts: [],
             title: '',
-            topicId: 0
+            topicId: 0,
+            category: ''
           }
           for (let post of topic.data.post_stream.posts) {
             let wisdomPost = {
@@ -139,6 +136,7 @@
           }
           wisdom.title = topic.data.title
           wisdom.topicId = topic.data.id
+          wisdom.category = this.type
           wisdoms.push(wisdom)
         }
         this.publicWisdoms = this.publicWisdoms.concat(wisdoms)
@@ -164,6 +162,7 @@
       }
     },
     created: function () {
+      es6promise.polyfill()
       this.getUserData()
       /* bind event 'scroll' to window */
       if (this.type === 'public') {

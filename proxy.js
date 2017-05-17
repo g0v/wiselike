@@ -19,10 +19,6 @@ const storage = multer.diskStorage({
     })
   }
 })
-// const corsOptions = {
-//   origin: '*'
-// }
-// app.use(cors(corsOptions))
 
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
@@ -71,8 +67,8 @@ async function post (url, formData) {
       resolve(val)
     })
     .catch(error => {
-      console.log(error.response)
-      resolve(error.response)
+      // console.log(error.response)
+      resolve(error)
     })
   })
 }
@@ -85,7 +81,7 @@ async function put (url, formData) {
     })
     .catch(error => {
       console.log(error.response)
-      resolve(error.response)
+      resolve(error)
     })
   })
 }
@@ -120,39 +116,25 @@ async function CreatProfile (UserName, Url, profileformData, inboxformData) {
     })
   }
 }
-async function Ask (PostUrl, PostformData, me) {
-  let id = await post(PostUrl, PostformData)
-  console.log(id)
-  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + id.data.topic_id + `/change-owner`
-  let ChangeNameformData = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      username: me,
-      'post_ids[]': id.data.id
-    }
-  )
-  // change owner
-  await post(ChangeNameUrl, ChangeNameformData)
-}
-async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
-  let id = await post(PostUrl, PostformData)
-  let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-  let ChangeNameformData = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      username: me,
-      'post_ids[]': id.data.id
-    }
-  )
-  if (reply === 'true') {
-    // change category
-    await put(PutUrl, PutformData)
-  }
-  // change owner
-  await post(ChangeNameUrl, ChangeNameformData)
-}
+
+// async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+//   let id = await post(PostUrl, PostformData)
+//   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+//   let ChangeNameformData = querystring.stringify(
+//     {
+//       api_key: process.env.DISCOURSE_API_KEY,
+//       api_username: process.env.DISCOURSE_API_USERNAME,
+//       username: me,
+//       'post_ids[]': id.data.id
+//     }
+//   )
+//   if (reply === 'true') {
+//     // change category
+//     await put(PutUrl, PutformData)
+//   }
+//   // change owner
+//   await post(ChangeNameUrl, ChangeNameformData)
+// }
 
 app.use(bodyParser.json())
 // app.use(cors(corsOptions))
@@ -272,7 +254,6 @@ app.post('/users/:user/wisdoms', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-
   let formData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -282,9 +263,41 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
-  Ask(`${process.env.DISCOURSE_HOST}/posts`, formData, me)
+  /* post question */
+  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
+  .then((val) => {
+    let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + val.data.topic_id + `/change-owner`
+    let ChangeNameformData = querystring.stringify(
+      {
+        api_key: process.env.DISCOURSE_API_KEY,
+        api_username: process.env.DISCOURSE_API_USERNAME,
+        username: me,
+        'post_ids[]': val.data.id
+      }
+    )
+    /* change owner */
+    axios.post(ChangeNameUrl, ChangeNameformData)
+    .then((val) => {
+      res.status(200).send(val.data)
+    })
+    .catch(error => {
+      res.status(433).send(error.response.data)
+    })
+  })
+  .catch(error => {
+    res.status(433).send(error.response.data)
+  })
   return null
 })
+
+// axios.post(ChangeNameUrl, ChangeNameformData)
+//     .then((val) => {
+//       res.status(200).send(val.data)
+//     })
+//     .catch(error => {
+//       res.status(433).send(error.response.data)
+//     })
+
 app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -293,11 +306,13 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
+  console.log(me)
   let topicid = req.query.topicid
-  let slug = req.query.slug
-  let categoryid = req.query.categoryid
+  let type = req.query.type
+  // let slug = req.query.slug
+  // let categoryid = req.query.categoryid
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -307,20 +322,113 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
       raw: req.body.raw
     }
   )
-  let putformData1 = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      category_id: categoryid
-    }
-  )
-  if (slug !== 'undefined' && categoryid !== 'undefined') {
-    TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
-  } else {
-    TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
-  }
+  // let putformData1 = querystring.stringify(
+  //   {
+  //     api_key: process.env.DISCOURSE_API_KEY,
+  //     api_username: process.env.DISCOURSE_API_USERNAME,
+  //     category_id: categoryid
+  //   }
+  // )
+  /* reply question */
+  axios.post(posturl, postformData)
+  .then((val) => {
+    let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+    let ChangeNameformData = querystring.stringify(
+      {
+        api_key: process.env.DISCOURSE_API_KEY,
+        api_username: process.env.DISCOURSE_API_USERNAME,
+        username: me,
+        'post_ids[]': val.data.id
+      }
+    )
+    /* change owner */
+    axios.post(ChangeNameUrl, ChangeNameformData)
+    .then((val) => {
+      if (type === 'public') {
+        res.status(200).send(val.data)
+      } else {
+        /* change category */
+        axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
+        .then(response => {
+          let id = response.data.topic_list.topics[0].category_id
+          console.log(id)
+          let putformData1 = querystring.stringify(
+            {
+              api_key: process.env.DISCOURSE_API_KEY,
+              api_username: process.env.DISCOURSE_API_USERNAME,
+              category_id: id
+            }
+          )
+          axios.put(puturl, putformData1)
+          .then((val) => {
+            res.status(200).send(val.data)
+          })
+          .catch(error => {
+            res.status(433).send(error.response.data)
+          })
+        })
+        .catch(error => {
+          console.log(error)
+          return res.status(error.response.status).json(error.response.data)
+        })
+        // https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith02620
+        // axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
+        // .then((val) => {
+        //   val = JSON.parse(val)
+        //   console.log(val)
+        // //   axios.put(puturl, ChangeNameformData)
+        // // .then((val) => {
+        // //   res.status(200).send(val.data)
+        // // })
+        // // .catch(error => {
+        // //   res.status(433).send(error.response.data)
+        // // })
+        // })
+        // .catch(error => {
+        //   res.status(433).send(error)
+        // })
+      }
+    })
+    .catch(error => {
+      res.status(433).send(error.response.data)
+    })
+  })
+  .catch(error => {
+    res.status(433).send(error.response.data)
+  })
+  // let putformData1 = querystring.stringify(
+  //   {
+  //     api_key: process.env.DISCOURSE_API_KEY,
+  //     api_username: process.env.DISCOURSE_API_USERNAME,
+  //     category_id: categoryid
+  //   }
+  // )
+  // if (slug !== 'undefined' && categoryid !== 'undefined') {
+  //   TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
+  // } else {
+  //   TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
+  // }
   return null
 })
+
+// async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
+//   let id = await post(PostUrl, PostformData)
+//   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+//   let ChangeNameformData = querystring.stringify(
+//     {
+//       api_key: process.env.DISCOURSE_API_KEY,
+//       api_username: process.env.DISCOURSE_API_USERNAME,
+//       username: me,
+//       'post_ids[]': id.data.id
+//     }
+//   )
+//   if (reply === 'true') {
+//     // change category
+//     await put(PutUrl, PutformData)
+//   }
+//   // change owner
+//   await post(ChangeNameUrl, ChangeNameformData)
+// }
 
 app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)

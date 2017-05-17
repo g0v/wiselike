@@ -13,7 +13,7 @@
   import config from '../../config'
   export default {
     name: 'ask',
-    props: ['userId', 'topicid', 'slug', 'ProfileCategoryId'],
+    props: ['userId', 'topicid', 'type'],
     data () {
       var CheckContent = (rule, value, callback) => {
         if (String(value).length < 10) {
@@ -36,22 +36,26 @@
     },
     methods: {
       AskLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&categoryid=' + this.ProfileCategoryId + '&slug=' + this.slug
+        return config.runtime.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&type=' + this.type
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
         if (this.local_storage.length === 3) {
           this.$refs[formName].validate((valid) => {
             if (valid) {
+              let vm = this
               axios({
                 method: 'post',
                 url: this.AskLink(this.local_storage),
                 data: {raw: this.ruleForm.content}
               })
               .then(() => {
-                /* push mock data into wisdom */
+                vm.sucessful()
               })
-              this.sucessful()
+              .catch(function (error) {
+                console.log(error)
+                vm.error()
+              })
             } else {
               return false
             }
@@ -65,11 +69,17 @@
           })
         }
       },
-      sucessful () {
-        this.ruleForm.content = null
+      error () {
         this.$message({
           showClose: true,
-          message: '成功發送回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
+          message: '發送失敗，請稍後重試。',
+          type: 'error'
+        })
+      },
+      sucessful () {
+        this.$message({
+          showClose: true,
+          message: '成功發送，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
           type: 'success'
         })
       }

@@ -58,27 +58,34 @@
           this.$refs[formName].validate((valid) => {
             if (valid) {
               this.dialogFormVisible = false
+              let vm = this
               axios({
                 method: 'post',
                 url: this.AskLink(this.local_storage),
                 data: {title: this.ruleForm.title, raw: this.ruleForm.content}
               })
-              .then(() => {
+              .then((val) => {
                 /* push mock data into wisdom */
+                vm.sucessful()
               })
               .catch(function (error) {
                 console.log(error)
+                vm.error()
               })
-              this.sucessful()
             } else {
               return false
             }
           })
         } else {
           this.loginalert = true
-          // this.dialogFormVisible = false
-          // alert('請先登入')
         }
+      },
+      error () {
+        this.$message({
+          showClose: true,
+          message: '發送失敗，請稍後重試。',
+          type: 'error'
+        })
       },
       sucessful () {
         this.$message({
