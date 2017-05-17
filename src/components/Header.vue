@@ -16,6 +16,7 @@
               //- el-button.create(@click="router") My Profile
               router-link.el-button.create(:to="'/user/' + username") My Profile
             | hello, {{username}}
+            el-button.logout(@click="logout") Logout
 
 </template>
 
@@ -55,6 +56,12 @@
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
+      },
+      logout: function (event) {
+        window.localStorage.removeItem('username')
+        window.localStorage.removeItem('sso')
+        window.localStorage.removeItem('sig')
+        window.location.reload()
       },
       CreateProfile: async function (event) {
         if (this.username === null) {
