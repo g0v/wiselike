@@ -312,7 +312,8 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   // let slug = req.query.slug
   // let categoryid = req.query.categoryid
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `.json`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + me + `/` + topicid + `.json`
+  // let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
