@@ -20,6 +20,13 @@ const storage = multer.diskStorage({
   }
 })
 
+// ask
+// reply
+// createprofile
+
+// avatar
+// background Image
+
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
@@ -59,19 +66,19 @@ function getUsername (sso, sig) {
 }
 const app = express()
 
-async function post (url, formData) {
-  return new Promise((resolve, reject) => {
-    axios.post(url, formData)
-    .then((val) => {
-      // console.log(val)
-      resolve(val)
-    })
-    .catch(error => {
-      // console.log(error.response)
-      resolve(error)
-    })
-  })
-}
+// async function post (url, formData) {
+//   return new Promise((resolve, reject) => {
+//     axios.post(url, formData)
+//     .then((val) => {
+//       // console.log(val)
+//       resolve(val)
+//     })
+//     .catch(error => {
+//       // console.log(error.response)
+//       resolve(error)
+//     })
+//   })
+// }
 
 async function put (url, formData) {
   return new Promise((resolve, reject) => {
@@ -85,65 +92,10 @@ async function put (url, formData) {
     })
   })
 }
-async function CreatProfile (UserName, Url, profileformData, inboxformData) {
-  for (let i = 0; i < 2; i++) {
-    let topicurl = ''
-    i === 0 ? (topicurl = await post(Url, profileformData)) : (topicurl = await post(Url, inboxformData))
-    axios.get(`${process.env.DISCOURSE_HOST}` + topicurl.data.category.topic_url + `.json`)
-    .then(response => {
-      let id = response.data.post_stream.posts[0].id
-      let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + response.data.post_stream.posts[0].topic_id + `/change-owner`
-      let introductionUrl = `${process.env.DISCOURSE_HOST}/posts/` + id
-      let ChangeNameformData = querystring.stringify(
-        {
-          api_key: process.env.DISCOURSE_API_KEY,
-          api_username: process.env.DISCOURSE_API_USERNAME,
-          username: UserName,
-          'post_ids[]': id
-        }
-      )
-      let introduction = querystring.stringify(
-        {
-          api_key: process.env.DISCOURSE_API_KEY,
-          api_username: process.env.DISCOURSE_API_USERNAME,
-          'post[raw]': '建立一個完整的「簡介」可以讓更多人瞭解你，內容嘗試保持在 200 個字元內！'
-        }
-      )
-      axios.post(ChangeNameUrl, ChangeNameformData)
-        .then((val) => {
-          put(introductionUrl, introduction)
-        })
-    })
-  }
-}
-
-// async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
-//   let id = await post(PostUrl, PostformData)
-//   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-//   let ChangeNameformData = querystring.stringify(
-//     {
-//       api_key: process.env.DISCOURSE_API_KEY,
-//       api_username: process.env.DISCOURSE_API_USERNAME,
-//       username: me,
-//       'post_ids[]': id.data.id
-//     }
-//   )
-//   if (reply === 'true') {
-//     // change category
-//     await put(PutUrl, PutformData)
-//   }
-//   // change owner
-//   await post(ChangeNameUrl, ChangeNameformData)
-// }
 
 app.use(bodyParser.json())
-// app.use(cors(corsOptions))
 app.use(cors())
-// app.use(function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-//   next()
-// })
+
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
   // source: https://github.com/edhemphill/passport-discourse/blob/master/lib/discourse-sso.js
@@ -306,14 +258,10 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  console.log(me)
   let topicid = req.query.topicid
   let type = req.query.type
-  // let slug = req.query.slug
-  // let categoryid = req.query.categoryid
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
   let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + me + `/` + topicid + `.json`
-  // let puturl = `${process.env.DISCOURSE_HOST}/t/` + slug + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -323,14 +271,6 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
       raw: req.body.raw
     }
   )
-  // let putformData1 = querystring.stringify(
-  //   {
-  //     api_key: process.env.DISCOURSE_API_KEY,
-  //     api_username: process.env.DISCOURSE_API_USERNAME,
-  //     category_id: categoryid
-  //   }
-  // )
-  /* reply question */
   axios.post(posturl, postformData)
   .then((val) => {
     let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
@@ -372,22 +312,6 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
           console.log(error)
           return res.status(error.response.status).json(error.response.data)
         })
-        // https://talk.pdis.nat.gov.tw/c/wiselike/profile-smith02620
-        // axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
-        // .then((val) => {
-        //   val = JSON.parse(val)
-        //   console.log(val)
-        // //   axios.put(puturl, ChangeNameformData)
-        // // .then((val) => {
-        // //   res.status(200).send(val.data)
-        // // })
-        // // .catch(error => {
-        // //   res.status(433).send(error.response.data)
-        // // })
-        // })
-        // .catch(error => {
-        //   res.status(433).send(error)
-        // })
       }
     })
     .catch(error => {
@@ -397,46 +321,19 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   .catch(error => {
     res.status(433).send(error.response.data)
   })
-  // let putformData1 = querystring.stringify(
-  //   {
-  //     api_key: process.env.DISCOURSE_API_KEY,
-  //     api_username: process.env.DISCOURSE_API_USERNAME,
-  //     category_id: categoryid
-  //   }
-  // )
-  // if (slug !== 'undefined' && categoryid !== 'undefined') {
-  //   TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'true') // fist reply need move category
-  // } else {
-  //   TopicReply(posturl, postformData, puturl, putformData1, me, topicid, 'false') // second reply
-  // }
+
   return null
 })
-
-// async function TopicReply (PostUrl, PostformData, PutUrl, PutformData, me, topicid, reply) {
-//   let id = await post(PostUrl, PostformData)
-//   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-//   let ChangeNameformData = querystring.stringify(
-//     {
-//       api_key: process.env.DISCOURSE_API_KEY,
-//       api_username: process.env.DISCOURSE_API_USERNAME,
-//       username: me,
-//       'post_ids[]': id.data.id
-//     }
-//   )
-//   if (reply === 'true') {
-//     // change category
-//     await put(PutUrl, PutformData)
-//   }
-//   // change owner
-//   await post(ChangeNameUrl, ChangeNameformData)
-// }
 
 app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
 app.post('/users/:user/createprofile', (req, res) => {
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
@@ -466,7 +363,55 @@ app.post('/users/:user/createprofile', (req, res) => {
       'permissions[everyone]': `3`
     }
   )
-  CreatProfile(`${req.params.user}`, Url, profileformData, inboxformData)
+  for (let i = 0; i < 2; i++) {
+    // let topicurl = ''
+    let formdata = ''
+    i === 0 ? (formdata = profileformData) : (formdata = inboxformData)
+    axios.post(Url, formdata)
+    .then((val) => {
+      axios.get(`${process.env.DISCOURSE_HOST}` + val.data.category.topic_url + `.json`)
+      .then(response => {
+        let id = response.data.post_stream.posts[0].id
+        let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + response.data.post_stream.posts[0].topic_id + `/change-owner`
+        let introductionUrl = `${process.env.DISCOURSE_HOST}/posts/` + id
+        let ChangeNameformData = querystring.stringify(
+          {
+            api_key: process.env.DISCOURSE_API_KEY,
+            api_username: process.env.DISCOURSE_API_USERNAME,
+            username: me,
+            'post_ids[]': id
+          }
+        )
+        let introduction = querystring.stringify(
+          {
+            api_key: process.env.DISCOURSE_API_KEY,
+            api_username: process.env.DISCOURSE_API_USERNAME,
+            'post[raw]': '建立一個完整的「簡介」可以讓更多人瞭解你，內容嘗試保持在 200 個字元內！'
+          }
+        )
+        axios.post(ChangeNameUrl, ChangeNameformData)
+        .then((val) => {
+          // put(introductionUrl, introduction)
+          axios.put(introductionUrl, introduction)
+          .then((val) => {
+            res.status(200).send(val.data)
+          })
+          .catch(error => {
+            res.status(433).send(error.response.data)
+          })
+        })
+        .catch(error => {
+          res.status(433).send(error.response.data)
+        })
+      })
+      .catch(error => {
+        res.status(433).send(error.response.data)
+      })
+    })
+    .catch(error => {
+      res.status(433).send(error.response.data)
+    })
+  }
   return null
 })
 

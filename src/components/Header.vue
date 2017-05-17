@@ -60,15 +60,36 @@
         if (this.username === null) {
           this.warningmessage()
         } else {
+          let vm = this
           axios({
             method: 'post',
             url: this.Link(this.local_storage)
           })
-          location.reload()
-          this.$router.push({
-            path: '/user/' + this.username
+          .then(() => {
+            location.reload()
+            vm.$router.push({
+              path: '/user/' + this.username
+            })
+          })
+          .catch(function (error) {
+            console.log(error)
+            vm.error()
           })
         }
+      },
+      error () {
+        this.$message({
+          showClose: true,
+          message: '建立失敗，請稍後重試。',
+          type: 'error'
+        })
+      },
+      sucessful () {
+        this.$message({
+          showClose: true,
+          message: '成功建立 Profile。',
+          type: 'success'
+        })
       }
     },
     mounted: function () {
