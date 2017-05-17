@@ -75,8 +75,9 @@
         let loadStep = (remain === 1) ? 1 : 2
         /* get topics */
         this.loading = true
+        let len = this.loadBegin
         if (this.loadmore === true) {
-          for (let i = this.loadBegin; i < loadStep; i++) {
+          for (let i = this.loadBegin; i < (len + loadStep); i++) {
             let topic = await this.getDiscussionTopic(this.publicTopics, i)
             topics.push(topic)
             this.loadBegin++
