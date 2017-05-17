@@ -45,8 +45,8 @@
           el-form-item.acenter(prop='introduceraw')
             el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
           div
-            el-button.button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-            el-button.button(@click='Introedit = true') 取 消
+            el-button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+            el-button(@click='Introedit = true') 取 消
 
       .description
         h3(v-if='Introedit') {{ newDesc || user.userDescription}}
@@ -228,7 +228,7 @@
                 data: {id: this.id, raw: this.ruleForm.introduceraw}
               }).then(
                 this.Introedit = true,
-                this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+                this.sucessful()
               )
               .catch(function (error) {
                 console.log(error)

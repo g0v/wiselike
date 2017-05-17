@@ -16,7 +16,7 @@
               //- el-button.create(@click="router") My Profile
               router-link.el-button.create(:to="'/user/' + username") My Profile
             | hello, {{username}}
-            el-button.logout(@click="logout") Logout
+            el-button.logout.create(@click="logout") Logout
 
 </template>
 

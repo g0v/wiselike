@@ -442,7 +442,6 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       type: 'uploaded',
       upload_id: id
     }
-    res.send(val)
     Prequest.put({
       url: `${process.env.DISCOURSE_HOST}/users/` + me + `/preferences/avatar/pick`,
       formData: pickform
