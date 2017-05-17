@@ -17,8 +17,9 @@
           img.avatar_image(:src="user.userIcon")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
           el-button.button.backgroundimage(@click='open', icon='picture', size='large', v-if='selfkey') 變更背景
-          el-button.background_button(type='primary' @click='Editimage', v-if='background') 送 出
-          el-button.background_button(@click='cancelBackground', v-if='background') 取 消
+          .background_button
+            el-button(type='primary' @click='Editimage', v-if='background') 送 出
+            el-button(@click='cancelBackground', v-if='background') 取 消
 
       h1 {{ user.userName }}
       .profile_background
@@ -31,10 +32,10 @@
             el-checkbox(v-for='city in cities', :label='city', :key='city') {{city}}
           span 新增領域：
           el-input.catagoryInput(v-model='addcategory', placeholder='请输入内容')
-          el-button.button(type='primary' @click='AddCategory') 新 增
+          el-button(type='primary' @click='AddCategory') 新 增
           hr
-          el-button.button(type='primary' @click='EditCategory') 送 出
-          el-button.button(@click='CateEdit = true') 取 消
+          el-button(type='primary' @click='EditCategory') 送 出
+          el-button(@click='CateEdit = true') 取 消
         div(v-if='CateEdit')
           el-tag.checkbox(v-for='List in checkList',type='warning',:key="List") {{List}}
           el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
@@ -172,6 +173,10 @@
           this.image = false
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         })
+        .catch(function (error) {
+          this.$message.error('更改失敗，請稍後重試。')
+          console.log(error)
+        })
       },
       onbackgroundChange (e) {
         let files = e.target.files || e.dataTransfer.files
@@ -223,10 +228,11 @@
                 data: {id: this.id, raw: this.ruleForm.introduceraw}
               }).then(
                 this.Introedit = true,
-                this.sucessful()
+                this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
               )
               .catch(function (error) {
                 console.log(error)
+                this.$message.error('更改失敗，請稍後重試。')
               })
             })
           }
@@ -392,7 +398,8 @@
     margin-right: 10em;
   }
   .background_button {
-    right: -37em !important;
+    position: absolute;
+    right: 1.2em !important;
     top: 4em !important;
     line-height: 0.5 !important;
     font-size: 0.5em !important;

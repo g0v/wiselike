@@ -80,18 +80,18 @@ const app = express()
 //   })
 // }
 
-async function put (url, formData) {
-  return new Promise((resolve, reject) => {
-    axios.put(url, formData)
-    .then((val) => {
-      resolve(val)
-    })
-    .catch(error => {
-      console.log(error.response)
-      resolve(error)
-    })
-  })
-}
+// async function put (url, formData) {
+//   return new Promise((resolve, reject) => {
+//     axios.put(url, formData)
+//     .then((val) => {
+//       resolve(val)
+//     })
+//     .catch(error => {
+//       console.log(error.response)
+//       resolve(error)
+//     })
+//   })
+// }
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -337,7 +337,6 @@ app.post('/users/:user/createprofile', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-
   let Url = `${process.env.DISCOURSE_HOST}/categories`
   let profileformData = querystring.stringify(
     {
@@ -364,7 +363,6 @@ app.post('/users/:user/createprofile', (req, res) => {
     }
   )
   for (let i = 0; i < 2; i++) {
-    // let topicurl = ''
     let formdata = ''
     i === 0 ? (formdata = profileformData) : (formdata = inboxformData)
     axios.post(Url, formdata)
@@ -391,7 +389,6 @@ app.post('/users/:user/createprofile', (req, res) => {
         )
         axios.post(ChangeNameUrl, ChangeNameformData)
         .then((val) => {
-          // put(introductionUrl, introduction)
           axios.put(introductionUrl, introduction)
           .then((val) => {
             res.status(200).send(val.data)
@@ -451,6 +448,7 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       formData: pickform
     })
     .then(function (val) {
+      res.status(200).send(val.data)
       // delete local image
       fs.unlink('./uploads/' + req.file.originalname, (err) => {
         if (err) {
@@ -460,9 +458,16 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
         }
       })
     })
+    .catch(error => {
+      res.status(433).send(error)
+    })
+  })
+  .catch(error => {
+    res.status(433).send(error)
   })
   return null
 })
+
 app.post('/users/:user/introduction', (req, res) => {
   if (!verification(req)) {
     res.status(403)
@@ -476,9 +481,16 @@ app.post('/users/:user/introduction', (req, res) => {
       'post[raw]': req.body.raw
     }
   )
-  put(Url, introduction)
+  axios.put(Url, introduction)
+  .then((val) => {
+    res.status(200).send(val.data)
+  })
+  .catch(error => {
+    res.status(433).send(error)
+  })
   return null
 })
+
 app.post('/users/:user/category', (req, res) => { // set user category
   if (!verification(req)) {
     res.status(403)
@@ -486,25 +498,30 @@ app.post('/users/:user/category', (req, res) => { // set user category
   }
   let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
   axios.get(Url + `.json`)
-    .then(response => {
-      let title = response.data.title
-      let categoryid = response.data.category_id
-      let category = querystring.stringify(
-        {
-          api_key: process.env.DISCOURSE_API_KEY,
-          api_username: process.env.DISCOURSE_API_USERNAME,
-          title: title,
-          category_id: categoryid,
-          'tags[]': req.body.tag,
-          featuredLink: ''
-        }
-      )
-      put(Url, category)
+  .then(response => {
+    let title = response.data.title
+    let categoryid = response.data.category_id
+    let category = querystring.stringify(
+      {
+        api_key: process.env.DISCOURSE_API_KEY,
+        api_username: process.env.DISCOURSE_API_USERNAME,
+        title: title,
+        category_id: categoryid,
+        'tags[]': req.body.tag,
+        featuredLink: ''
+      }
+    )
+    axios.put(Url, category)
+    .then((val) => {
+      res.status(200).send(val.data)
     })
     .catch(error => {
-      console.log(error.response)
-      return res.status(error.response.status).json(error.response.data)
+      res.status(433).send(error)
     })
+  })
+  .catch(error => {
+    res.status(433).send(error)
+  })
   return null
 })
 
@@ -516,7 +533,6 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  console.log(me)
   let profile = getProfile(req.query.sso, req.query.sig)
   let form = {
     api_key: process.env.DISCOURSE_API_KEY,
@@ -553,6 +569,12 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
         }
       })
     })
+    .catch(error => {
+      res.status(433).send(error)
+    })
+  })
+  .catch(error => {
+    res.status(433).send(error)
   })
   return null
 })
