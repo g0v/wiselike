@@ -5,7 +5,7 @@
       icon="search",
       custom-item="my-item-zh",
       :fetch-suggestions="querySearch",
-      placeholder="搜尋用戶...",
+      placeholder="Search...",
       :trigger-on-focus="false")
 
 

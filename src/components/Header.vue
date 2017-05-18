@@ -14,9 +14,11 @@
               el-button.create(@click="CreateProfile") Create My Profile
             template(v-else)
               //- el-button.create(@click="router") My Profile
-              router-link.el-button.create(:to="'/user/' + username") My Profile
-            | hello, {{username}}
-            el-button.logout.create(@click="logout") Logout
+
+            span.create Hello, {{username}}
+            router-link.el-button.create(:to="'/user/' + username") My Profile
+            el-button.logout(@click="logout") Logout
+
 
 </template>
 
@@ -147,7 +149,7 @@
   .right{
     text-align: right;
     margin: auto;
-    .el-button.create{
+    .create{
       margin-right: 6px;
       // text-decoration: none;
     }
