@@ -60,21 +60,24 @@
         this.local_storage = window.localStorage
         if (this.type !== 'public' && this.local_storage.username !== this.userId) return
         /* route post */
-        console.log(this.$route.params.userId)
         if (this.type === 'public' && isNaN(this.$route.hash) === true) {
           this.routePosId = Number(this.$route.hash.replace(/#/, ''))
-          console.log(this.routePosId)
           axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
             let pos = []
             pos[0] = val
             this.topic2wisdom(pos)
           })
         }
-        /* get all topics of user except meta */
-        this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
-        console.log(this.profileLink + this.page)
-        await this.loadWisdom()
-        // this.privateTopics = await this.getDiscussionCategory(this.inboxLink + this.page)
+         /* check userid ready */
+        if (this.userId) {
+          /* get all topics of user except meta */
+          this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
+          await this.loadWisdom()
+          /* bind event 'scroll' to window */
+          if (this.type === 'public') {
+            window.addEventListener('scroll', this.hitLoad)
+          }
+        }
       },
       loadWisdom: async function (val) { // lazyload
         let topics = []
@@ -94,12 +97,10 @@
             this.loadBegin++
           }
         }
-        console.log(this.loadBegin)
         await this.topic2wisdom(topics)
-        // console.log(this.publicWisdoms)
         this.loading = false
         /* get topic list from next page of category */
-        if (this.loadBegin === total) {
+        if (this.loadBegin === total && total !== 0) {
           this.loadBegin = 0
           this.page += 1
           this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
@@ -180,10 +181,6 @@
     },
     created: function () {
       this.getUserData()
-      /* bind event 'scroll' to window */
-      if (this.type === 'public') {
-        window.addEventListener('scroll', this.hitLoad)
-      }
     }
   }
 </script>

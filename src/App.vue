@@ -93,10 +93,11 @@
             // console.log(newTopics[0])
             newTopics = newTopics.slice(1)
             this.topicList = newTopics
+            // console.log(this.topicList)
             /* find the profile owner by category id from each topic */
             return Promise.all(newTopics.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
           }).then((responses) => {
-            let i = 0
+            // let i = 0
             for (let res of responses) {
               /* sort the topics and then get the oldest one(meta) */
               let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
@@ -104,10 +105,14 @@
               let user = first.slug.split('-')[1]
               // this.topicList[i++].profile = user
               /* FIXME */
-              let oldTopic = this.topicList.splice(i++, 1)
-              oldTopic.profile = user
-              this.topicList.push(oldTopic)
+              // console.log(this.topicList)
+              let oldTopic = this.topicList.splice(0, 1)
+              oldTopic[0].profile = user
+              // console.log(oldTopic)
+              // console.log(user)
+              this.topicList.push(oldTopic[0])
             }
+            // console.log(this.topicList)
           }).catch(err => console.log('getActivity error: ' + err))
       }
     },

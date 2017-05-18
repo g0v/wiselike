@@ -27,7 +27,7 @@
               img.avatar.shadow(:src='user.userIcon')
               p.name {{user.userName}}
       el-col(:lg="8", :sm='24')
-        .activity(v-if='dataready')
+        .activity
           h3 Recent Activity
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
             h4 {{o.profile}}
@@ -53,8 +53,7 @@
         currentDate: new Date(),
         selectedUsers: [],
         activeCate: 0,
-        activityTop10: [],
-        dataready: false
+        activityTop10: []
       }
     },
     computed: {
@@ -98,19 +97,12 @@
         this.selectedUsers = this.users
       },
       topics: function () {
+        // console.log(this.topics)
         this.activityTop10 = this.slice(this.topics, 10)
-        console.log('watch')
-        if (this.activityTop10.length > 0) {
-          console.log(this.activityTop10[0].id)
-          console.log(this.activityTop10[0].profile)
-        }
-        // this.dataready = isNaN(this.activityTop10[0].profile)
       }
     },
     created: function () {
       this.activityTop10 = this.slice(this.topics, 10)
-      // console.log(typeof (this.activityTop10[0].profile))
-      // this.dataready = isNaN(this.activityTop10[0].profile)
     }
   }
 </script>
