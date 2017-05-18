@@ -102,7 +102,11 @@
               let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
               /* split profile-username -> username */
               let user = first.slug.split('-')[1]
-              this.topicList[i++].profile = user
+              // this.topicList[i++].profile = user
+              /* FIXME */
+              let oldTopic = this.topicList.splice(i++, 1)
+              oldTopic.profile = user
+              this.topicList.push(oldTopic)
             }
           }).catch(err => console.log('getActivity error: ' + err))
       }
