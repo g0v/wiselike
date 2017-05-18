@@ -14,7 +14,7 @@
                 i.fa.fa-edit
                 |  inside wisdom
               //- .info(v-bind:style="{ backgroundImage: `url(${o.userBg})`}")
-                
+
     el-row
       el-col(:lg="16", :sm='24')
         .hot
@@ -129,7 +129,8 @@
   .slides {
     margin: 3em 0;
     .user {
-      background-size: cover !important;
+      background-size: cover;
+      background-position: center;
       height: 100%;
       display: flex;
       flex-flow: column nowrap;
@@ -142,6 +143,20 @@
         border-radius: 1em;
         line-height: 2em;
         padding: 0 5ch;
+      }
+      * {
+        position: relative;
+        z-index: 100;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10;
+        background: rgba(gray, 0.5);
       }
     }
   }

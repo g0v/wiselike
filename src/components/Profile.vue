@@ -1,7 +1,7 @@
 <template lang="pug">
   .profile(v-if="user")
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
-    
+
     .info(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
 
       .avatar
@@ -344,15 +344,12 @@
     right: 1.1em;
   }
   .info {
+    background-size: cover;
+    background-position: center;
     position: relative;
     color: white;
     text-align: center;
     padding: 5em 0 3em;
-    background-size: cover;
-    * {
-      position: relative;
-      z-index: 100;
-    }
     .avatar-uploader-icon {
       font-size: 28px;
       color: #ffffff;
@@ -378,6 +375,10 @@
     }
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
+    }
+    * {
+      position: relative;
+      z-index: 100;
     }
     &::after {
       content: "";

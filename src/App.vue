@@ -47,7 +47,7 @@
                   var tmp2 = {}
                   tmp2['Id'] = tmp['userId']
                   tmp2['userId'] = user['username'] // 英文名
-                  tmp2['userName'] = (user['name'] !== null) ? user['name'] : user['username'] // 中文名
+                  tmp2['userName'] = (user['name']) ? user['name'] : user['username'] // 中文名
                   tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
                   tmp2['userDescription'] = tmp['description']
                   tmp2['topic_count'] = tmp['topic_count']
