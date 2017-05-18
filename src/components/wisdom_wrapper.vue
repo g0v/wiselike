@@ -41,7 +41,8 @@
         loadBegin: 0,
         loading: false,
         loadmore: false,
-        autoload: true
+        autoload: true,
+        routePosId: 0
       }
     },
     computed: {
@@ -58,8 +59,20 @@
         /* check user */
         this.local_storage = window.localStorage
         if (this.type !== 'public' && this.local_storage.username !== this.userId) return
+        /* route post */
+        console.log(this.$route.params.userId)
+        if (this.type === 'public' && isNaN(this.$route.hash) === true) {
+          this.routePosId = Number(this.$route.hash.replace(/#/, ''))
+          console.log(this.routePosId)
+          axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
+            let pos = []
+            pos[0] = val
+            this.topic2wisdom(pos)
+          })
+        }
         /* get all topics of user except meta */
         this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
+        console.log(this.profileLink + this.page)
         await this.loadWisdom()
         // this.privateTopics = await this.getDiscussionCategory(this.inboxLink + this.page)
       },
@@ -77,10 +90,11 @@
         if (this.loadmore === true) {
           for (let i = this.loadBegin; i < (len + loadStep); i++) {
             let topic = await this.getDiscussionTopic(this.publicTopics, i)
-            topics.push(topic)
+            if (topic !== null) topics.push(topic)
             this.loadBegin++
           }
         }
+        console.log(this.loadBegin)
         await this.topic2wisdom(topics)
         // console.log(this.publicWisdoms)
         this.loading = false
@@ -104,9 +118,13 @@
       getDiscussionTopic: async function (url, i) { // 抓topic
         return new Promise((resolve, reject) => {
           let id = url
-          axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
-            resolve(val)
-          })
+          if (id[i].id !== this.routePosId) {
+            axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
+              resolve(val)
+            })
+          } else {
+            resolve(null)
+          }
         })
       },
       topic2wisdom: function (topics) {
@@ -161,8 +179,6 @@
       }
     },
     created: function () {
-      console.log(isNaN(this.$route.hash))
-      // es6promise.polyfill()
       this.getUserData()
       /* bind event 'scroll' to window */
       if (this.type === 'public') {
