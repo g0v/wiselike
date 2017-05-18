@@ -4,15 +4,15 @@
     el-row
       .slides
         h3 Popular Users
-        el-carousel(trigger='click', type='card', height='400px')
+        el-carousel(trigger='click', type='card', height='400px', arrow='always')
           el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
-            router-link.user(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
+            router-link.user.dim(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.userIcon')
               h4.name {{ o.userName }}
-              .link.shadow
-                i.fa.fa-edit
-                |  inside wisdom
+              .meta.link
+                i.fa.fa-arrow-circle-right
+                |  into wisdom
               //- .info(v-bind:style="{ backgroundImage: `url(${o.userBg})`}")
 
     el-row
@@ -140,24 +140,24 @@
       .link {
         background: $highlight;
         color: white;
-        border-radius: 1em;
+        border-radius: .8em;
         line-height: 2em;
         padding: 0 5ch;
       }
-      * {
-        position: relative;
-        z-index: 100;
-      }
-      &::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 10;
-        background: rgba(gray, 0.5);
-      }
+      // * {
+      //   position: relative;
+      //   z-index: 100;
+      // }
+      // &::after {
+      //   content: "";
+      //   position: absolute;
+      //   left: 0;
+      //   right: 0;
+      //   top: 0;
+      //   bottom: 0;
+      //   z-index: 10;
+      //   background: rgba(gray, 0.5);
+      // }
     }
   }
   .users { // Popular People
