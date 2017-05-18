@@ -60,16 +60,16 @@
         this.local_storage = window.localStorage
         if (this.type !== 'public' && this.local_storage.username !== this.userId) return
         /* route post */
-        if (this.type === 'public' && isNaN(this.$route.hash) === true) {
-          this.routePosId = Number(this.$route.hash.replace(/#/, ''))
-          axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
-            let pos = []
-            pos[0] = val
-            this.topic2wisdom(pos)
-          })
-        }
          /* check userid ready */
         if (this.userId) {
+          if (this.type === 'public' && isNaN(this.$route.hash) === true) {
+            this.routePosId = Number(this.$route.hash.replace(/#/, ''))
+            axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
+              let pos = []
+              pos[0] = val
+              this.topic2wisdom(pos)
+            })
+          }
           /* get all topics of user except meta */
           this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
           await this.loadWisdom()
