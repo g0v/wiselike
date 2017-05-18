@@ -30,7 +30,7 @@
         .activity
           h3 Recent Activity
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
-            h4 {{o.profile}}
+            h4
               i.fa.fa-retweet
               |  {{o.title}}
               span.meta

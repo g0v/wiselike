@@ -24,7 +24,6 @@
 
       h1 {{ user.userName }}
       
-
       .category
         el-card.box-card(v-if='!CateEdit')
           h3 【領域選項，最多勾選五項】
@@ -62,6 +61,7 @@
 </template>
 
 <script>
+  import { Loading } from 'element-ui'
   import wisdomWrapper from './wisdom_wrapper.vue'
   import ask from './Ask.vue'
   import axios from 'axios'
@@ -133,7 +133,6 @@
       },
       EditCategory: function () {
         this.CateEdit = true
-        // console.log(this.user.userCategory)
         if (this.checkList[0].indexOf('尚未選擇領域') > -1) {
           this.checkList = this.checkList.slice(1)
         }
@@ -165,6 +164,9 @@
         return config.runtime.proxyHost + '/users/' + this.user.userId + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       Editimage () {
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料上傳中，請稍等' })
+        this.fullscreenLoading = true
         this.background = false
         let form = new FormData()
         let url = ''
@@ -174,9 +176,13 @@
           ((this.imagefile) && (this.user.userIcon = this.image))
           this.ImageEdit = true
           this.image = false
+          /* turn off full screen loading */
+          loadingInstance.close()
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         })
         .catch(function (error) {
+          /* turn off full screen loading */
+          loadingInstance.close()
           this.$message.error('更改失敗，請稍後重試。')
           console.log(error)
         })
