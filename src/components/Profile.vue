@@ -2,17 +2,9 @@
   .profile(v-if="user")
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
 
-    .info(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
+    .info.dim(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
 
       .avatar
-        div(v-if='!ImageEdit')
-          div(v-if='!image')
-            .el-icon-plus.avatar-uploader-icon
-            div: button.avatar_button(@click='ImageEdit = true, image = false') 取 消
-          div(v-else='')
-            div: img.avatar_image(:src='image')
-            button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
-            button.avatar_button(@click='ImageEdit = true, image = false') 取 消
         div(v-if='ImageEdit')
           img.avatar_image(:src="user.userIcon")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
@@ -21,6 +13,14 @@
           .background_button
             el-button(type='primary' @click='Editimage', v-if='background') 送 出
             el-button(@click='cancelBackground', v-if='background') 取 消
+        div(v-else)
+          div(v-if='!image')
+            .el-icon-plus.avatar-uploader-icon
+            div: button.avatar_button(@click='ImageEdit = true, image = false') 取 消
+          div(v-else)
+            div: img.avatar_image(:src='image')
+            button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
+            button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
       h1 {{ user.userName }}
       
@@ -314,10 +314,10 @@
     margin: 0 auto;
   }
   .checkbox {
-    background-color: rgba(0, 0, 0, 0.47);
-    color: #ffc233;
-    font-weight: 700;
-    margin:1em;
+    // background-color: rgba(0, 0, 0, 0.47);
+    // color: #ffc233;
+    // font-weight: 700;
+    margin: 0 1em;
     font-size: 1rem;
   }
   .hide_input {
@@ -377,20 +377,20 @@
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
     }
-    * {
-      position: relative;
-      z-index: 100;
-    }
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      z-index: 10;
-      background: rgba(gray, 0.5);
-    }
+    // * {
+    //   position: relative;
+    //   z-index: 100;
+    // }
+    // &::after {
+    //   content: "";
+    //   position: absolute;
+    //   left: 0;
+    //   right: 0;
+    //   top: 0;
+    //   bottom: 0;
+    //   z-index: 10;
+    //   background: rgba(gray, 0.5);
+    // }
   }
   .input {
     margin-bottom: 1em;

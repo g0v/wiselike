@@ -3,9 +3,14 @@
     el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
       el-form-item(prop='content')
         .reply
-          el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
+          el-tooltip(placement="bottom")
+            div(slot="content")
+              .meta
+                | You could use
+                a(href='http://commonmark.org/help/', target='_blank')  markdown
+                |  to write the posts!
+            el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
           el-button(type='primary', @click="submit('ruleForm')") 送 出
-
 </template>
 
 <script>
@@ -90,6 +95,7 @@
 </script>
 
 <style lang="scss">
+@import '../global.scss';
 .title {
   margin: 1em 0;
 }

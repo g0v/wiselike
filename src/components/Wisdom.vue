@@ -3,8 +3,8 @@
   el-card.box-card
     .clearfix(slot='header')
       h2
-        i.el-icon-caret-right
-        | {{content.title}}
+        i.fa.fa-long-arrow-right
+        |  {{content.title}}
 
     .text.item(v-for='(post, index) of content.posts', :class="{sereply: index >= 2}")
       p
@@ -161,6 +161,7 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
+@import 'node_modules/font-awesome/scss/font-awesome';
 // .wisdom {
 //   margin: 3em auto;
 //   max-width: $maxWidth;

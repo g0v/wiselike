@@ -1,5 +1,6 @@
-/* fontAwesome's font path */
+/* fontAwesome's font path (note: add @import to component) */
 $fa-font-path:"../../node_modules/font-awesome/fonts";
+// @import 'node_modules/font-awesome/scss/font-awesome';
 
 /* theme size */
 $maxWidth: 1120px;
@@ -11,12 +12,18 @@ $font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsof
 
 /* theme color */
 $bgcolor: #f1f1f1;
-$card: #ffffff;
+$card: #fff;
 $highlight: #1aabb3;
+$fontcolor: #333;
 
-h1, h2, h3, h4, h5, h6, p {
+a {
+  text-decoration: none;
+  color: $fontcolor;
+}
+
+h1, h2, h3, h4, h5, h6, p, .meta {
   font-family: $font;
-  letter-spacing: .8px;
+  letter-spacing: .5px;
   div.meta {
     font-weight: 400;
   }
@@ -27,17 +34,31 @@ h1, h2, h3, h4, h5, h6, p {
       content: ' - ';
     }
   }
-}
-
-a {
-  text-decoration: none;
-  color: dimgray;
+  a {
+    color: $highlight;
+  }
 }
 
 .shadow {
   box-shadow: 0 5px 6px -5px gray;
 }
 
+.dim {
+  * {
+    position: relative;
+    z-index: 100;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    background: rgba(dimgray, 0.5);
+  }
+}
 // ********************** transition
 
 .fade-enter,
