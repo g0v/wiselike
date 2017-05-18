@@ -6,6 +6,7 @@
     Foot.footer
 </template>
 <script>
+  import es6promise from 'es6-promise'
   import Navbar from './components/Header.vue'
   import Foot from './components/Footer.vue'
   import axios from 'axios'
@@ -109,6 +110,10 @@
     mounted: function () {
       this.getUser()
       this.getActivity()
+    },
+    created: function () {
+      /* axios for IE11 */
+      es6promise.polyfill()
     }
   }
 </script>

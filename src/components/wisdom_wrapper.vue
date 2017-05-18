@@ -21,8 +21,6 @@
 </template>
 
 <script>
-  import es6promise from 'es6-promise'
-  // require('es6-promise').polyfill()
   import axios from 'axios'
   import wisdom from './Wisdom.vue'
   import wisdomprivate from './Wisdom_Private.vue'
@@ -163,7 +161,8 @@
       }
     },
     created: function () {
-      es6promise.polyfill()
+      console.log(isNaN(this.$route.hash))
+      // es6promise.polyfill()
       this.getUserData()
       /* bind event 'scroll' to window */
       if (this.type === 'public') {
