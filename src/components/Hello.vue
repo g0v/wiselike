@@ -97,7 +97,6 @@
         this.selectedUsers = this.users
       },
       topics: function () {
-        // console.log(this.topics)
         this.activityTop10 = this.slice(this.topics, 10)
       }
     },
@@ -152,20 +151,6 @@
         line-height: 2em;
         padding: 0 5ch;
       }
-      // * {
-      //   position: relative;
-      //   z-index: 100;
-      // }
-      // &::after {
-      //   content: "";
-      //   position: absolute;
-      //   left: 0;
-      //   right: 0;
-      //   top: 0;
-      //   bottom: 0;
-      //   z-index: 10;
-      //   background: rgba(gray, 0.5);
-      // }
     }
   }
   .users { // Popular People
@@ -223,4 +208,5 @@
     }
   }
 }
+
 </style>

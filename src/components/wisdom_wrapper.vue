@@ -62,7 +62,7 @@
         /* route post */
          /* check userid ready */
         if (this.userId) {
-          await this.activityRoute()
+          await this.activityRoute(this.publicTopics)
           /* get all topics of user except meta */
           this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
           await this.loadWisdom()
@@ -74,6 +74,7 @@
       },
       activityRoute: async function () {
         if (this.type === 'public' && isNaN(this.$route.hash) === true) {
+          this.publicWisdoms = []
           this.routePosId = Number(this.$route.hash.replace(/#/, ''))
           axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
             let pos = []
@@ -178,9 +179,6 @@
       }
     },
     watch: {
-      $route: function () {
-        this.getUserData()
-      },
       userId: function () {
         this.getUserData()
       }
@@ -225,9 +223,6 @@
     .sereply{
       margin-left:3em;
     }
-    // .el-dialog__title{
-    //   font-size:1.5rem;
-    // }
     .el-textarea {
       display: inline-block;
       width: 88%;

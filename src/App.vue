@@ -3,6 +3,7 @@
     Navbar.header(:users="users")
     transition(name='fade', mode='out-in')
       router-view.view(:users="users", :topics="topicList", :tags="tags")
+    el-button.page-up(@click='goAnchor', icon='caret-top', size='large')
     Foot.footer
 </template>
 <script>
@@ -11,6 +12,7 @@
   import Foot from './components/Footer.vue'
   import axios from 'axios'
   import config from '../config'
+  import $ from 'jQuery'
   export default {
     name: 'app',
     components: {
@@ -25,6 +27,11 @@
       }
     },
     methods: {
+      goAnchor: function (anchor) {
+        $('html, body').animate({
+          scrollTop: 0
+        }, 1000)
+      },
       getUser: function () {
         axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
           var users = response.data
@@ -144,6 +151,22 @@
     // background: $lightblack;
     text-align: center;
     border-top: 1px solid lightgray;
+  }
+  .page-up {
+    background-color: rgba(255, 0, 116, 0.7);
+    position: fixed;
+    color: white;
+    right: 0.5em;
+    bottom: 1em;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 2.5em;
+    cursor: pointer;
+    font-size: 1.5em;
+    opacity: 1;
+    -webkit-transition: .3s;
+    transition: .3s;
+    z-index: 999;
   }
 }
 </style>

@@ -42,7 +42,12 @@ h1, h2, h3, h4, h5, h6, p, .meta {
 .shadow {
   box-shadow: 0 5px 6px -5px gray;
 }
-
+.sereply {
+  .thumbnail {
+    width: 10%;
+    height: 10%;
+  }
+}
 .dim {
   * {
     position: relative;
