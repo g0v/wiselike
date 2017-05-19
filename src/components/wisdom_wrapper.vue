@@ -62,14 +62,7 @@
         /* route post */
          /* check userid ready */
         if (this.userId) {
-          if (this.type === 'public' && isNaN(this.$route.hash) === true) {
-            this.routePosId = Number(this.$route.hash.replace(/#/, ''))
-            axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
-              let pos = []
-              pos[0] = val
-              this.topic2wisdom(pos)
-            })
-          }
+          await this.activityRoute()
           /* get all topics of user except meta */
           this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
           await this.loadWisdom()
@@ -77,6 +70,16 @@
           if (this.type === 'public') {
             window.addEventListener('scroll', this.hitLoad)
           }
+        }
+      },
+      activityRoute: async function () {
+        if (this.type === 'public' && isNaN(this.$route.hash) === true) {
+          this.routePosId = Number(this.$route.hash.replace(/#/, ''))
+          axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
+            let pos = []
+            pos[0] = val
+            this.topic2wisdom(pos)
+          })
         }
       },
       loadWisdom: async function (val) { // lazyload
@@ -106,7 +109,7 @@
           this.publicTopics = await this.getDiscussionCategory(this.profileLink + this.page)
         }
       },
-      getDiscussionCategory: function (url) { // 抓取作者全部的category
+      getDiscussionCategory: async function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
           axios.get(url).then((val) => {
             let topics = val['data']['topic_list']['topics']
@@ -128,7 +131,7 @@
           }
         })
       },
-      topic2wisdom: function (topics) {
+      topic2wisdom: async function (topics) {
         let wisdoms = []
         for (let topic of topics) {
           let wisdom = {
@@ -175,6 +178,9 @@
       }
     },
     watch: {
+      $route: function () {
+        this.getUserData()
+      },
       userId: function () {
         this.getUserData()
       }
