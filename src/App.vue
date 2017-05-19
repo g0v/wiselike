@@ -12,7 +12,7 @@
   import Foot from './components/Footer.vue'
   import axios from 'axios'
   import config from '../config'
-  import $ from 'jQuery'
+  import $ from 'jquery'
   export default {
     name: 'app',
     components: {
