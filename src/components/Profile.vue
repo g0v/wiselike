@@ -50,8 +50,7 @@
       .description
         h3(v-if='Introedit') {{ newDesc || user.userDescription}}
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
-
-      ask.ask(:userId = "user.userId", v-if='Introedit')
+    ask.ask(:userId = "user.userId", v-if='Introedit')
 
     wisdomWrapper(:type = '"private"', :userId = "user.userId")
     wisdomWrapper(:type = '"public"', :userId = "user.userId")
@@ -383,20 +382,6 @@
     p, h1 {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
     }
-    // * {
-    //   position: relative;
-    //   z-index: 100;
-    // }
-    // &::after {
-    //   content: "";
-    //   position: absolute;
-    //   left: 0;
-    //   right: 0;
-    //   top: 0;
-    //   bottom: 0;
-    //   z-index: 10;
-    //   background: rgba(gray, 0.5);
-    // }
   }
   .input {
     margin-bottom: 1em;
@@ -430,12 +415,16 @@
     flex-flow: row nowrap;
     align-items: center;
     justify-content: center;
+    margin-bottom: 2em;
   }
   .acenter {
     position: inherit !important;
   }
   .ask {
-    margin-top: 1em;
+    margin-left: calc(50% - 3em);
+    margin-top: -4em;
+    z-index: 999;
+    position: absolute;
   }
   .backgroundimage {
     position: absolute;
