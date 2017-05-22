@@ -1,6 +1,6 @@
 <template lang="pug">
   .header
-    el-menu.menu(mode='horizontal')
+    el-menu.menu(theme='dark', mode='horizontal')
       el-row.row-bg(type='flex', justify='space-between')
         el-col.left(:span='8')
           Search(:users="users")
@@ -8,17 +8,17 @@
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
           template(v-if="username === null")
-            el-button.login(@click.native="login") Login
+            el-button.login(@click.native="login") Sign in
           template(v-else)
             template(v-if="checkprofile === true")
               el-button.create(@click="CreateProfile") Create My Profile
             template(v-else)
-              //- el-button.create(@click="router") My Profile
-
-            span.create Hello, {{username}}
-            router-link.el-button.create(:to="'/user/' + username") My Profile
-            el-button.logout(@click="logout") Logout
-
+              el-submenu.operation(index='1') 
+                template(slot='title') Hello, {{username}}
+                el-menu-item(index='1-1')
+                  router-link(:to="'/user/' + username") My Profile
+                el-menu-item(index='1-2')
+                  .logout(@click="logout") Sign out
 
 </template>
 
@@ -128,7 +128,7 @@
 .header {
   .menu{
     padding: .5em 1em;
-    background: none;
+    // background: none;
   }
   .left {
     margin: auto;
@@ -152,6 +152,12 @@
     .create{
       margin-right: 6px;
       // text-decoration: none;
+    }
+    .operation{
+      float:right;
+    }
+    .hello{
+      float:right;
     }
   }
 }
