@@ -170,8 +170,8 @@
     top:70px;
     cursor: pointer;
   }
-.el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
+  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
     color: #48576a;
-}
+  }
 }
 </style>
