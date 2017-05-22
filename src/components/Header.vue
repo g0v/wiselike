@@ -16,7 +16,7 @@
               el-submenu.operation(index='1') 
                 template(slot='title') Hello, {{username}}
                 el-menu-item(index='1-1')
-                  router-link(:to="'/user/' + username") My Profile
+                  router-link.profile(:to="'/user/' + username") My Profile
                 el-menu-item(index='1-2')
                   .logout(@click="logout") Sign out
 
@@ -122,7 +122,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
 @import '../global.scss';
 .header {
@@ -159,6 +159,19 @@
     .hello{
       float:right;
     }
+    .profile{
+      display: block;
+    }
   }
+  .el-submenu.is-active .el-submenu__title {
+    border-bottom-color: #324157;
+  }
+  .el-menu--horizontal .el-submenu>.el-menu {
+    top:70px;
+    cursor: pointer;
+  }
+.el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
+    color: #48576a;
+}
 }
 </style>
