@@ -277,24 +277,24 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
           )
           axios.put(puturl, putformData1)
           .then((val) => {
-            res.status(200).send(val.data)
+            res.status(200).send(val)
           })
           .catch(error => {
-            res.status(433).send(error.response.data)
+            res.status(433).send(error.response)
           })
         })
         .catch(error => {
           console.log(error)
-          return res.status(error.response.status).json(error.response.data)
+          return res.status(error.response.status).json(error.response)
         })
       }
     })
     .catch(error => {
-      res.status(433).send(error.response.data)
+      res.status(433).send(error.response)
     })
   })
   .catch(error => {
-    res.status(433).send(error.response.data)
+    res.status(433).send(error.response)
   })
 
   return null
