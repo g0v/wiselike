@@ -96,11 +96,15 @@
           this.$refs[formName].validate((valid) => {
             if (valid) {
               let vm = this
-              axios({
-                method: 'post',
-                url: this.AskLink(this.local_storage),
-                data: {raw: this.ruleForm.content}
-              })
+              // let form = new FormData()
+              var form = new URLSearchParams()
+              form.append('raw', this.ruleForm.content)
+              // axios({
+              //   method: 'post',
+              //   url: this.AskLink(this.local_storage),
+              //   data: {raw: this.ruleForm.content}
+              // })
+              axios.post(this.AskLink(this.local_storage), form)
               .then(() => {
                 vm.sucessful()
                 vm.temporaryData()

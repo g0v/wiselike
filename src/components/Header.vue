@@ -8,16 +8,16 @@
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
           template(v-if="username === null")
-            el-menu-item.operation(@click.native="login") Sign in
+            el-menu-item.operation(@click.native="login", index='0') Sign in
           template(v-else)
             template(v-if="checkprofile === true")
-              el-menu-item.create(@click="CreateProfile") Create My Profile
+              el-menu-item.create(@click="CreateProfile", index='1') Create My Profile
             template(v-else)
-              el-submenu.operation(index='1') 
+              el-submenu.operation(index='2') 
                 template(slot='title') Hello, {{username}}
-                el-menu-item(index='1-1')
+                el-menu-item(index='2-1')
                   router-link.profile(:to="'/user/' + username") My Profile
-                el-menu-item(index='1-2')
+                el-menu-item(index='2-2')
                   .logout(@click="logout") Sign out
 
 </template>

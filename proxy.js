@@ -58,10 +58,16 @@ function getUsername (sso, sig) {
   return profile.username
 }
 const app = express()
-
-app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '1mb'}))
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
+// app.use(bodyParser.urlencoded({
+//   extended: false
+// }))
+// var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(cors())
-app.options('/*', cors())
+// app.use(bodyParser.text())
 
 // app.all('/*', function (req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*')
@@ -215,7 +221,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
   return null
 })
 
-app.post('/users/:user/wisdoms/topic', cors(), (req, res) => {
+app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
@@ -223,6 +229,9 @@ app.post('/users/:user/wisdoms/topic', cors(), (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
+  // console.log(req.body.raw)
+  // res.send(req.body)
+  // res.status(200).send(req)
   let topicid = req.query.topicid
   let type = req.query.type
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
