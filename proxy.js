@@ -431,23 +431,17 @@ app.post('/users/:user/introduction', (req, res) => {
     return res.json({'error': 'Please login'})
   }
   let Url = `${process.env.DISCOURSE_HOST}/posts/` + req.body.id
-  let introduction = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      'post[raw]': req.body.raw
-    }
-  )
-  // axios.put(Url, introduction)
-  axios({
-    method: 'put',
+  let introduction = {
+    api_key: process.env.DISCOURSE_API_KEY,
+    api_username: process.env.DISCOURSE_API_USERNAME,
+    'post[raw]': req.body.raw
+  }
+
+  Prequest.put({
     url: Url,
-    data: introduction,
-    headers: {
-      'content-type': 'application/x-www-form-urlencoded'
-    }
+    formData: introduction
   })
-  .then((val) => {
+  .then(function (val) {
     res.status(200).send(val.data)
   })
   .catch(error => {
