@@ -426,6 +426,7 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
 })
 
 app.post('/users/:user/introduction', (req, res) => {
+  res.header('Access-Control-Allow-Headers', 'Content-Type')
   if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
