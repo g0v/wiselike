@@ -140,10 +140,10 @@
           list[i] = 'wiselike-' + this.checkList[i]
         }
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
-        let form = new URLSearchParams()
-        form.append('categoryUrl', this.user.topic_url)
-        form.append('tag', list)
-        axios.post(this.CategoryLink(this.local_storage), form, config)
+        let formd = new URLSearchParams()
+        formd.append('categoryUrl', this.user.topic_url)
+        formd.append('tag', list)
+        axios.post(this.CategoryLink(this.local_storage), formd, config)
         .then(
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         )
