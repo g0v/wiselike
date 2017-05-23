@@ -97,6 +97,11 @@
             if (valid) {
               let vm = this
               // let form = new FormData()
+              var config = {
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                }
+              }
               var form = new URLSearchParams()
               form.append('raw', this.ruleForm.content)
               // axios({
@@ -104,7 +109,7 @@
               //   url: this.AskLink(this.local_storage),
               //   data: {raw: this.ruleForm.content}
               // })
-              axios.post(this.AskLink(this.local_storage), form)
+              axios.post(this.AskLink(this.local_storage), form, config)
               .then(() => {
                 vm.sucessful()
                 vm.temporaryData()
