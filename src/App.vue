@@ -153,7 +153,7 @@
     border-top: 1px solid lightgray;
   }
   .page-up {
-    background-color: rgba(255, 0, 116, 0.7);
+    background-color: #324157;
     position: fixed;
     color: white;
     right: 0.5em;

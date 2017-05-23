@@ -8,10 +8,10 @@
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
           template(v-if="username === null")
-            el-button.login(@click.native="login") Sign in
+            el-menu-item.operation(@click.native="login") Sign in
           template(v-else)
             template(v-if="checkprofile === true")
-              el-button.create(@click="CreateProfile") Create My Profile
+              el-menu-item.create(@click="CreateProfile") Create My Profile
             template(v-else)
               el-submenu.operation(index='1') 
                 template(slot='title') Hello, {{username}}
@@ -140,10 +140,8 @@
     .logo{
       font-family: 'Kadwa', serif;
       text-decoration: none;
-      // color: white;
       font-size: 2.2rem;
       color: gold;
-      // text-shadow: 1px 1px 0 lightgray;
     }
   }
   .right{
@@ -151,12 +149,9 @@
     margin: auto;
     .create{
       margin-right: 6px;
-      // text-decoration: none;
-    }
-    .operation{
       float:right;
     }
-    .hello{
+    .operation{
       float:right;
     }
     .profile{
@@ -169,6 +164,8 @@
   .el-menu--horizontal .el-submenu>.el-menu {
     top:70px;
     cursor: pointer;
+    right:17px;
+    min-width: 77%
   }
   .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
     color: #48576a;
