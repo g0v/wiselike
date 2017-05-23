@@ -167,10 +167,11 @@
         let loadingInstance = Loading.service({ fullscreen: true, text: '資料上傳中，請稍等' })
         this.fullscreenLoading = true
         this.background = false
+        let config = {headers: {'Content-Type': 'multipart/form-data'}}
         let form = new FormData()
         let url = ''
         this.imagefile ? (form.append('avatar', this.imagefile), url = this.imageLink(this.local_storage, 'avatar')) : (form.append('profile_background', this.backgroundimage), url = this.imageLink(this.local_storage, 'background'))
-        axios.post(url, form)
+        axios.post(url, form, config)
         .then((val) => {
           ((this.imagefile) && (this.user.userIcon = this.image))
           this.ImageEdit = true
