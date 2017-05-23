@@ -62,6 +62,12 @@ const app = express()
 app.use(bodyParser.json())
 app.use(cors())
 
+app.all('/*', function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
+
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
   // source: https://github.com/edhemphill/passport-discourse/blob/master/lib/discourse-sso.js
