@@ -80,6 +80,15 @@
           icon: ''
         }
         temporaryPost.content = this.ruleForm.content
+        temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
+        temporaryPost.author = this.local_storage.username
+        axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
+        .then((response) => {
+          var user = response.data.user
+          temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
+          this.content.posts.push(temporaryPost)
+          this.ruleForm.content = ''
+        })
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
@@ -130,6 +139,9 @@
     },
     created: function () {
       // console.log(this.content)
+      // let date = new Date()
+      // let D = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
+      // console.log(this.local_storage = window.localStorage)
     }
   }
 </script>
