@@ -58,22 +58,13 @@ function getUsername (sso, sig) {
   return profile.username
 }
 const app = express()
+
 app.use(bodyParser.json({limit: '1mb'}))
 app.use(bodyParser.urlencoded({
   extended: true
 }))
-// app.use(bodyParser.urlencoded({
-//   extended: false
-// }))
-// var urlencodedParser = bodyParser.urlencoded({ extended: false })
-app.use(cors())
-// app.use(bodyParser.text())
 
-// app.all('/*', function (req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-//   next()
-// })
+app.use(cors())
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
@@ -481,13 +472,14 @@ app.post('/users/:user/category', (req, res) => { // set user category
   .then(response => {
     let title = response.data.title
     let categoryid = response.data.category_id
+    let tag = req.body.tag.split(',')
     let category = querystring.stringify(
       {
         api_key: process.env.DISCOURSE_API_KEY,
         api_username: process.env.DISCOURSE_API_USERNAME,
         title: title,
         category_id: categoryid,
-        'tags[]': req.body.tag,
+        'tags[]': tag,
         featuredLink: ''
       }
     )

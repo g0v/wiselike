@@ -139,11 +139,11 @@
         for (let i in this.checkList) {
           list[i] = 'wiselike-' + this.checkList[i]
         }
-        axios({
-          method: 'post',
-          url: this.CategoryLink(this.local_storage),
-          data: {categoryUrl: this.user.topic_url, tag: list}
-        })
+        let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+        let form = new URLSearchParams()
+        form.append('categoryUrl', this.user.topic_url)
+        form.append('tag', list)
+        axios.post(this.CategoryLink(this.local_storage), form, config)
         .then(
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         )
@@ -230,11 +230,13 @@
           if (valid) {
             axios.get('https://talk.pdis.nat.gov.tw' + this.user.topic_url + '.json').then((val) => {
               this.id = val.data.post_stream.posts[0].id
-              axios({
-                method: 'post',
-                url: this.Link(this.local_storage),
-                data: {id: this.id, raw: this.ruleForm.introduceraw}
-              }).then(
+
+              let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+              let form = new URLSearchParams()
+              form.append('id', this.id)
+              form.append('raw', this.ruleForm.introduceraw)
+              axios.post(this.Link(this.local_storage), form, config)
+              .then(
                 this.Introedit = true,
                 this.sucessful()
               )

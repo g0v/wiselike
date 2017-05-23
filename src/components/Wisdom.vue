@@ -70,7 +70,6 @@
         return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.content.topicId + '&type=' + this.content.category
       },
       temporaryData: function () {
-        console.log(this.content.posts)
         let date = new Date()
         date.g
         let temporaryPost = {
@@ -97,18 +96,9 @@
             if (valid) {
               let vm = this
               // let form = new FormData()
-              var config = {
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                }
-              }
-              var form = new URLSearchParams()
+              let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+              let form = new URLSearchParams()
               form.append('raw', this.ruleForm.content)
-              // axios({
-              //   method: 'post',
-              //   url: this.AskLink(this.local_storage),
-              //   data: {raw: this.ruleForm.content}
-              // })
               axios.post(this.AskLink(this.local_storage), form, config)
               .then(() => {
                 vm.sucessful()

@@ -48,11 +48,6 @@
           type: 'warning'
         })
       },
-      // router: async function () {
-      //   this.$router.push({
-      //     path: '/user/' + this.username
-      //   })
-      // },
       Link: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },

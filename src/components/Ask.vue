@@ -59,11 +59,11 @@
             if (valid) {
               this.dialogFormVisible = false
               let vm = this
-              axios({
-                method: 'post',
-                url: this.AskLink(this.local_storage),
-                data: {title: this.ruleForm.title, raw: this.ruleForm.content}
-              })
+              let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+              let form = new URLSearchParams()
+              form.append('title', this.ruleForm.title)
+              form.append('raw', this.ruleForm.content)
+              axios.post(this.AskLink(this.local_storage), form, config)
               .then((val) => {
                 /* push mock data into wisdom */
                 vm.sucessful()
