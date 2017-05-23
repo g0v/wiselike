@@ -20,13 +20,6 @@ const storage = multer.diskStorage({
   }
 })
 
-// ask
-// reply
-// createprofile
-
-// avatar
-// background Image
-
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
@@ -65,33 +58,6 @@ function getUsername (sso, sig) {
   return profile.username
 }
 const app = express()
-
-// async function post (url, formData) {
-//   return new Promise((resolve, reject) => {
-//     axios.post(url, formData)
-//     .then((val) => {
-//       // console.log(val)
-//       resolve(val)
-//     })
-//     .catch(error => {
-//       // console.log(error.response)
-//       resolve(error)
-//     })
-//   })
-// }
-
-// async function put (url, formData) {
-//   return new Promise((resolve, reject) => {
-//     axios.put(url, formData)
-//     .then((val) => {
-//       resolve(val)
-//     })
-//     .catch(error => {
-//       console.log(error.response)
-//       resolve(error)
-//     })
-//   })
-// }
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -241,14 +207,6 @@ app.post('/users/:user/wisdoms', (req, res) => {
   })
   return null
 })
-
-// axios.post(ChangeNameUrl, ChangeNameformData)
-//     .then((val) => {
-//       res.status(200).send(val.data)
-//     })
-//     .catch(error => {
-//       res.status(433).send(error.response.data)
-//     })
 
 app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
@@ -480,7 +438,15 @@ app.post('/users/:user/introduction', (req, res) => {
       'post[raw]': req.body.raw
     }
   )
-  axios.put(Url, introduction)
+  // axios.put(Url, introduction)
+  axios({
+    method: 'put',
+    url: Url,
+    data: introduction,
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  })
   .then((val) => {
     res.status(200).send(val.data)
   })
