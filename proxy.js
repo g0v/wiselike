@@ -215,7 +215,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
   return null
 })
 
-app.post('/users/:user/wisdoms/topic', (req, res) => {
+app.post('/users/:user/wisdoms/topic', cors(), (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
