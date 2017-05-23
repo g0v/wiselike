@@ -231,70 +231,71 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   }
   // console.log(req.body.raw)
   // res.send(req.body)
-  // res.status(200).send(req)
-  let topicid = req.query.topicid
-  let type = req.query.type
-  let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + me + `/` + topicid + `.json`
-  let postformData = querystring.stringify(
-    {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
-      category: `${req.params.user}`,
-      topic_id: topicid,
-      raw: req.body.raw
-    }
-  )
-  axios.post(posturl, postformData)
-  .then((val) => {
-    let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-    let ChangeNameformData = querystring.stringify(
-      {
-        api_key: process.env.DISCOURSE_API_KEY,
-        api_username: process.env.DISCOURSE_API_USERNAME,
-        username: me,
-        'post_ids[]': val.data.id
-      }
-    )
-    /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData)
-    .then((val) => {
-      if (type === 'public') {
-        res.status(200).send(val.data)
-      } else {
-        /* change category */
-        axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
-        .then(response => {
-          let id = response.data.topic_list.topics[0].category_id
-          console.log(id)
-          let putformData1 = querystring.stringify(
-            {
-              api_key: process.env.DISCOURSE_API_KEY,
-              api_username: process.env.DISCOURSE_API_USERNAME,
-              category_id: id
-            }
-          )
-          axios.put(puturl, putformData1)
-          .then((val) => {
-            res.status(200).send(val.data)
-          })
-          .catch(error => {
-            res.status(433).send(error.response.data)
-          })
-        })
-        .catch(error => {
-          console.log(error)
-          return res.status(error.response.status).json(error.response.data)
-        })
-      }
-    })
-    .catch(error => {
-      res.status(433).send(error.response.data)
-    })
-  })
-  .catch(error => {
-    res.status(433).send(error.response.data)
-  })
+  res.send(req.body.raw)
+
+  // let topicid = req.query.topicid
+  // let type = req.query.type
+  // let posturl = `${process.env.DISCOURSE_HOST}/posts`
+  // let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + me + `/` + topicid + `.json`
+  // let postformData = querystring.stringify(
+  //   {
+  //     api_key: process.env.DISCOURSE_API_KEY,
+  //     api_username: process.env.DISCOURSE_API_USERNAME,
+  //     category: `${req.params.user}`,
+  //     topic_id: topicid,
+  //     raw: req.body.raw
+  //   }
+  // )
+  // axios.post(posturl, postformData)
+  // .then((val) => {
+  //   let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+  //   let ChangeNameformData = querystring.stringify(
+  //     {
+  //       api_key: process.env.DISCOURSE_API_KEY,
+  //       api_username: process.env.DISCOURSE_API_USERNAME,
+  //       username: me,
+  //       'post_ids[]': val.data.id
+  //     }
+  //   )
+  //   /* change owner */
+  //   axios.post(ChangeNameUrl, ChangeNameformData)
+  //   .then((val) => {
+  //     if (type === 'public') {
+  //       res.status(200).send(val.data)
+  //     } else {
+  //       /* change category */
+  //       axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
+  //       .then(response => {
+  //         let id = response.data.topic_list.topics[0].category_id
+  //         console.log(id)
+  //         let putformData1 = querystring.stringify(
+  //           {
+  //             api_key: process.env.DISCOURSE_API_KEY,
+  //             api_username: process.env.DISCOURSE_API_USERNAME,
+  //             category_id: id
+  //           }
+  //         )
+  //         axios.put(puturl, putformData1)
+  //         .then((val) => {
+  //           res.status(200).send(val.data)
+  //         })
+  //         .catch(error => {
+  //           res.status(433).send(error.response.data)
+  //         })
+  //       })
+  //       .catch(error => {
+  //         console.log(error)
+  //         return res.status(error.response.status).json(error.response.data)
+  //       })
+  //     }
+  //   })
+  //   .catch(error => {
+  //     res.status(433).send(error.response.data)
+  //   })
+  // })
+  // .catch(error => {
+  //   res.status(433).send(error.response.data)
+  // })
 
   return null
 })
