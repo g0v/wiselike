@@ -75,3 +75,23 @@ h1, h2, h3, h4, h5, h6, p, .meta {
 .fade-enter-active {
   transition: opacity .3s ease;
 }
+
+// ********************** onebox
+aside.onebox {
+  border:5px solid #e9e9e9;
+  padding: 12px 25px 12px 12px;
+  font-size: 0.9em;
+}
+
+aside.onebox .onebox-body img {
+  max-height: 170px;
+  max-width: 20%;
+  height: auto;
+  float: left;
+  margin-right: 10px;
+}
+
+aside.onebox .onebox-body {
+  clear: both;
+}
+
