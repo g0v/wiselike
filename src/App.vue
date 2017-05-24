@@ -98,6 +98,7 @@
             /* drop first topic which is actually meta */
             newTopics = newTopics.slice(1)
             this.topicList = newTopics
+            newTopics = newTopics.slice(0, 10)
             /* find the profile owner by category id from each topic */
             return Promise.all(newTopics.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
           }).then((responses) => {
