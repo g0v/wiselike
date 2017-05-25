@@ -3,7 +3,8 @@
     el-button(@click='dialogFormVisible = true', icon='edit', size='large')
       | 我要提問
     el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
-      el-alert(v-if='loginalert === true', title='請先登入', type='error', show-icon='')
+      .anonymously(v-if='loginalert === true') 您尚未登入網站，將以匿名提問！
+      //- el-alert(v-if='loginalert === true', title='請先登入', type='error', show-icon='')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
         el-form-item(prop='title', label='標題')
           el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
@@ -53,32 +54,27 @@
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
-        if (this.local_storage.length === 3) {
-          this.loginalert = false
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              this.dialogFormVisible = false
-              let vm = this
-              let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
-              let form = new URLSearchParams()
-              form.append('title', this.ruleForm.title)
-              form.append('raw', this.ruleForm.content)
-              axios.post(this.AskLink(this.local_storage), form, config)
-              .then((val) => {
-                /* push mock data into wisdom */
-                vm.sucessful()
-              })
-              .catch(function (error) {
-                console.log(error)
-                vm.error()
-              })
-            } else {
-              return false
-            }
-          })
-        } else {
-          this.loginalert = true
-        }
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.dialogFormVisible = false
+            let vm = this
+            let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+            let form = new URLSearchParams()
+            form.append('title', this.ruleForm.title)
+            form.append('raw', this.ruleForm.content)
+            axios.post(this.AskLink(this.local_storage), form, config)
+            .then((val) => {
+              /* push mock data into wisdom */
+              vm.sucessful()
+            })
+            .catch(function (error) {
+              console.log(error)
+              vm.error()
+            })
+          } else {
+            return false
+          }
+        })
       },
       error () {
         this.$message({
@@ -96,12 +92,24 @@
       }
     },
     created: function () {
+      this.local_storage = window.localStorage
+      if (this.local_storage.username === undefined) {
+        this.loginalert = true
+      }
     }
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .title {
   margin: 1em 0;
+}
+.ask {
+  .anonymously {
+    margin-top: -1em;
+    color: blue;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
 }
 </style>
