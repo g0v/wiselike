@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import Search from './Search.vue'
+  import Search from './Searchbar.vue'
   import config from '../../config'
   import axios from 'axios'
   export default {
