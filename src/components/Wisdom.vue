@@ -1,11 +1,16 @@
 <template lang="pug">
 
-  el-card.box-card
+  el-card.box-card(v-if="deleteCom")
     .clearfix(slot='header')
       h2
         i.fa.fa-long-arrow-right
         |  {{content.title}}
-
+        el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+          h2 確認刪除此問題？
+          div(style='text-align: right; margin: 0')
+            el-button(size='mini', type='text', @click='visible2 = false') 取消
+            el-button(type='primary', size='mini', @click='DeletePrivate') 确定
+        el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
     .text.item(v-for='(post, index) of content.posts', :class="{sereply: index >= 2}")
       p
         img.avatar(:src='post.icon')
@@ -40,7 +45,7 @@
   import config from '../../config'
   export default {
     name: 'wisdom',
-    props: ['content', 'userId'],
+    props: ['content', 'userId', 'type'],
     components: {
       wisdomprivate,
       wisdomreply
@@ -62,10 +67,33 @@
             { validator: CheckContent, trigger: 'blur' }
           ]
         },
-        local_storage: {}
+        local_storage: {},
+        visible2: false,
+        deleteQ: false,
+        deleteCom: true
       }
     },
     methods: {
+      DeleteLink: function (localstorage) {
+        return config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+      },
+      DeletePrivate: function () {
+        this.local_storage = window.localStorage
+        this.visible2 = false
+        let vm = this
+        let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+        let form = new URLSearchParams()
+        form.append('topid', this.content.topicId)
+        axios.post(this.DeleteLink(this.local_storage), form, config)
+        .then(() => {
+          vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+          this.deleteCom = false
+        })
+        .catch(function (error) {
+          console.log(error)
+          vm.error()
+        })
+      },
       AskLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.content.topicId + '&type=' + this.content.category
       },
@@ -137,7 +165,7 @@
       }
     },
     created: function () {
-      // console.log(this.content)
+      if (this.type === 'private') this.deleteQ = true
       // let date = new Date()
       // let D = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
       // console.log(this.local_storage = window.localStorage)
@@ -148,6 +176,12 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
+  .delete {
+    float: right;
+    color: white;
+    font-weight: 700;
+    background-color: red;
+  }
   .text {
     font-size: 1em;
   }

@@ -551,3 +551,27 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
   })
   return null
 })
+app.post('/users/:user/delete', (req, res) => { // set user category
+  if (!verification(req)) {
+    res.status(403)
+    return res.json({'error': 'Please login'})
+  }
+  let Url = `${process.env.DISCOURSE_HOST}/t/` + req.body.topid
+  let form = {
+    api_key: process.env.DISCOURSE_API_KEY,
+    api_username: process.env.DISCOURSE_API_USERNAME,
+    context: '/t/topic/' + req.body.topid
+  }
+  Prequest.delete({
+    url: Url,
+    formData: form
+  })
+  .then((val) => {
+    res.status(200).send(val.data)
+  })
+  .catch(error => {
+    res.status(433).send(error)
+  })
+  return null
+})
+

@@ -10,7 +10,7 @@
       p(v-else) 歷史問題
         span(style='float:right')
           el-switch(on-text="on", off-text="off", v-model="autoload")  auto-load
-      wisdom(v-for='(wisdom, idx) of publicWisdoms', :content='wisdom', :key='idx', :userId='userId')
+      wisdom(v-for='(wisdom, idx) of publicWisdoms', :content='wisdom', :type='type', :key='idx', :userId='userId')
 
     //- load more button
     el-button.loader(type="primary", v-on:click="loadWisdom", v-loading="loading", v-show="loadmore")
