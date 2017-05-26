@@ -13,8 +13,10 @@
             template(v-if="checkprofile === true")
               el-menu-item.create(@click="CreateProfile", index='1') Create My Profile
             template(v-else)
-              el-submenu.operation(index='2') 
-                template(slot='title') Hello, {{username}}
+              el-submenu.operation(index='2')
+                template(slot='title') 
+                  img.avatar(:src='userIcon') 
+                  span {{username}}
                 el-menu-item(index='2-1')
                   router-link.profile(:to="'/user/' + username") My Profile
                 el-menu-item(index='2-2')
@@ -36,6 +38,7 @@
       return {
         myKey: '',
         username: '',
+        userIcon: '',
         checkprofile: true,
         local_storage: ''
       }
@@ -55,6 +58,7 @@
         window.open(config.runtime.proxyHost + '/login')
       },
       logout: function (event) {
+        window.localStorage.removeItem('userIcon')
         window.localStorage.removeItem('username')
         window.localStorage.removeItem('sso')
         window.localStorage.removeItem('sig')
@@ -100,12 +104,12 @@
       this.username = window.localStorage.getItem('username')
       this.local_storage = window.localStorage
       window.addEventListener('message', (event) => {
-        // console.log(event)
         if (event.origin !== config.runtime.proxyHost) {
           console.log('Incorrect origin')
           return
         }
         this.username = event.data.username
+        window.localStorage.setItem('userIcon', this.userIcon)
         window.localStorage.setItem('username', event.data.username)
         window.localStorage.setItem('sso', event.data.sso)
         window.localStorage.setItem('sig', event.data.sig)
@@ -113,6 +117,12 @@
     },
     updated: function () {
       this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
+      this.username = window.localStorage.getItem('username')
+      for (var i in this.users) {
+        if (this.username === this.users[i].userId) {
+          this.userIcon = this.users[i].userIcon
+        }
+      }
     }
   }
 </script>
@@ -151,6 +161,14 @@
     }
     .profile{
       display: block;
+    }
+    .avatar{
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      margin-right: 5px;
+      vertical-align: middle; 
     }
   }
   .el-submenu.is-active .el-submenu__title {

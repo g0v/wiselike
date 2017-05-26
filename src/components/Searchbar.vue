@@ -2,9 +2,10 @@
   .Search
     el-input(placeholder="Search...", v-model='input', @keyup.enter.native='submit')
         el-select(v-model='select', slot='prepend', placeholder="Select")
-            el-option(label='Users', value='Users')
-            el-option(label='Issues', value='Issues')
-        Searchresult(:users='users')
+          el-option(label='Users', value='Users')
+          el-option(label='Issues', value='Issues')
+        el-button(slot='append', icon='search', @click='submit')
+        Searchresult(:users='users')  
 </template>
 
 <script>
@@ -34,15 +35,7 @@ export default {
         this.$router.push({path: str})
       }
     }
-  },
-  watch: {
-    // input: function () {
-    //   if (this.select === '1') {
-    //     this.search_string = this.input
-    //   }
-    // }
   }
-
 }
 </script>
 
