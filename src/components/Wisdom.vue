@@ -16,10 +16,8 @@
         el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
           h2 分享連結
           el-input(v-model='shareLink', placeholder='请输入内容')
-          //- el-button(type='primary', size='mini', @click='') 确定
-          //- div(style='text-align: right; margin: 0')
-          //-   el-button(size='mini', type='text', @click='shareVisible = false') 取消
-          //-   el-button(type='primary', size='mini', @click='') 确定
+          i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
+          el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
         el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
 
     .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
@@ -83,9 +81,12 @@
       }
     },
     methods: {
+      open: function () {
+        let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
+        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.shareLink) + '&title=' + this.topicContent.title + '&description=' + descrip, 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
+      },
       share: function () {
-        this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.content.topicId
-        console.log(this.content.topicId)
+        this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
       },
       DeleteLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
@@ -224,6 +225,9 @@
     color: white;
     font-weight: 700;
     background-color: red;
+  }
+  .fa6 {
+    font-size: 4em;
   }
   .share {
     float: right;
