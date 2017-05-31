@@ -12,6 +12,16 @@
             el-button(size='mini', type='text', @click='visible2 = false') 取消
             el-button(type='primary', size='mini', @click='DeletePrivate') 确定
         el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
+
+        el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
+          h2 分享連結
+          el-input(v-model='shareLink', placeholder='请输入内容')
+          //- el-button(type='primary', size='mini', @click='') 确定
+          //- div(style='text-align: right; margin: 0')
+          //-   el-button(size='mini', type='text', @click='shareVisible = false') 取消
+          //-   el-button(type='primary', size='mini', @click='') 确定
+        el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
+
     .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
       p
         img.avatar(:src='post.icon')
@@ -65,12 +75,18 @@
         },
         local_storage: {},
         visible2: false,
+        shareVisible: false,
         deleteQ: false,
         deleteCom: true,
-        topicContent: {}
+        topicContent: {},
+        shareLink: ''
       }
     },
     methods: {
+      share: function () {
+        this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.content.topicId
+        console.log(this.content.topicId)
+      },
       DeleteLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
@@ -208,6 +224,15 @@
     color: white;
     font-weight: 700;
     background-color: red;
+  }
+  .share {
+    float: right;
+    color: white;
+    font-weight: 700;
+    background-color: #324157;
+  }
+  .shareBox{
+    width:300px;
   }
   .text {
     font-size: 1em;
