@@ -53,7 +53,7 @@
 
       ask.ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdom(:type='"top"', :userId='user.userId', :topicId='topId')
+    wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
     wisdomWrapper(:type = '"private"', :userId = "user.userId", v-if='selfkey')
     wisdomWrapper(:type = '"public"', :userId = "user.userId")
 
