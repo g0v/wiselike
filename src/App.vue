@@ -87,20 +87,22 @@
             }
             tags.unshift(all)
             this.tags = tags
-            let newTopics = topics.map((topic) => {
+            let newTopicsFilter = []
+            topics.map((topic) => {
               let newTopic = {}
               newTopic.title = topic.title
               newTopic.userName = topic.last_poster_username
               newTopic.id = topic.id
               newTopic.category = topic.category_id
-              return newTopic
+              /* filter posts_count > 1 */
+              if (topic.posts_count > 1 && newTopicsFilter.length < 10) {
+                newTopicsFilter.push(newTopic)
+              }
             })
             /* drop first topic which is actually meta */
-            newTopics = newTopics.slice(1)
-            this.topicList = newTopics.slice(0, 10)
-            newTopics = newTopics.slice(0, 10)
+            this.topicList = newTopicsFilter
             /* find the profile owner by category id from each topic */
-            return Promise.all(newTopics.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
+            return Promise.all(newTopicsFilter.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
           }).then((responses) => {
             for (let res of responses) {
               /* sort the topics and then get the oldest one(meta) */
