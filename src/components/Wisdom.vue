@@ -1,17 +1,18 @@
 <template lang="pug">
 
-  el-card.box-card(v-if="deleteCom")
+  el-card.box-card(v-if="deleteCom && topicContent", :class='[type]')
     .clearfix(slot='header')
       h2
         i.fa.fa-long-arrow-right
-        |  {{content.title}}
+        |  {{topicContent.title}}
+        //- delete button
         el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
           h2 確認刪除此問題？
           div(style='text-align: right; margin: 0')
             el-button(size='mini', type='text', @click='visible2 = false') 取消
             el-button(type='primary', size='mini', @click='DeletePrivate') 确定
         el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
-    .text.item(v-for='(post, index) of content.posts', :class="{sereply: index >= 2}")
+    .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
       p
         img.avatar(:src='post.icon')
         span.el-dialog__title
@@ -38,17 +39,12 @@
 </template>
 
 <script>
-  // import axios from 'axios'
-  import wisdomprivate from './Wisdom_Private.vue'
-  import wisdomreply from './Wisdom_Reply.vue'
   import axios from 'axios'
   import config from '../../config'
   export default {
     name: 'wisdom',
-    props: ['content', 'userId', 'type'],
+    props: ['userId', 'type', 'topicId'],
     components: {
-      wisdomprivate,
-      wisdomreply
     },
     data () {
       var CheckContent = (rule, value, callback) => {
@@ -70,7 +66,8 @@
         local_storage: {},
         visible2: false,
         deleteQ: false,
-        deleteCom: true
+        deleteCom: true,
+        topicContent: {}
       }
     },
     methods: {
@@ -166,9 +163,39 @@
     },
     created: function () {
       if (this.type === 'private') this.deleteQ = true
-      // let date = new Date()
-      // let D = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
-      // console.log(this.local_storage = window.localStorage)
+
+      /* fetch topic by id */
+      let id = this.topicId
+      axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
+        .then((topic) => {
+          /* convert topic to wisdom */
+          let wisdom = {
+            posts: [],
+            title: '',
+            topicId: 0,
+            category: ''
+          }
+          for (let post of topic.data.post_stream.posts) {
+            let wisdomPost = {
+              content: '',
+              author: '',
+              time: '',
+              icon: ''
+            }
+            wisdomPost.content = post.cooked
+            wisdomPost.author = post.username
+            wisdomPost.time = post.created_at.replace(/T.*/, '')
+            if (post['avatar_template'].indexOf('https:') === -1) {
+              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
+            }
+            wisdom.posts.push(wisdomPost)
+          }
+          wisdom.title = topic.data.title
+          wisdom.topicId = topic.data.id
+          wisdom.category = this.type
+          /* save the wisdom */
+          this.topicContent = wisdom
+        })
     }
   }
 </script>
@@ -196,6 +223,15 @@
     line-height: 2em;
     width: 100%;
     margin-bottom: 2em;
+    &.top {
+      border-left: 2px solid salmon;
+    }
+    &.public {
+      border-left: 2px solid mediumaquamarine;
+    }
+    &.private {
+      border-left: 2px solid cyan;
+    }
     img.avatar {
       width: 5%;
       vertical-align: middle;
@@ -208,15 +244,24 @@
     .sereply{
       margin-left:3em;
     }
-    .el-textarea {
-      display: inline-block;
-      width: 88%;
-      vertical-align: bottom;
-    }
+    // .el-textarea {
+    //   display: inline-block;
+    //   width: 88%;
+    //   vertical-align: bottom;
+    // }
   }
   .loader {
     font-size: large;
     height: 3em;
     width: 100%;
   }
+
+.reply {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+  .el-button {
+    margin: 0 0 0 1ch;
+  }
+}
 </style>

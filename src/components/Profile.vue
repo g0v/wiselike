@@ -23,7 +23,7 @@
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
       h1 {{ user.userName }}
-      
+
       .category
         el-card.box-card(v-if='!CateEdit')
           h3 【領域選項，最多勾選五項】
@@ -50,9 +50,11 @@
       .description
         h3(v-if='Introedit') {{ newDesc || user.userDescription}}
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
-    ask.ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdomWrapper(:type = '"private"', :userId = "user.userId")
+      ask.ask(:userId = "user.userId", v-if='Introedit')
+
+    wisdom(:type='"top"', :userId='user.userId', :topicId='topId')
+    wisdomWrapper(:type = '"private"', :userId = "user.userId", v-if='selfkey')
     wisdomWrapper(:type = '"public"', :userId = "user.userId")
 
   .profile(v-else)
@@ -61,6 +63,7 @@
 
 <script>
   import { Loading } from 'element-ui'
+  import wisdom from './Wisdom.vue'
   import wisdomWrapper from './wisdom_wrapper.vue'
   import ask from './Ask.vue'
   import axios from 'axios'
@@ -69,6 +72,7 @@
     name: 'profile',
     props: ['users'],
     components: {
+      wisdom,
       wisdomWrapper,
       ask
     },
@@ -252,7 +256,7 @@
       ShowYourself: function () {
         this.local_storage = window.localStorage
         this.ruleForm.introduceraw = this.user.userDescription
-        this.local_storage.username === this.user.userId ? this.selfkey = true : this.selfkey = false
+        this.selfkey = this.local_storage.username === this.user.userId
         this.ProfileBackroundImage = this.user.userBg
         if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
           this.checkList[0] = '尚未選擇領域'
@@ -293,6 +297,9 @@
         } else {
           return this.users[pos]
         }
+      },
+      topId: function () {
+        return Number(this.$route.hash.replace(/#/, ''))
       }
     }
   }
@@ -311,7 +318,7 @@
   .box-card {
     color: black;
     max-width: $maxWidth;
-    margin: 0 auto;
+    margin: 1em auto;
   }
   .catagoryInput {
     max-width: 30%;
@@ -423,12 +430,12 @@
   .acenter {
     position: inherit !important;
   }
-  .ask {
-    margin-left: calc(50% - 3em);
-    margin-top: -4em;
-    z-index: 999;
-    position: absolute;
-  }
+  // .ask {
+  //   margin-left: calc(50% - 3em);
+  //   margin-top: -4em;
+  //   z-index: 999;
+  //   position: absolute;
+  // }
   .backgroundimage {
     position: absolute;
     right: 1em;
