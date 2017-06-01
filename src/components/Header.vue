@@ -56,6 +56,7 @@
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
+        this.setlocalstorage()
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
@@ -98,23 +99,26 @@
           message: '成功建立 Profile。',
           type: 'success'
         })
+      },
+      setlocalstorage: function () {
+        this.username = window.localStorage.getItem('username')
+        this.local_storage = window.localStorage
+        window.addEventListener('message', (event) => {
+          if (event.origin !== config.runtime.proxyHost) {
+            console.log('Incorrect origin')
+            return
+          }
+          this.username = event.data.username
+          window.localStorage.setItem('userIcon', this.userIcon)
+          window.localStorage.setItem('username', event.data.username)
+          window.localStorage.setItem('sso', event.data.sso)
+          window.localStorage.setItem('sig', event.data.sig)
+          console.log(event.data.username)
+        }, false)
       }
     },
     mounted: function () {
-      this.username = window.localStorage.getItem('username')
-      this.local_storage = window.localStorage
-      window.addEventListener('message', (event) => {
-        if (event.origin !== config.runtime.proxyHost) {
-          console.log('Incorrect origin')
-          return
-        }
-        this.username = event.data.username
-        window.localStorage.setItem('userIcon', this.userIcon)
-        window.localStorage.setItem('username', event.data.username)
-        window.localStorage.setItem('sso', event.data.sso)
-        window.localStorage.setItem('sig', event.data.sig)
-        console.log(event.data.username)
-      }, false)
+      this.setlocalstorage()
     },
     updated: function () {
       this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
