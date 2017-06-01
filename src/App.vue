@@ -146,14 +146,16 @@
     // border-bottom: 1px solid lightgray;
   }
   .view {
-    flex: 1 1 0;
+    flex: 1 1 auto; /* ie11 hates 0px */
     // padding: 0 0 0 0;
+
   }
   .footer {
     flex: 0 0 7rem;
     // background: $lightblack;
     text-align: center;
     border-top: 1px solid lightgray;
+    width: 100%; /* fix for ie11 */
   }
   .page-up {
     background-color: #324157;

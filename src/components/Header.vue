@@ -7,20 +7,20 @@
         el-col.center(:span='8')
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:span='8')
-          template(v-if="username === null")
-            el-menu-item.operation(@click.native="login", index='0') Sign in
+          //- template(v-if="username === null")
+          el-menu-item.operation(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
-            template(v-if="checkprofile === true")
-              el-menu-item.create(@click="CreateProfile", index='1') Create My Profile
-            template(v-else)
-              el-submenu.operation(index='2')
-                template(slot='title') 
-                  img.avatar(:src='userIcon') 
-                  span {{username}}
-                el-menu-item(index='2-1')
-                  router-link.profile(:to="'/user/' + username") My Profile
-                el-menu-item(index='2-2')
-                  .logout(@click="logout") Sign out
+            //- template(v-if="checkprofile === true")
+            el-menu-item.create(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
+            //- template(v-else)
+            el-submenu.operation(v-else, index='2')
+              template(slot='title')
+                img.avatar(:src='userIcon')
+                span {{username}}
+              el-menu-item(index='2-1')
+                router-link.profile(:to="'/user/' + username") My Profile
+              el-menu-item(index='2-2')
+                .logout(@click="logout") Sign out
 
 </template>
 
@@ -168,20 +168,20 @@
       height: 20px;
       border-radius: 4px;
       margin-right: 5px;
-      vertical-align: middle; 
+      vertical-align: middle;
     }
   }
-  .el-submenu.is-active .el-submenu__title {
-    border-bottom-color: #324157;
-  }
-  .el-menu--horizontal .el-submenu>.el-menu {
-    top:70px;
-    cursor: pointer;
-    right:17px;
-    min-width: 77%
-  }
-  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
-    color: #48576a;
-  }
+  // .el-submenu.is-active .el-submenu__title {
+  //   border-bottom-color: #324157;
+  // }
+  // .el-menu--horizontal .el-submenu>.el-menu {
+  //   top:70px;
+  //   cursor: pointer;
+  //   right:17px;
+  //   min-width: 77%
+  // }
+  // .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
+  //   color: #48576a;
+  // }
 }
 </style>

@@ -1,7 +1,7 @@
 <template lang="pug">
   el-row.component
     el-col.logos(:lg='8', :sm='24')
-      //- router-link.logo(to='/', exact='', title="Home")
+      router-link.logo(to='/', exact='', title="Home")
         img(src='../assets/logo.png', alt='logo')
       a.logo(href="https://github.com/g0v/wiselike", title="Github", target="_blank")
         i.fa.fa-github
@@ -58,7 +58,7 @@
   }
   .license {
     padding: 1em;
-    font-size: 0.5em;
+    font-size: 0.8rem;
     color: gray;
   }
 }
