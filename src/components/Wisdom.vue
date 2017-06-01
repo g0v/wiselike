@@ -18,10 +18,10 @@
         el-input(v-model='shareLink', placeholder='请输入内容')
         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
       el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
-
-      img.avatar(:src='topicContent.posts[0].icon')
-      span.authorName {{topicContent.posts[0].author}} 提問：
-      div.content(v-html='topicContent.posts[0].content')
+      div(v-if='topicContent.posts !== undefined')
+        img.avatar(:src='topicContent.posts[0].icon')
+        span.authorName {{topicContent.posts[0].author}} 提問：
+        div.content(v-html='topicContent.posts[0].content')
 
     div.line
 
