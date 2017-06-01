@@ -1,36 +1,38 @@
 <template lang="pug">
- .wisdom
-  div.card
-    div.title
-      i.fa.fa-long-arrow-right
-      | {{topicContent.title}}
+.wisdom
+  .card(:class='[type]')
+    .title
+      i.fa.fa-lg.fa-question-circle
+      span  {{topicContent.title}}
 
-    div.question
+    .question
       el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
         h2 確認刪除此問題？
         div(style='text-align: right; margin: 0')
           el-button(size='mini', type='text', @click='visible2 = false') 取消
           el-button(type='primary', size='mini', @click='DeletePrivate') 确定
-      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
+      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
 
       el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
         h2 分享連結
         el-input(v-model='shareLink', placeholder='请输入内容')
         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
-      el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
-      div(v-if='topicContent.posts !== undefined')
-        img.avatar(:src='topicContent.posts[0].icon')
-        span.authorName {{topicContent.posts[0].author}} 提問：
-        div.content(v-html='topicContent.posts[0].content')
+      el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分 享
 
-    div.line
+      //- div(v-if='topicContent.posts')
+      //-   .authorName
+      //-     img.avatar(:src='topicContent.posts[0].icon')
+      //-     .meta {{topicContent.posts[0].author}}
+      //-   .content(v-html='topicContent.posts[0].content')
 
-    div.reply(v-for='(post, index) of topicContent.posts', v-if='index > 0')
-      div
+    //- hr.line
+
+    .reply(v-for='(post, index) of topicContent.posts')
+      .authorName
         img.avatar(:src='post.icon')
-        span.authorName {{post.author}} 回應：
-        div.content(v-html='post.content')
-    
+        .meta {{post.author}}
+      .content(v-html='post.content')
+
     el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
       el-form-item(prop='content')
         .reply
@@ -42,50 +44,6 @@
                 |  to write the posts!
             el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
           el-button(type='primary', @click="submit('ruleForm')") 送 出
-
-  //- el-card.box-card(v-if="deleteCom && topicContent", :class='[type]')
-  //-   .clearfix(slot='header')
-  //-     h2
-  //-       i.fa.fa-long-arrow-right
-  //-       |  {{topicContent.title}}
-  //-       //- delete button
-  //-       el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
-  //-         h2 確認刪除此問題？
-  //-         div(style='text-align: right; margin: 0')
-  //-           el-button(size='mini', type='text', @click='visible2 = false') 取消
-  //-           el-button(type='primary', size='mini', @click='DeletePrivate') 确定
-  //-       el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
-
-  //-       el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
-  //-         h2 分享連結
-  //-         el-input(v-model='shareLink', placeholder='请输入内容')
-  //-         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
-  //-       el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
-
-  //-   .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
-  //-     p
-  //-       img.avatar(:src='post.icon')
-  //-       span.el-dialog__title
-  //-         | {{post.author}}
-  //-         span(v-if="index === 0")
-  //-           |  提問
-  //-         span(v-else)
-  //-           |  回應
-  //-           sup  {{post.time}}
-  //-     p.sereply(v-html='post.content')
-
-  //-   //- wisdomreply(:userId='userId', :topicid='content.topicId', :type='content.category')
-  //-   el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
-  //-     el-form-item(prop='content')
-  //-       .reply
-  //-         el-tooltip(placement="bottom")
-  //-           div(slot="content")
-  //-             .meta
-  //-               | You could use
-  //-               a(href='http://commonmark.org/help/', target='_blank')  markdown
-  //-               |  to write the posts!
-  //-           el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
-  //-         el-button(type='primary', @click="submit('ruleForm')") 送 出
 </template>
 
 <script>
@@ -276,51 +234,53 @@
       margin-bottom: 2em;
       font-family: $font;
       .title {
-        background-color: #324157;
         font-size: 1.5rem;
-        color: white;
-        padding: 0.5em;
+        padding: .5em 0 0 1em;
         font-weight: 700;
       }
       .question {
-        padding: 1.5em;
-        font-size: 1.2rem;
+        text-align: right;
+        padding: 0 1em;
       }
-      .content {
-        line-height: 2.5rem;
-        margin: 0 2em 0 2em;
-      }
-      .avatar {
-        width: 70px;
-        vertical-align: middle;
-        margin-right: 1em;
-        border-radius: 50%;
-      }
-      .authorName {
-        font-size: 1.5rem;
-        font-weight: 700;
+      .reply {
+        padding: 0 3em;
+        margin: 0 0 1em 0;
+        position: relative;
+        .authorName {
+          position: absolute;
+          text-align: center;
+          left: 1em;
+          .avatar {
+            width: 70px;
+            border-radius: 50%;
+            vertical-align: middle;
+          }
+        }
+        .content {
+          border-left: 5px solid lightgray;
+          padding: 0 0 0 1ch;
+          margin: 0 0 2em 3.5em;
+          line-height: 2rem;
+        }
       }
       .line {
         border: 1px solid #d1dbe5;
       }
-      .reply {
-        padding: 1.5em;
-      }
     }
   }
   .delete {
-    float: right;
+    // float: right;
     color: white;
-    font-weight: 700;
+    // font-weight: 700;
     background-color: red;
   }
   .fa6 {
     font-size: 4em;
   }
   .share {
-    float: right;
+    // float: right;
     color: white;
-    font-weight: 700;
+    // font-weight: 700;
     background-color: #324157;
   }
   .shareBox{
@@ -336,25 +296,25 @@
       background-color: linen;
       padding: 20px;
   }
-  .box-card {
+  .card {
     line-height: 2em;
     width: 100%;
     margin-bottom: 2em;
     &.top {
-      border-left: 2px solid salmon;
+      border: 2px solid salmon;
     }
-    &.public {
-      border-left: 2px solid mediumaquamarine;
-    }
-    &.private {
-      border-left: 2px solid cyan;
-    }
-    img.avatar {
-      width: 5%;
-      vertical-align: middle;
-      margin-right: 1em;
-      border-radius: 50%;
-    }
+    // &.public {
+    //   border-left: 2px solid mediumaquamarine;
+    // }
+    // &.private {
+    //   border-left: 2px solid cyan;
+    // }
+    // img.avatar {
+    //   width: 5%;
+    //   vertical-align: middle;
+    //   margin-right: 1em;
+    //   border-radius: 50%;
+    // }
     .el-dialog__title{
       margin-right: 1em;
     }
@@ -380,5 +340,6 @@
   .el-button {
     margin: 0 0 0 1ch;
   }
+
 }
 </style>

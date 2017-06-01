@@ -53,9 +53,9 @@
 
       ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
-    wisdomWrapper(:type = '"private"', :userId = "user.userId", v-if='selfkey')
-    wisdomWrapper(:type = '"public"', :userId = "user.userId", :topicId='topId')
+    wisdom.wrapped(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
+    wisdomWrapper.wrapped(:type = '"private"', :userId = "user.userId", v-if='selfkey')
+    wisdomWrapper.wrapped(:type = '"public"', :userId = "user.userId", :topicId='topId')
 
   .profile(v-else)
     h1 no such user
@@ -441,5 +441,9 @@
     position: absolute;
     right: 1em;
   }
+}
+.wrapped {
+  margin: 2em auto;
+  max-width: $maxWidth;
 }
 </style>

@@ -201,8 +201,8 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 .component {
-  margin: 2em auto;
-  max-width: $maxWidth;
+  // margin: 2em auto;
+  // max-width: $maxWidth;
   @media all and (max-width: $breakpoint) {
     margin: 2em 3ch;
   }
