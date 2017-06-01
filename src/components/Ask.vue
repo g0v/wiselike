@@ -1,8 +1,10 @@
 <template lang="pug">
   .ask
+
     el-button(@click='dialogFormVisible = true', icon='edit', size='large')
       | 我要提問
-    el-dialog(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
+
+    el-dialog.askDialog.dim(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       .anonymously(v-if='loginalert === true') 您尚未登入網站，將以匿名提問！
       //- el-alert(v-if='loginalert === true', title='請先登入', type='error', show-icon='')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
@@ -101,15 +103,15 @@
 </script>
 
 <style lang="scss" scoped>
-.title {
-  margin: 1em 0;
-}
 .ask {
   .anonymously {
     margin-top: -1em;
     color: blue;
     font-size: 1.2rem;
     font-weight: 700;
+  }
+  .askDialog {
+    position: fixed;
   }
 }
 </style>
