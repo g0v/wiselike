@@ -252,7 +252,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     /* change owner */
     axios.post(ChangeNameUrl, ChangeNameformData)
     .then((val) => {
-      if (type === 'public') {
+      if (type === 'public' || type === 'top') {
         res.status(200).send(val.data)
       } else {
         /* change category */

@@ -55,7 +55,7 @@
 
     wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
     wisdomWrapper(:type = '"private"', :userId = "user.userId", v-if='selfkey')
-    wisdomWrapper(:type = '"public"', :userId = "user.userId")
+    wisdomWrapper(:type = '"public"', :userId = "user.userId", :topicId='topId')
 
   .profile(v-else)
     h1 no such user

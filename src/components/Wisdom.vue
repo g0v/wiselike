@@ -17,7 +17,6 @@
           h2 分享連結
           el-input(v-model='shareLink', placeholder='请输入内容')
           i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
-          el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
         el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
 
     .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
@@ -109,7 +108,7 @@
         })
       },
       AskLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.content.topicId + '&type=' + this.content.category
+        return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
       },
       temporaryData: function () {
         let date = new Date()
@@ -127,7 +126,7 @@
         .then((response) => {
           var user = response.data.user
           temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
-          this.content.posts.push(temporaryPost)
+          this.topicContent.posts.push(temporaryPost)
           this.ruleForm.content = ''
         })
       },
@@ -180,7 +179,6 @@
     },
     created: function () {
       if (this.type === 'private') this.deleteQ = true
-
       /* fetch topic by id */
       let id = this.topicId
       axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
@@ -220,6 +218,11 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
+  // .clearfix {
+  //   background-color: #324157;
+  //   padding: 0.1em;
+  //   color: white;
+  // }
   .delete {
     float: right;
     color: white;

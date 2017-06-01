@@ -29,7 +29,7 @@
   // import wisdomreply from './Wisdom_Reply.vue'
   export default {
     name: 'wisdomWrapper',
-    props: ['userId', 'type'],
+    props: ['userId', 'type', 'topicId'],
     components: {
       wisdom
       // wisdomprivate
@@ -60,7 +60,7 @@
         Object.assign(this.$data, this.$options.data())
         /* check user */
         this.local_storage = window.localStorage
-
+        console.log(this.topicId)
         // if (this.type === 'private' && this.local_storage.username !== this.userId) return
 
         /* check userid ready */
