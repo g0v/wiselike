@@ -51,7 +51,7 @@
         h3(v-if='Introedit') {{ newDesc || user.userDescription}}
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
 
-      ask.ask(:userId = "user.userId", v-if='Introedit')
+    ask.ask(:userId = "user.userId", v-if='Introedit')
 
     wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
     wisdomWrapper(:type = '"private"', :userId = "user.userId", v-if='selfkey')
@@ -430,12 +430,12 @@
   .acenter {
     position: inherit !important;
   }
-  // .ask {
-  //   margin-left: calc(50% - 3em);
-  //   margin-top: -4em;
-  //   z-index: 999;
-  //   position: absolute;
-  // }
+  .ask {
+    margin-left: calc(50% - 3em);
+    margin-top: -4em;
+    z-index: 999;
+    position: absolute;
+  }
   .backgroundimage {
     position: absolute;
     right: 1em;

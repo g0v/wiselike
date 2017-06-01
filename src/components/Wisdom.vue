@@ -83,7 +83,7 @@
     methods: {
       open: function () {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
-        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.shareLink) + '&title=' + this.topicContent.title + '&description=' + descrip, 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
+        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.shareLink) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
       },
       share: function () {
         this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
