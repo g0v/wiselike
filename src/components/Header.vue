@@ -113,6 +113,7 @@
         window.localStorage.setItem('username', event.data.username)
         window.localStorage.setItem('sso', event.data.sso)
         window.localStorage.setItem('sig', event.data.sig)
+        console.log(event.data.username)
       }, false)
     },
     updated: function () {

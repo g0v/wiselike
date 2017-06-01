@@ -60,7 +60,6 @@
         Object.assign(this.$data, this.$options.data())
         /* check user */
         this.local_storage = window.localStorage
-        console.log(this.topicId)
         // if (this.type === 'private' && this.local_storage.username !== this.userId) return
 
         /* check userid ready */
@@ -115,8 +114,14 @@
           axios.get(url).then((val) => {
             let topics = val['data']['topic_list']['topics']
             /* drop first meta topic */
+            let topicsFilter = []
             topics = topics.slice(1)
-            resolve(topics)
+            topics.filter((id) => {
+              if (this.topicId !== id.id) {
+                topicsFilter.push(id)
+              }
+            })
+            resolve(topicsFilter)
           })
         })
       },
