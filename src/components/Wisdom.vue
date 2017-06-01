@@ -1,37 +1,36 @@
 <template lang="pug">
+ .wisdom
+  div.card
+    div.title
+      i.fa.fa-long-arrow-right
+      | {{topicContent.title}}
 
-  el-card.box-card(v-if="deleteCom && topicContent", :class='[type]')
-    .clearfix(slot='header')
-      h2
-        i.fa.fa-long-arrow-right
-        |  {{topicContent.title}}
-        //- delete button
-        el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
-          h2 確認刪除此問題？
-          div(style='text-align: right; margin: 0')
-            el-button(size='mini', type='text', @click='visible2 = false') 取消
-            el-button(type='primary', size='mini', @click='DeletePrivate') 确定
-        el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
+    div.question
+      el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+        h2 確認刪除此問題？
+        div(style='text-align: right; margin: 0')
+          el-button(size='mini', type='text', @click='visible2 = false') 取消
+          el-button(type='primary', size='mini', @click='DeletePrivate') 确定
+      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
 
-        el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
-          h2 分享連結
-          el-input(v-model='shareLink', placeholder='请输入内容')
-          i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
-        el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
+      el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
+        h2 分享連結
+        el-input(v-model='shareLink', placeholder='请输入内容')
+        i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
+      el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
 
-    .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
-      p
+      img.avatar(:src='topicContent.posts[0].icon')
+      span.authorName {{topicContent.posts[0].author}} 提問：
+      div.content(v-html='topicContent.posts[0].content')
+
+    div.line
+
+    div.reply(v-for='(post, index) of topicContent.posts', v-if='index > 0')
+      div
         img.avatar(:src='post.icon')
-        span.el-dialog__title
-          | {{post.author}}
-          span(v-if="index === 0")
-            |  提問
-          span(v-else)
-            |  回應
-            sup  {{post.time}}
-      p.sereply(v-html='post.content')
-
-    //- wisdomreply(:userId='userId', :topicid='content.topicId', :type='content.category')
+        span.authorName {{post.author}} 回應：
+        div.content(v-html='post.content')
+    
     el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
       el-form-item(prop='content')
         .reply
@@ -43,6 +42,50 @@
                 |  to write the posts!
             el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
           el-button(type='primary', @click="submit('ruleForm')") 送 出
+
+  //- el-card.box-card(v-if="deleteCom && topicContent", :class='[type]')
+  //-   .clearfix(slot='header')
+  //-     h2
+  //-       i.fa.fa-long-arrow-right
+  //-       |  {{topicContent.title}}
+  //-       //- delete button
+  //-       el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+  //-         h2 確認刪除此問題？
+  //-         div(style='text-align: right; margin: 0')
+  //-           el-button(size='mini', type='text', @click='visible2 = false') 取消
+  //-           el-button(type='primary', size='mini', @click='DeletePrivate') 确定
+  //-       el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删除
+
+  //-       el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
+  //-         h2 分享連結
+  //-         el-input(v-model='shareLink', placeholder='请输入内容')
+  //-         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
+  //-       el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分享
+
+  //-   .text.item(v-for='(post, index) of topicContent.posts', :class="{sereply: index >= 2}")
+  //-     p
+  //-       img.avatar(:src='post.icon')
+  //-       span.el-dialog__title
+  //-         | {{post.author}}
+  //-         span(v-if="index === 0")
+  //-           |  提問
+  //-         span(v-else)
+  //-           |  回應
+  //-           sup  {{post.time}}
+  //-     p.sereply(v-html='post.content')
+
+  //-   //- wisdomreply(:userId='userId', :topicid='content.topicId', :type='content.category')
+  //-   el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
+  //-     el-form-item(prop='content')
+  //-       .reply
+  //-         el-tooltip(placement="bottom")
+  //-           div(slot="content")
+  //-             .meta
+  //-               | You could use
+  //-               a(href='http://commonmark.org/help/', target='_blank')  markdown
+  //-               |  to write the posts!
+  //-           el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
+  //-         el-button(type='primary', @click="submit('ruleForm')") 送 出
 </template>
 
 <script>
@@ -223,6 +266,48 @@
   //   padding: 0.1em;
   //   color: white;
   // }
+  .wisdom {
+    .card {
+      border: 1px solid #d1dbe5;
+      border-radius: 4px;
+      background-color: #fff;
+      overflow: hidden;
+      box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+      margin-bottom: 2em;
+      font-family: $font;
+      .title {
+        background-color: #324157;
+        font-size: 1.5rem;
+        color: white;
+        padding: 0.5em;
+        font-weight: 700;
+      }
+      .question {
+        padding: 1.5em;
+        font-size: 1.2rem;
+      }
+      .content {
+        line-height: 2.5rem;
+        margin: 0 2em 0 2em;
+      }
+      .avatar {
+        width: 70px;
+        vertical-align: middle;
+        margin-right: 1em;
+        border-radius: 50%;
+      }
+      .authorName {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .line {
+        border: 1px solid #d1dbe5;
+      }
+      .reply {
+        padding: 1.5em;
+      }
+    }
+  }
   .delete {
     float: right;
     color: white;
