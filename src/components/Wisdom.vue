@@ -226,7 +226,11 @@
               icon: ''
             }
             wisdomPost.content = post.cooked
-            wisdomPost.author = post.username
+            if (post.name === '') {
+              wisdomPost.author = post.username
+            } else {
+              wisdomPost.author = post.name
+            }
             wisdomPost.time = post.created_at.replace(/T.*/, '')
             if (post['avatar_template'].indexOf('https:') === -1) {
               wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
