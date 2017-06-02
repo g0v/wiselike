@@ -16,11 +16,11 @@
             el-submenu.operation(v-else, index='2')
               template(slot='title')
                 img.avatar(:src='userIcon')
-                span {{username}}
+                span.username {{username}}
               el-menu-item(index='2-1')
                 router-link.profile(:to="'/user/' + username") My Profile
               el-menu-item(index='2-2')
-                .logout(@click="logout") Sign out
+                span.signout(@click="logout") Sign out
 
 </template>
 
@@ -166,27 +166,34 @@
     }
     .profile{
       display: block;
+      font-size: 16px;
+    }
+    .signout{
+      font-size: 16px;
     }
     .avatar{
       display: inline-block;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
       border-radius: 4px;
-      margin-right: 5px;
+      margin-right: 8px;
       vertical-align: middle;
     }
+    .username{
+      font-size: 16px;
+    }
   }
-  // .el-submenu.is-active .el-submenu__title {
-  //   border-bottom-color: #324157;
-  // }
-  // .el-menu--horizontal .el-submenu>.el-menu {
-  //   top:70px;
-  //   cursor: pointer;
-  //   right:17px;
-  //   min-width: 77%
-  // }
-  // .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
-  //   color: #48576a;
-  // }
+  .el-submenu.is-active .el-submenu__title {
+    border-bottom-color: #324157;
+  }
+  .el-menu--horizontal .el-submenu>.el-menu {
+    top:70px;
+    cursor: pointer;
+    right:17px;
+    min-width: 77%
+  }
+  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
+    color: #48576a;
+  }
 }
 </style>

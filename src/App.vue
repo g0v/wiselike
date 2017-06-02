@@ -3,7 +3,7 @@
     Navbar.header(:users="users")
     transition(name='fade', mode='out-in')
       router-view.view(:users="users", :topics="topicList", :tags="tags")
-    el-button.page-up(@click='goAnchor', icon='caret-top', size='large')
+    el-button.page-up(@click='goAnchor', icon='arrow-up', size='large')
     Foot.footer
 </template>
 <script>
