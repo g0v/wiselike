@@ -19,31 +19,12 @@
         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
       el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分 享
 
-      //- div(v-if='topicContent.posts')
-      //-   .authorName
-      //-     img.avatar(:src='topicContent.posts[0].icon')
-      //-     .meta {{topicContent.posts[0].author}}
-      //-   .content(v-html='topicContent.posts[0].content')
-
-    //- hr.line
-
     .reply(v-for='(post, index) of topicContent.posts')
       .authorName
         img.avatar(:src='post.icon')
         .meta {{post.author}}
       .content(v-html='post.content')
     
-    //- el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
-    //-   el-form-item(prop='content')
-    //-     .reply
-    //-       el-tooltip(placement="bottom")
-    //-         div(slot="content")
-    //-           .meta
-    //-             | You could use
-    //-             a(href='http://commonmark.org/help/', target='_blank')  markdown
-    //-             |  to write the posts!
-    //-         el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
-    //-       el-button(type='primary', @click="submit('ruleForm')") 送 出
     div.replyButton(v-if="!reply && local_storage.userIcon !== undefined")
       img.avatar(:src='local_storage.userIcon')
       el-button(type='primary', @click="reply = true") 我 要 回 覆
@@ -205,40 +186,6 @@
           })
         }
       },
-      // submit: function (formName) {
-      //   this.local_storage = window.localStorage
-      //   if (this.local_storage.length === 3) {
-      //     let htmlcode = new Remarkable()
-      //     let rawHtml = htmlcode.render(this.markdownText)
-      //     this.$refs[formName].validate((valid) => {
-      //       if (valid) {
-      //         let vm = this
-      //         // let form = new FormData()
-      //         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
-      //         let form = new URLSearchParams()
-      //         form.append('raw', rawHtml)
-      //         axios.post(this.AskLink(this.local_storage), form, config)
-      //         .then(() => {
-      //           vm.sucessful()
-      //           vm.temporaryData()
-      //         })
-      //         .catch(function (error) {
-      //           console.log(error)
-      //           vm.error()
-      //         })
-      //       } else {
-      //         return false
-      //       }
-      //     })
-      //   } else {
-      //     this.dialogFormVisible = false
-      //     this.$message({
-      //       showClose: true,
-      //       message: '請先登入',
-      //       type: 'warning'
-      //     })
-      //   }
-      // },
       error () {
         this.$message({
           showClose: true,
@@ -254,9 +201,11 @@
         })
       }
     },
+    updated: function () {
+      this.local_storage = window.localStorage
+    },
     created: function () {
       this.local_storage = window.localStorage
-      console.log(this.local_storage)
       if (this.type === 'private') this.deleteQ = true
       /* fetch topic by id */
       let id = this.topicId
@@ -297,11 +246,6 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
-  // .clearfix {
-  //   background-color: #324157;
-  //   padding: 0.1em;
-  //   color: white;
-  // }
   #editor {
     margin: 1em;
     height: 20em;
@@ -395,29 +339,12 @@
     &.top {
       border: 2px solid salmon;
     }
-    // &.public {
-    //   border-left: 2px solid mediumaquamarine;
-    // }
-    // &.private {
-    //   border-left: 2px solid cyan;
-    // }
-    // img.avatar {
-    //   width: 5%;
-    //   vertical-align: middle;
-    //   margin-right: 1em;
-    //   border-radius: 50%;
-    // }
     .el-dialog__title{
       margin-right: 1em;
     }
     .sereply{
       margin-left:3em;
     }
-    // .el-textarea {
-    //   display: inline-block;
-    //   width: 88%;
-    //   vertical-align: bottom;
-    // }
   }
   .loader {
     font-size: large;
