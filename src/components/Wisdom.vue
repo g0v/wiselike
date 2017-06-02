@@ -32,27 +32,42 @@
         img.avatar(:src='post.icon')
         .meta {{post.author}}
       .content(v-html='post.content')
+    
+    //- el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
+    //-   el-form-item(prop='content')
+    //-     .reply
+    //-       el-tooltip(placement="bottom")
+    //-         div(slot="content")
+    //-           .meta
+    //-             | You could use
+    //-             a(href='http://commonmark.org/help/', target='_blank')  markdown
+    //-             |  to write the posts!
+    //-         el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
+    //-       el-button(type='primary', @click="submit('ruleForm')") 送 出
+    div.replyButton(v-if="!reply && local_storage.userIcon !== undefined")
+      img.avatar(:src='local_storage.userIcon')
+      el-button(type='primary', @click="reply = true") 我 要 回 覆
+    div.center(v-else-if="local_storage.userIcon === undefined")
+      el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
+    
+    #editor(v-if='reply')
+      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
+      el-button.button(style='float:right', type='primary', @click="submit") 送 出
+      el-button.button(style='float:right', @click="reply = false") 取 消
 
-    el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
-      el-form-item(prop='content')
-        .reply
-          el-tooltip(placement="bottom")
-            div(slot="content")
-              .meta
-                | You could use
-                a(href='http://commonmark.org/help/', target='_blank')  markdown
-                |  to write the posts!
-            el-input(v-model='ruleForm.content', auto-complete='off', type='textarea', autosize='', placeholder='我要回應...')
-          el-button(type='primary', @click="submit('ruleForm')") 送 出
 </template>
 
 <script>
+  import Remarkable from 'remarkable'
+  import { mavonEditor } from 'mavon-editor'
+  import '../css/index.css'
   import axios from 'axios'
   import config from '../../config'
   export default {
     name: 'wisdom',
     props: ['userId', 'type', 'topicId'],
     components: {
+      'mavon-editor': mavonEditor
     },
     data () {
       var CheckContent = (rule, value, callback) => {
@@ -77,10 +92,39 @@
         deleteQ: false,
         deleteCom: true,
         topicContent: {},
-        shareLink: ''
+        shareLink: '',
+        markdownText: '',
+        reply: false,
+        toolbars: {
+          bold: true, // 粗体
+          italic: true, // 斜体
+          header: true, // 标题
+          underline: true, // 下划线
+          strikethrough: true, // 中划线
+          // superscript: true, // 上角标
+          // subscript: true, // 下角标
+          quote: true, // 引用
+          ol: true, // 有序列表
+          ul: true, // 无序列表
+          link: true, // 链接
+          imagelink: true, // 图片链接
+          code: true, // code
+          table: true, // 表格
+          subfield: true, // 是否需要分栏
+          fullscreen: true, // 全屏编辑
+          help: true, // 帮助
+          /* 1.3.5 */
+          undo: true, // 上一步
+          redo: true, // 下一步
+          trash: true, // 清空
+          htmlcode: true // 展示html源码
+        }
       }
     },
     methods: {
+      login: function (event) {
+        window.open(config.runtime.proxyHost + '/login')
+      },
       open: function () {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
         window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.shareLink) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
@@ -111,7 +155,7 @@
       AskLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
       },
-      temporaryData: function () {
+      temporaryData: function (rawHtml) {
         let date = new Date()
         date.g
         let temporaryPost = {
@@ -120,7 +164,7 @@
           time: '',
           icon: ''
         }
-        temporaryPost.content = this.ruleForm.content
+        temporaryPost.content = rawHtml
         temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
         temporaryPost.author = this.local_storage.username
         axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
@@ -128,31 +172,29 @@
           var user = response.data.user
           temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
           this.topicContent.posts.push(temporaryPost)
-          this.ruleForm.content = ''
+          this.markdownText = ''
         })
       },
-      submit: function (formName) {
+      submit: function () {
         this.local_storage = window.localStorage
-        if (this.local_storage.length === 3) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              let vm = this
-              // let form = new FormData()
-              let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
-              let form = new URLSearchParams()
-              form.append('raw', this.ruleForm.content)
-              axios.post(this.AskLink(this.local_storage), form, config)
-              .then(() => {
-                vm.sucessful()
-                vm.temporaryData()
-              })
-              .catch(function (error) {
-                console.log(error)
-                vm.error()
-              })
-            } else {
-              return false
-            }
+
+        if (this.local_storage.username !== undefined) {
+          let htmlcode = new Remarkable()
+          let rawHtml = htmlcode.render(this.markdownText)
+
+          let vm = this
+          // let form = new FormData()
+          let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+          let form = new URLSearchParams()
+          form.append('raw', rawHtml)
+          axios.post(this.AskLink(this.local_storage), form, config)
+          .then(() => {
+            vm.sucessful()
+            vm.temporaryData(rawHtml)
+          })
+          .catch(function (error) {
+            console.log(error)
+            vm.error()
           })
         } else {
           this.dialogFormVisible = false
@@ -163,6 +205,40 @@
           })
         }
       },
+      // submit: function (formName) {
+      //   this.local_storage = window.localStorage
+      //   if (this.local_storage.length === 3) {
+      //     let htmlcode = new Remarkable()
+      //     let rawHtml = htmlcode.render(this.markdownText)
+      //     this.$refs[formName].validate((valid) => {
+      //       if (valid) {
+      //         let vm = this
+      //         // let form = new FormData()
+      //         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+      //         let form = new URLSearchParams()
+      //         form.append('raw', rawHtml)
+      //         axios.post(this.AskLink(this.local_storage), form, config)
+      //         .then(() => {
+      //           vm.sucessful()
+      //           vm.temporaryData()
+      //         })
+      //         .catch(function (error) {
+      //           console.log(error)
+      //           vm.error()
+      //         })
+      //       } else {
+      //         return false
+      //       }
+      //     })
+      //   } else {
+      //     this.dialogFormVisible = false
+      //     this.$message({
+      //       showClose: true,
+      //       message: '請先登入',
+      //       type: 'warning'
+      //     })
+      //   }
+      // },
       error () {
         this.$message({
           showClose: true,
@@ -179,6 +255,8 @@
       }
     },
     created: function () {
+      this.local_storage = window.localStorage
+      console.log(this.local_storage)
       if (this.type === 'private') this.deleteQ = true
       /* fetch topic by id */
       let id = this.topicId
@@ -224,6 +302,13 @@
   //   padding: 0.1em;
   //   color: white;
   // }
+  #editor {
+    margin: 1em;
+    height: 20em;
+    .button {
+      margin: 1em;
+    }
+  }
   .wisdom {
     .card {
       border: 1px solid #d1dbe5;
@@ -250,11 +335,6 @@
           position: absolute;
           text-align: center;
           left: 1em;
-          .avatar {
-            width: 70px;
-            border-radius: 50%;
-            vertical-align: middle;
-          }
         }
         .content {
           border-left: 5px solid lightgray;
@@ -263,8 +343,20 @@
           line-height: 2rem;
         }
       }
+      .avatar {
+        width: 70px;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
       .line {
         border: 1px solid #d1dbe5;
+      }
+      .replyButton {
+        text-align: center;
+        margin: 2em;
+      }
+      .center {
+        text-align: center;
       }
     }
   }

@@ -7,6 +7,14 @@ import App from './App'
 import router from './router'
 import Element from 'element-ui'
 
+// import mavonEditor from 'mavon-editor'
+// import 'mavon-editor/dist/css/index.css'
+
+//     // use
+// Vue.use(mavonEditor)
+
+var editor = require('./components/Wisdom.vue')
+
 Vue.use(Element)
 
 Vue.config.productionTip = false
@@ -17,4 +25,9 @@ new Vue({
   router,
   template: '<App/>',
   components: { App }
-})
+},
+  {
+    el: '#app',
+    render: h => h(editor)
+  }
+)
