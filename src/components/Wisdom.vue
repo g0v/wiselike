@@ -16,8 +16,8 @@
       el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
         h2 分享連結
         el-input(v-model='shareLink', placeholder='请输入内容')
-        i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='open')
-      el-button.share(v-if="deleteQ === false", v-popover:popover1='', @click='share') 分 享
+        i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
+      el-button.share(v-if="deleteQ === false", v-popover:popover1='') 分 享
 
     .reply(v-for='(post, index) of topicContent.posts')
       .authorName
@@ -39,11 +39,11 @@
 </template>
 
 <script>
-  import Remarkable from 'remarkable'
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
   import axios from 'axios'
   import config from '../../config'
+  import $ from 'jquery'
   export default {
     name: 'wisdom',
     props: ['userId', 'type', 'topicId'],
@@ -80,10 +80,6 @@
           bold: true, // 粗体
           italic: true, // 斜体
           header: true, // 标题
-          underline: true, // 下划线
-          strikethrough: true, // 中划线
-          // superscript: true, // 上角标
-          // subscript: true, // 下角标
           quote: true, // 引用
           ol: true, // 有序列表
           ul: true, // 无序列表
@@ -106,112 +102,100 @@
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
       },
-      open: function () {
+
+      shareFB: function () {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
-        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.shareLink) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
+        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB')) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
       },
+
       share: function () {
         this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
       },
-      DeleteLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+
+      UrlLink: function (localstorage, type) {
+        let dele = config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let submit = config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
+        let shareFB = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
+
+        if (type === 'DeletePrivate') return dele
+        else if (type === 'submit') return submit
+        else if (type === 'shareFB') return shareFB
       },
+
       DeletePrivate: function () {
         this.local_storage = window.localStorage
         this.visible2 = false
         let vm = this
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         let form = new URLSearchParams()
-        form.append('topid', this.content.topicId)
-        axios.post(this.DeleteLink(this.local_storage), form, config)
+        form.append('topid', this.topicId)
+        axios.post(this.UrlLink(this.local_storage, 'DeletePrivate'), form, config)
         .then(() => {
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
           this.deleteCom = false
         })
         .catch(function (error) {
           console.log(error)
-          vm.error()
+          vm.$message.error('刪除失敗，請稍後重試。')
         })
       },
-      AskLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
-      },
-      temporaryData: function (rawHtml) {
-        let date = new Date()
-        date.g
-        let temporaryPost = {
-          content: '',
-          author: '',
-          time: '',
-          icon: ''
-        }
-        temporaryPost.content = rawHtml
-        temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
-        temporaryPost.author = this.local_storage.username
-        axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
-        .then((response) => {
-          var user = response.data.user
-          temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
-          this.topicContent.posts.push(temporaryPost)
-          this.markdownText = ''
-        })
-      },
+
       submit: function () {
-        this.local_storage = window.localStorage
-
-        if (this.local_storage.username !== undefined) {
-          let htmlcode = new Remarkable()
-          let rawHtml = htmlcode.render(this.markdownText)
-
-          let vm = this
-          // let form = new FormData()
-          let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
-          let form = new URLSearchParams()
-          form.append('raw', rawHtml)
-          axios.post(this.AskLink(this.local_storage), form, config)
-          .then(() => {
-            vm.sucessful()
-            vm.temporaryData(rawHtml)
-          })
-          .catch(function (error) {
-            console.log(error)
-            vm.error()
-          })
-        } else {
-          this.dialogFormVisible = false
-          this.$message({
-            showClose: true,
-            message: '請先登入',
-            type: 'warning'
-          })
+        /* cheack Character > 10 */
+        let strLength = this.markdownText.replace(/\s/g, '')
+        if (strLength.length < 10) {
+          this.$message.error('欄位長度需大於10個字。')
+          return
         }
-      },
-      error () {
-        this.$message({
-          showClose: true,
-          message: '發送失敗，請稍後重試。',
-          type: 'error'
+        /* set form */
+        let vm = this
+        let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+        let form = new URLSearchParams()
+        form.append('raw', this.markdownText)
+
+        axios.post(this.UrlLink(this.local_storage, 'submit'), form, config)
+        .then(() => {
+          let date = new Date()
+          let temporaryPost = {
+            content: '',
+            author: '',
+            time: '',
+            icon: ''
+          }
+          temporaryPost.content = $('.v-show-content')[0].innerHTML
+          temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
+          temporaryPost.author = this.local_storage.username
+
+          axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
+          .then((response) => {
+            vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+            var user = response.data.user
+            temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
+            this.topicContent.posts.push(temporaryPost)
+            this.markdownText = ''
+            this.reply = false
+          })
         })
-      },
-      sucessful () {
-        this.$message({
-          showClose: true,
-          message: '成功發送，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
-          type: 'success'
+        .catch(function (error) {
+          console.log(error)
+          vm.$message.error('回覆失敗，請稍後重試。')
         })
       }
     },
-    updated: function () {
-      this.local_storage = window.localStorage
+    watch: {
+      userId: function () {
+        this.local_storage = window.localStorage
+      }
     },
     created: function () {
-      this.local_storage = window.localStorage
       if (this.type === 'private') this.deleteQ = true
       /* fetch topic by id */
       let id = this.topicId
       axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
         .then((topic) => {
           /* convert topic to wisdom */
+          this.local_storage = window.localStorage
+          this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
           let wisdom = {
             posts: [],
             title: '',

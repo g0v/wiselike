@@ -6,6 +6,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Element from 'element-ui'
+import 'url-search-params-polyfill'
 
 // import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'

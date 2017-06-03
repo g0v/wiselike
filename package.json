@@ -31,6 +31,7 @@
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
     "sass-loader": "^6.0.3",
+    "url-search-params-polyfill": "^1.2.0",
     "vue": "^2.2.2",
     "vue-router": "^2.2.0"
   },
