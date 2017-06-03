@@ -116,6 +116,7 @@
           window.localStorage.setItem('sso', event.data.sso)
           window.localStorage.setItem('sig', event.data.sig)
           console.log(event.data.username)
+          window.location.reload()
         }, false)
       }
     },
