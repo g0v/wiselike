@@ -103,7 +103,6 @@
         // this.username = window.localStorage.getItem('username')
         // this.local_storage = window.localStorage
         console.log('setlocalstorage')
-        console.log('setlocalstorage')
         window.addEventListener('message', (event) => {
           console.log(event)
           console.log(config.runtime.proxyHost)
@@ -125,12 +124,13 @@
     },
     updated: function () {
       this.username = window.localStorage.getItem('username')
-      this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
-      for (var i in this.users) {
-        if (this.username === this.users[i].userId) {
-          this.userIcon = this.users[i].userIcon
+      this.users.filter((post) => {
+        (post.userId === this.username) && (this.checkprofile = false)
+        if (post.userId === this.username) {
+          this.checkprofile = false
+          this.userIcon = post.userIcon
         }
-      }
+      })
     }
   }
 </script>

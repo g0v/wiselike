@@ -88,11 +88,11 @@ app.get('/sso_done', (req, res) => {
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
   let webHost = config.runtime.webHost
   let body = `
-Hello ${username}, you may close this window. It will be automatically closed in 5 seconds.
+Hello ${username}, you may close this window. It will be automatically closed in 3 seconds.
 <script>
 window.opener.postMessage(${data}, "${webHost}");
 window.opener.location.reload();
-window.setTimeout(function () {window.close();}, 5000);
+window.setTimeout(function () {window.close();}, 3000);
 </script>
 `
   res.send(body)
