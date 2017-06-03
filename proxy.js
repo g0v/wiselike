@@ -82,16 +82,17 @@ app.get('/login', (req, res) => {
 })
 
 app.get('/sso_done', (req, res) => {
-  // TODO get user profile.
   let sso = req.query.sso
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
   let webHost = config.runtime.webHost
   let body = `
-Hello ${username}, you may close this window
+Hello ${username}, you may close this window. It will be automatically closed in 5 seconds.
 <script>
-window.opener.postMessage(${data}, "${webHost}"); // FIXME read from config
+window.opener.postMessage(${data}, "${webHost}");
+window.opener.location.reload();
+window.setTimeout(function () {window.close();}, 5000);
 </script>
 `
   res.send(body)

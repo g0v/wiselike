@@ -5,8 +5,8 @@
       | 我要提問
 
     el-dialog.askDialog.dim(title='提問', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
-      .anonymously(v-if='loginalert === true') 您尚未登入網站，將以匿名提問！
-      //- el-alert(v-if='loginalert === true', title='請先登入', type='error', show-icon='')
+      .anonymously(v-if='hasLoginAlert() === true') 您尚未登入網站，將以匿名提問！
+      //- el-alert(v-if='hasLoginAlert() === true', title='請先登入', type='error', show-icon='')
       el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
         el-form-item(prop='title', label='標題')
           el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
@@ -78,6 +78,11 @@
           }
         })
       },
+      hasLoginAlert: function () {
+        if (this.local_storage.username === undefined) {
+          this.loginalert = true
+        }
+      },
       error () {
         this.$message({
           showClose: true,
@@ -95,9 +100,6 @@
     },
     created: function () {
       this.local_storage = window.localStorage
-      if (this.local_storage.username === undefined) {
-        this.loginalert = true
-      }
     }
   }
 </script>
