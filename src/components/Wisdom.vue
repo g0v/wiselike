@@ -13,7 +13,7 @@
           el-button(type='primary', size='mini', @click='DeletePrivate') 确定
       el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
 
-      el-popover(ref='popover1', placement='top', width='400', v-model='shareVisible')
+      el-popover(ref='popover1', placement='top', width='400')
         h2 分享連結
         el-input(v-model='shareLink', placeholder='请输入内容')
         i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
@@ -51,27 +51,10 @@
       'mavon-editor': mavonEditor
     },
     data () {
-      var CheckContent = (rule, value, callback) => {
-        if (String(value).length < 10) {
-          callback(new Error('欄位長度需大於10個字'))
-        } else {
-          callback()
-        }
-      }
       return {
-        ruleForm: {
-          content: ''
-        },
-        rules: {
-          content: [
-            { validator: CheckContent, trigger: 'blur' }
-          ]
-        },
         local_storage: {},
         visible2: false,
-        shareVisible: false,
         deleteQ: false,
-        deleteCom: true,
         topicContent: {},
         shareLink: '',
         markdownText: '',
@@ -108,10 +91,6 @@
         window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB')) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
       },
 
-      share: function () {
-        this.shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
-      },
-
       UrlLink: function (localstorage, type) {
         let dele = config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
         let submit = config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
@@ -132,7 +111,6 @@
         axios.post(this.UrlLink(this.local_storage, 'DeletePrivate'), form, config)
         .then(() => {
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
-          this.deleteCom = false
         })
         .catch(function (error) {
           console.log(error)
@@ -192,41 +170,41 @@
       /* fetch topic by id */
       let id = this.topicId
       axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
-        .then((topic) => {
-          /* convert topic to wisdom */
-          this.local_storage = window.localStorage
-          this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
-          let wisdom = {
-            posts: [],
-            title: '',
-            topicId: 0,
-            category: ''
+      .then((topic) => {
+        /* convert topic to wisdom */
+        this.local_storage = window.localStorage
+        this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
+        let wisdom = {
+          posts: [],
+          title: '',
+          topicId: 0,
+          category: ''
+        }
+        for (let post of topic.data.post_stream.posts) {
+          let wisdomPost = {
+            content: '',
+            author: '',
+            time: '',
+            icon: ''
           }
-          for (let post of topic.data.post_stream.posts) {
-            let wisdomPost = {
-              content: '',
-              author: '',
-              time: '',
-              icon: ''
-            }
-            wisdomPost.content = post.cooked
-            if (post.name === '') {
-              wisdomPost.author = post.username
-            } else {
-              wisdomPost.author = post.name
-            }
-            wisdomPost.time = post.created_at.replace(/T.*/, '')
-            if (post['avatar_template'].indexOf('https:') === -1) {
-              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
-            }
-            wisdom.posts.push(wisdomPost)
+          wisdomPost.content = post.cooked
+          if (post.name === '') {
+            wisdomPost.author = post.username
+          } else {
+            wisdomPost.author = post.name
           }
-          wisdom.title = topic.data.title
-          wisdom.topicId = topic.data.id
-          wisdom.category = this.type
-          /* save the wisdom */
-          this.topicContent = wisdom
-        })
+          wisdomPost.time = post.created_at.replace(/T.*/, '')
+          if (post['avatar_template'].indexOf('https:') === -1) {
+            wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
+          }
+          wisdom.posts.push(wisdomPost)
+        }
+        wisdom.title = topic.data.title
+        wisdom.topicId = topic.data.id
+        wisdom.category = this.type
+        /* save the wisdom */
+        this.topicContent = wisdom
+      })
     }
   }
 </script>
@@ -347,6 +325,5 @@
   .el-button {
     margin: 0 0 0 1ch;
   }
-
 }
 </style>
