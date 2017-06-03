@@ -100,14 +100,15 @@
         })
       },
       setlocalstorage: function () {
-        this.username = window.localStorage.getItem('username')
-        this.local_storage = window.localStorage
+        // this.username = window.localStorage.getItem('username')
+        // this.local_storage = window.localStorage
         window.addEventListener('message', (event) => {
           console.log(event)
-          if (event.origin !== config.runtime.proxyHost) {
-            console.log('Incorrect origin')
-            return
-          }
+          console.log(config.runtime.proxyHost)
+          // if (event.origin !== config.runtime.proxyHost) {
+          //   console.log('Incorrect origin')
+          //   return
+          // }
           this.username = event.data.username
           window.localStorage.setItem('userIcon', this.userIcon)
           window.localStorage.setItem('username', event.data.username)
