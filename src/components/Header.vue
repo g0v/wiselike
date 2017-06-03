@@ -102,13 +102,15 @@
       setlocalstorage: function () {
         // this.username = window.localStorage.getItem('username')
         // this.local_storage = window.localStorage
+        console.log('setlocalstorage')
+        console.log('setlocalstorage')
         window.addEventListener('message', (event) => {
           console.log(event)
           console.log(config.runtime.proxyHost)
-          // if (event.origin !== config.runtime.proxyHost) {
-          //   console.log('Incorrect origin')
-          //   return
-          // }
+          if (event.origin !== config.runtime.proxyHost) {
+            console.log('Incorrect origin')
+            return
+          }
           this.username = event.data.username
           window.localStorage.setItem('userIcon', this.userIcon)
           window.localStorage.setItem('username', event.data.username)
@@ -122,10 +124,8 @@
       this.setlocalstorage()
     },
     updated: function () {
-      console.log('123123')
-      this.setlocalstorage()
-      this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
       this.username = window.localStorage.getItem('username')
+      this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
       for (var i in this.users) {
         if (this.username === this.users[i].userId) {
           this.userIcon = this.users[i].userIcon

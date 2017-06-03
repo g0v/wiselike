@@ -33,6 +33,7 @@
     
     #editor(v-if='reply')
       mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
+      el-tag.tag(type='primary') 欄位長度需大於10個字。
       el-button.button(style='float:right', type='primary', @click="submit") 送 出
       el-button.button(style='float:right', @click="reply = false") 取 消
 
@@ -267,6 +268,10 @@
       }
       .center {
         text-align: center;
+      }
+      .tag {
+        font-size: 1.2rem;
+        margin: 1em;
       }
     }
   }
