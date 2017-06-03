@@ -92,6 +92,7 @@ app.get('/sso_done', (req, res) => {
 Hello ${username}, you may close this window
 <script>
 window.opener.postMessage(${data}, "${webHost}"); // FIXME read from config
+window.close();
 </script>
 `
   res.send(body)
