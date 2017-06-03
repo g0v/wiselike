@@ -26,7 +26,6 @@
       .content(v-html='post.content')
     
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
-      img.avatar(:src='local_storage.userIcon')
       el-button(type='primary', @click="reply = true") 我 要 回 覆
     div.center(v-else-if="local_storage.username === undefined")
       el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
