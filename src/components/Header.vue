@@ -56,7 +56,6 @@
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
-        this.setlocalstorage()
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
@@ -104,6 +103,7 @@
         this.username = window.localStorage.getItem('username')
         this.local_storage = window.localStorage
         window.addEventListener('message', (event) => {
+          console.log(event)
           if (event.origin !== config.runtime.proxyHost) {
             console.log('Incorrect origin')
             return
@@ -121,6 +121,8 @@
       this.setlocalstorage()
     },
     updated: function () {
+      console.log('123123')
+      this.setlocalstorage()
       this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
       this.username = window.localStorage.getItem('username')
       for (var i in this.users) {
