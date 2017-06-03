@@ -1,40 +1,41 @@
 <template lang="pug">
-.wisdom
-  .card(:class='[type]')
-    .title
-      i.fa.fa-lg.fa-question-circle
-      span  {{topicContent.title}}
+.wisdom(:class='[type]')
+  .title
+    i.fa.fa-lg.fa-question-circle
+    span  {{topicContent.title}}
 
-    .question
-      el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
-        h2 確認刪除此問題？
-        div(style='text-align: right; margin: 0')
-          el-button(size='mini', type='text', @click='visible2 = false') 取消
-          el-button(type='primary', size='mini', @click='DeletePrivate') 确定
-      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
+  .question
+    el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+      h2 確認刪除此問題？
+      div(style='text-align: right; margin: 0')
+        el-button(size='mini', type='text', @click='visible2 = false') 取消
+        el-button(type='primary', size='mini', @click='DeletePrivate') 确定
+    el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
 
-      el-popover(ref='popover1', placement='top', width='400')
-        h2 分享連結
-        el-input(v-model='shareLink', placeholder='请输入内容')
-        i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
-      el-button.share(v-if="deleteQ === false", v-popover:popover1='') 分 享
+    el-popover(ref='popover1', placement='top', width='400')
+      h2 分享連結
+      el-input(v-model='shareLink', placeholder='请输入内容')
+      i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
+    el-button.share(v-if="deleteQ === false", v-popover:popover1='') 分 享
 
-    .reply(v-for='(post, index) of topicContent.posts')
-      .authorName
-        img.avatar(:src='post.icon')
-        .meta {{post.author}}
-      .content(v-html='post.content')
-    
-    div.replyButton(v-if="!reply && local_storage.username !== undefined")
-      img.avatar(:src='local_storage.userIcon')
-      el-button(type='primary', @click="reply = true") 我 要 回 覆
-    div.center(v-else-if="local_storage.username === undefined")
-      el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
-    
-    #editor(v-if='reply')
-      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
-      el-button.button(style='float:right', type='primary', @click="submit") 送 出
-      el-button.button(style='float:right', @click="reply = false") 取 消
+    |  {{ '#'+topicId }}
+
+  .reply(v-for='(post, index) of topicContent.posts')
+    .authorName
+      img.avatar(:src='post.icon')
+      .meta {{post.author}}
+    .content(v-html='post.content')
+
+  div.replyButton(v-if="!reply && local_storage.username !== undefined")
+    img.avatar(:src='local_storage.userIcon')
+    el-button(type='primary', @click="reply = true") 我 要 回 覆
+  div.center(v-else-if="local_storage.username === undefined")
+    el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
+
+  #editor(v-if='reply')
+    mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
+    el-button.button(style='float:right', type='primary', @click="submit") 送 出
+    el-button.button(style='float:right', @click="reply = false") 取 消
 
 </template>
 
@@ -220,54 +221,69 @@
     }
   }
   .wisdom {
-    .card {
+    border: 1px solid #d1dbe5;
+    border-radius: 4px;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+    font-family: $font;
+    line-height: 2em;
+    width: 100%;
+    margin-bottom: 2em;
+    &.top {
+      border: 2px solid salmon;
+    }
+    .el-dialog__title{
+      margin-right: 1em;
+    }
+    .sereply{
+      margin-left:3em;
+    }
+    .title {
+      font-size: 1.5rem;
+      padding: .5em 0 0 1em;
+      font-weight: 700;
+    }
+    .question {
+      text-align: right;
+      padding: 0 1em;
+    }
+    .reply {
+      padding: 0 3em;
+      margin: 0 0 1em 0;
+      position: relative;
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: baseline;
+      .el-button {
+        margin: 0 0 0 1ch;
+      }
+      .authorName {
+        position: absolute;
+        text-align: center;
+        left: 1em;
+      }
+      .content {
+        border-left: 5px solid lightgray;
+        padding: 0 0 0 1ch;
+        margin: 0 0 2em 3.5em;
+        line-height: 2rem;
+      }
+    }
+    .avatar {
+      width: 70px;
+      border-radius: 50%;
+      vertical-align: middle;
+    }
+    .line {
       border: 1px solid #d1dbe5;
-      border-radius: 4px;
-      background-color: #fff;
-      overflow: hidden;
-      box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
-      margin-bottom: 2em;
-      font-family: $font;
-      .title {
-        font-size: 1.5rem;
-        padding: .5em 0 0 1em;
-        font-weight: 700;
-      }
-      .question {
-        text-align: right;
-        padding: 0 1em;
-      }
-      .reply {
-        padding: 0 3em;
-        margin: 0 0 1em 0;
-        position: relative;
-        .authorName {
-          position: absolute;
-          text-align: center;
-          left: 1em;
-        }
-        .content {
-          border-left: 5px solid lightgray;
-          padding: 0 0 0 1ch;
-          margin: 0 0 2em 3.5em;
-          line-height: 2rem;
-        }
-      }
-      .avatar {
-        width: 70px;
-        border-radius: 50%;
-        vertical-align: middle;
-      }
-      .line {
-        border: 1px solid #d1dbe5;
-      }
-      .replyButton {
-        text-align: center;
-        margin: 2em;
-      }
-      .center {
-        text-align: center;
-      }
+    }
+    .replyButton {
+      text-align: center;
+      margin: 2em;
+    }
+    .center {
+      text-align: center;
     }
   }
   .delete {
@@ -298,32 +314,10 @@
       background-color: linen;
       padding: 20px;
   }
-  .card {
-    line-height: 2em;
-    width: 100%;
-    margin-bottom: 2em;
-    &.top {
-      border: 2px solid salmon;
-    }
-    .el-dialog__title{
-      margin-right: 1em;
-    }
-    .sereply{
-      margin-left:3em;
-    }
-  }
   .loader {
     font-size: large;
     height: 3em;
     width: 100%;
   }
 
-.reply {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: baseline;
-  .el-button {
-    margin: 0 0 0 1ch;
-  }
-}
 </style>
