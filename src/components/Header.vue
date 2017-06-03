@@ -56,7 +56,6 @@
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
-        this.setlocalstorage()
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
@@ -101,9 +100,12 @@
         })
       },
       setlocalstorage: function () {
-        this.username = window.localStorage.getItem('username')
-        this.local_storage = window.localStorage
+        // this.username = window.localStorage.getItem('username')
+        // this.local_storage = window.localStorage
+        console.log('setlocalstorage')
         window.addEventListener('message', (event) => {
+          console.log(event)
+          console.log(config.runtime.proxyHost)
           if (event.origin !== config.runtime.proxyHost) {
             console.log('Incorrect origin')
             return
@@ -114,6 +116,7 @@
           window.localStorage.setItem('sso', event.data.sso)
           window.localStorage.setItem('sig', event.data.sig)
           console.log(event.data.username)
+          window.location.reload()
         }, false)
       }
     },
@@ -121,13 +124,14 @@
       this.setlocalstorage()
     },
     updated: function () {
-      this.users.filter((post) => { (post.userId === this.username) && (this.checkprofile = false) })
       this.username = window.localStorage.getItem('username')
-      for (var i in this.users) {
-        if (this.username === this.users[i].userId) {
-          this.userIcon = this.users[i].userIcon
+      this.users.filter((post) => {
+        (post.userId === this.username) && (this.checkprofile = false)
+        if (post.userId === this.username) {
+          this.checkprofile = false
+          this.userIcon = post.userIcon
         }
-      }
+      })
     }
   }
 </script>

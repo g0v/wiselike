@@ -20,22 +20,22 @@
 
     |  {{ '#'+topicId }}
 
-  .reply(v-for='(post, index) of topicContent.posts')
-    .authorName
-      img.avatar(:src='post.icon')
-      .meta {{post.author}}
-    .content(v-html='post.content')
+    .reply(v-for='(post, index) of topicContent.posts')
+      .authorName
+        img.avatar(:src='post.icon')
+        .meta {{post.author}}
+      .content(v-html='post.content')
 
-  div.replyButton(v-if="!reply && local_storage.username !== undefined")
-    img.avatar(:src='local_storage.userIcon')
-    el-button(type='primary', @click="reply = true") 我 要 回 覆
-  div.center(v-else-if="local_storage.username === undefined")
-    el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
+    div.replyButton(v-if="!reply && local_storage.username !== undefined")
+      el-button(type='primary', @click="reply = true") 我 要 回 覆
+    div.center(v-else-if="local_storage.username === undefined")
+      el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
 
-  #editor(v-if='reply')
-    mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
-    el-button.button(style='float:right', type='primary', @click="submit") 送 出
-    el-button.button(style='float:right', @click="reply = false") 取 消
+    #editor(v-if='reply')
+      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
+      el-tag.tag(type='primary') 欄位長度需大於10個字。
+      el-button.button(style='float:right', type='primary', @click="submit") 送 出
+      el-button.button(style='float:right', @click="reply = false") 取 消
 
 </template>
 
@@ -268,6 +268,10 @@
         padding: 0 0 0 1ch;
         margin: 0 0 2em 3.5em;
         line-height: 2rem;
+      }
+      .tag {
+        font-size: 1.2rem;
+        margin: 1em;
       }
     }
     .avatar {
