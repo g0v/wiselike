@@ -268,6 +268,7 @@
         padding: 0 0 0 1ch;
         margin: 0 0 2em 3.5em;
         line-height: 2rem;
+        text-align: left;
       }
       .tag {
         font-size: 1.2rem;
