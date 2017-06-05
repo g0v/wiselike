@@ -2,17 +2,14 @@
   .header
     el-menu.menu(theme='dark', mode='horizontal')
       el-row.row-bg(type='flex', justify='space-between')
-        el-col.left(:span='8')
+        el-col.left(:sm='8', :xs='10')
           Search(:users="users")
-        el-col.center(:span='8')
+        el-col.center(:sm='8', :xs='4')
           router-link.logo(to='/', exact='') wiselike
-        el-col.right(:span='8')
-          //- template(v-if="username === null")
+        el-col.right(:sm='8', :xs='10')
           el-menu-item.operation(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
-            //- template(v-if="checkprofile === true")
             el-menu-item.create(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
-            //- template(v-else)
             el-submenu.operation(v-else, index='2')
               template(slot='title')
                 img.avatar(:src='userIcon')
