@@ -159,6 +159,9 @@
           console.log(error)
           vm.$message.error('回覆失敗，請稍後重試。')
         })
+      },
+      addTodo: function (e) {
+        console.log(e)
       }
     },
     watch: {
@@ -167,6 +170,7 @@
       }
     },
     created: function () {
+      this.$bus.on('add-todo', this.addTodo)
       if (this.type === 'private') this.deleteQ = true
       /* fetch topic by id */
       let id = this.topicId

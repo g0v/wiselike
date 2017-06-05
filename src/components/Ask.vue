@@ -21,6 +21,7 @@
       #editor
         mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true')
         el-tag.tag(type='primary') 欄位長度需大於10個字。
+        //- el-button.button(style='float:right', type='primary', @click="tes") 測 試
         el-button.button(style='float:right', type='primary', @click="submit") 送 出
         el-button.button(style='float:right', @click="dialogFormVisible = false") 取 消
 
@@ -92,6 +93,12 @@
       }
     },
     methods: {
+      tes: function () {
+        this.$bus.emit('add-todo', {
+          title: this.title,
+          raw: this.markdownText
+        })
+      },
       border: function (attribute, color) {
         let property = '5px solid ' + color
         setTimeout(function () { $(attribute).css('border', property) }, 100)
@@ -100,8 +107,6 @@
       openAsk: function () {
         this.dialogFormVisible = true
         this.border('.input', 'rgba(0, 75, 250, 0.38)')
-      },
-      tes: function () {
       },
       AskLink: function (localstorage) {
         return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig

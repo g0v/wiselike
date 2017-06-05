@@ -278,7 +278,7 @@
         this.newDesc = this.ruleForm.introduceraw
       },
       goAnchor: function (anchor) {
-        let anchorY = $(anchor).offset().top
+        let anchorY = $(anchor).offset()
         $('html, body').animate({
           scrollTop: anchorY
         }, 1000)
