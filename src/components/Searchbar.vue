@@ -1,10 +1,10 @@
 <<template lang="pug">
   .Search
-    el-input(placeholder="Search...", v-model='input', @keyup.enter.native='submit')
+    el-input(placeholder="Search...", v-model='input', @keyup.enter.native='submit', icon='search', :on-icon-click="submit")
         el-select(v-model='select', slot='prepend', placeholder="Select")
           el-option(label='Users', value='Users')
           el-option(label='Issues', value='Issues')
-        el-button(slot='append', icon='search', @click='submit')
+        //- el-button.icon(slot='append', icon='search', @click='submit')
         Searchresult(:users='users')  
 </template>
 
@@ -44,6 +44,9 @@ export default {
     width: 90px;
 }
 .el-input-group {
-    width: 50%;
+    width: 13rem;
+}
+.el-input-group__append{
+  padding: 0 5px;
 }
 </style>

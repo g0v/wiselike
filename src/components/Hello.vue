@@ -3,23 +3,20 @@
   .hello
     el-row
       .slides
-        h3 Popular Users
-        el-carousel(trigger='click', type='card', height='400px', arrow='always')
-          el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
-            router-link.user.dim(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
-              el-badge(:value='o.topic_count')
-                img.avatar.shadow(:src='o.userIcon')
-              h4.name {{ o.userName }}
-              .meta.link
-                i.fa.fa-arrow-circle-right
-                |  into wisdom
-              //- .info(v-bind:style="{ backgroundImage: `url(${o.userBg})`}")
-
+          h3 Popular Users
+          el-carousel(trigger='click', type='card', height='400px', arrow='always')
+            el-carousel-item(v-for='(o, idx) in slice(sortedUsers, 3)', :key='o', :data='o')
+              router-link.user.dim(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
+                el-badge(:value='o.topic_count')
+                  img.avatar.shadow(:src='o.userIcon')
+                h4.name {{ o.userName }}
+                .meta.link
+                  i.fa.fa-arrow-circle-right
+                  |  into wisdom
     el-row
       el-col(:lg="16", :sm='24')
         .hot
           h3 Category
-          //- el-button(:type="(idx === activeCate)?'primary':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='show(tag); activeCate = idx') {{tag}}
           el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
             h6 {{tag}}
           .users
@@ -203,8 +200,11 @@
     }
   }
   @media all and (max-width: $breakpoint) {
-    .people, .hot, .activity {
+    .people, .hot, .activity{
       margin: 0 3ch;
+    }
+    .slides{
+      margin: 5ch 3ch 0 3ch;
     }
   }
 }
