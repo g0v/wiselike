@@ -22,7 +22,7 @@
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
-      h1 {{ user.userName }}
+      h1.name {{ user.userName }}
 
       .category
         el-card.box-card(v-if='!CateEdit')
@@ -333,15 +333,16 @@
     // background-color: rgba(0, 0, 0, 0.47);
     // color: #ffc233;
     // font-weight: 700;
-    margin: 0 1em;
-    font-size: 1rem;
+    margin: 0 1ch;
+    // font-size: 1rem;
+    border-radius: 0;
   }
   .hide_input {
     border: 1px solid red;
     height: 11em;
     opacity: 0;
     width: 11em;
-    filter: alpha(opacity=0);
+    // filter: alpha(opacity=0);
     position: absolute;
     z-index: 999;
     margin: auto;
@@ -356,7 +357,7 @@
     border: 1px solid red;
     height: 2em;
     width: 6.5em;
-    filter: alpha(opacity=0);
+    // filter: alpha(opacity=0);
     position: absolute !important;
     right: 1.1em;
   }
@@ -375,7 +376,7 @@
       line-height: 178px;
       text-align: center;
       border: 3px dashed #d9d9d9;
-      border-radius: 6px;
+      // border-radius: 6px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -390,7 +391,10 @@
     .avatar_button {
       margin-top: 2em;
     }
-    p, h1 {
+    .name {
+      font-size: 3rem;
+    }
+    p, .name {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
     }
   }

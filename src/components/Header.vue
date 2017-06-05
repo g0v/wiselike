@@ -139,7 +139,7 @@
 .header {
   .menu{
     padding: .5em 1em;
-    // background: none;
+    background: none;
   }
   .left {
     margin: auto;
@@ -149,10 +149,14 @@
     text-align: center;
     margin: auto;
     .logo{
-      font-family: 'Kadwa', serif;
+      color: $logocolor;
+      font-family: $logofont;
       text-decoration: none;
       font-size: 2.2rem;
-      color: gold;
+      padding: 0 1ch;
+      &:hover {
+        background: $fontcolor;
+      }
     }
   }
   .right{

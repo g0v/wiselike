@@ -273,7 +273,8 @@
       .authorName {
         position: absolute;
         text-align: center;
-        left: 1em;
+        left: 0;
+        width: 6em;
       }
       .content {
         border-left: 5px solid lightgray;
