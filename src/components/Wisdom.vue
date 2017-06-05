@@ -1,5 +1,5 @@
 <template lang="pug">
-.wisdom(:class='[type]')
+#top.wisdom(:class='[type]')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
@@ -159,6 +159,12 @@
           console.log(error)
           vm.$message.error('回覆失敗，請稍後重試。')
         })
+      },
+      goAnchor: function (anchor) {
+        let anchorY = $(anchor).offset().top
+        $('html, body').animate({
+          scrollTop: anchorY
+        }, 1000)
       }
     },
     watch: {
@@ -206,6 +212,12 @@
         /* save the wisdom */
         this.topicContent = wisdom
       })
+    },
+    mounted () {
+      /* go to anchor if there's a highlight topic */
+      if (this.type === 'top') {
+        this.goAnchor('#top')
+      }
     }
   }
 </script>

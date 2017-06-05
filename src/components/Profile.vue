@@ -53,7 +53,7 @@
 
       ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdom.wrapped#top(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
+    wisdom.wrapped(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
     wisdomWrapper.wrapped(:type = '"private"', :userId = "user.userId", v-if='selfkey')
     wisdomWrapper.wrapped(:type = '"public"', :userId = "user.userId", :topicId='topId')
 
@@ -68,7 +68,7 @@
   import ask from './Ask.vue'
   import axios from 'axios'
   import config from '../../config'
-  import $ from 'jquery'
+  // import $ from 'jquery'
   export default {
     name: 'profile',
     props: ['users'],
@@ -276,12 +276,6 @@
         })
         /* push mock data into profile */
         this.newDesc = this.ruleForm.introduceraw
-      },
-      goAnchor: function (anchor) {
-        let anchorY = $(anchor).offset().top
-        $('html, body').animate({
-          scrollTop: anchorY
-        }, 1000)
       }
     },
     watch: {
@@ -295,7 +289,6 @@
     },
     mounted: function () {
       this.List = this.checkList
-      this.goAnchor('#top')
     },
     computed: {
       user: function () {
