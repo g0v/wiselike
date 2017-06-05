@@ -1,5 +1,6 @@
 <template lang="pug">
-#top.wisdom(:class='[type]')
+//- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
+.wisdom(:class='[type]')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
@@ -216,7 +217,7 @@
     mounted () {
       /* go to anchor if there's a highlight topic */
       if (this.type === 'top') {
-        this.goAnchor('#top')
+        this.goAnchor('.top')
       }
     }
   }

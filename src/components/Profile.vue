@@ -53,9 +53,13 @@
 
       ask(:userId = "user.userId", v-if='Introedit')
 
-    wisdom.wrapped(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
-    wisdomWrapper.wrapped(:type = '"private"', :userId = "user.userId", v-if='selfkey')
-    wisdomWrapper.wrapped(:type = '"public"', :userId = "user.userId", :topicId='topId')
+    .wrapped
+      wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
+      el-tabs(v-model='mode')
+        el-tab-pane(label='等待回答', name='private', v-if='selfkey')
+          wisdomWrapper(:type = '"private"', :userId = "user.userId", :topicId='topId')
+        el-tab-pane(label='歷史問題', name='public')
+          wisdomWrapper(:type = '"public"', :userId = "user.userId", :topicId='topId')
 
   .profile(v-else)
     h1 no such user
@@ -110,7 +114,8 @@
         addcategory: '',
         backgroundimage: '',
         background: false,
-        ProfileBackroundImage: ''
+        ProfileBackroundImage: '',
+        mode: 'public'
       }
     },
     methods: {

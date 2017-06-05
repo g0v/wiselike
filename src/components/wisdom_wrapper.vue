@@ -2,11 +2,12 @@
   .component(v-if='userId')
 
     .wisdom(v-if='!wisdoms.length')
-      h3 no wisdom here...
+      p 空空如也
 
     .wisdom(v-else)
-      p(v-if='type === "private"') 等待回答
-      p(v-else) 歷史問題
+      //- p(v-if='type === "private"') 等待回答
+      //- p(v-else) 歷史問題
+      p {{ title[type] }}
         span(style='float:right')
           el-tooltip(placement='left')
             div(slot='content') auto-loading?
@@ -18,8 +19,6 @@
     el-button.loader(type="primary", v-on:click="loadWisdom", v-loading="loading", v-show="loadmore")
       i.el-icon-arrow-down
 
-  .component(v-else)
-    h1 no such userId
 </template>
 
 <script>
@@ -44,7 +43,8 @@
         loading: false,
         loadmore: false,
         autoload: true,
-        routePosId: 0
+        routePosId: 0,
+        title: {private: '等待回答', public: '歷史問題'}
       }
     },
     computed: {
@@ -191,9 +191,7 @@
     created: function () {
       this.getUserData()
       /* bind event 'scroll' to window */
-      if (this.type === 'public') {
-        window.addEventListener('scroll', this.hitLoad)
-      }
+      window.addEventListener('scroll', this.hitLoad)
     }
   }
 </script>
