@@ -33,6 +33,7 @@
     "sass-loader": "^6.0.3",
     "url-search-params-polyfill": "^1.2.0",
     "vue": "^2.2.2",
+    "vue-bus": "^1.0.0",
     "vue-router": "^2.2.0"
   },
   "devDependencies": {
