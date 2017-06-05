@@ -15,29 +15,42 @@ $bgcolor: #f1f1f1;
 $card: #fff;
 $highlight: #1aabb3;
 $fontcolor: #333;
+$logofont: 'Kadwa', serif;
+$logocolor: gold;
 
 a {
   text-decoration: none;
   color: $fontcolor;
+  transition: all .3s ease;
 }
 
 h1, h2, h3, h4, h5, h6, p, .meta {
   font-family: $font;
   letter-spacing: .5px;
-  div.meta {
-    font-weight: 400;
-  }
-  span.meta {
-    font-size: 80%;
-    font-weight: 400;
-    &::before {
-      content: ' - ';
-    }
-  }
   a {
     color: $highlight;
   }
 }
+
+.meta {
+  color: rgba($fontcolor, 0.8);
+  background: $bgcolor;
+  padding: 3px;
+  font-weight: 400;
+  font-size: 90%;
+}
+// div.meta {
+//   color: rgba($fontcolor, 0.8);
+//   font-weight: 400;
+// }
+// span.meta {
+//   color: rgba($fontcolor, 0.8);
+//   font-size: 80%;
+//   font-weight: 400;
+//   &::before {
+//     content: ' - ';
+//   }
+// }
 
 .shadow {
   box-shadow: 0 5px 6px -5px gray;
@@ -61,7 +74,8 @@ h1, h2, h3, h4, h5, h6, p, .meta {
     top: 0;
     bottom: 0;
     z-index: 10;
-    background: rgba(#333, 0.5);
+    // background: rgba(#333, 0.5);
+    background: radial-gradient(circle, rgba(#333, 0.7), rgba(#333, 0.5));
   }
 }
 .ask {

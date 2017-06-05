@@ -1,5 +1,5 @@
 <template lang="pug">
-.wisdom(:class='[type]')
+#top.wisdom(:class='[type]')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
@@ -162,6 +162,12 @@
       },
       addTodo: function (e) {
         console.log(e)
+      },
+      goAnchor: function (anchor) {
+        let anchorY = $(anchor).offset().top
+        $('html, body').animate({
+          scrollTop: anchorY
+        }, 1000)
       }
     },
     watch: {
@@ -210,6 +216,12 @@
         /* save the wisdom */
         this.topicContent = wisdom
       })
+    },
+    mounted () {
+      /* go to anchor if there's a highlight topic */
+      if (this.type === 'top') {
+        this.goAnchor('#top')
+      }
     }
   }
 </script>
@@ -265,7 +277,8 @@
       .authorName {
         position: absolute;
         text-align: center;
-        left: 1em;
+        left: 0;
+        width: 6em;
       }
       .content {
         border-left: 5px solid lightgray;

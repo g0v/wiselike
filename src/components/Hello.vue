@@ -9,10 +9,9 @@
               router-link.user.dim(:to="'/user/' + o.userId", :style="{ backgroundImage: `url(${o.userBg})`}")
                 el-badge(:value='o.topic_count')
                   img.avatar.shadow(:src='o.userIcon')
-                h4.name {{ o.userName }}
-                .meta.link
-                  i.fa.fa-arrow-circle-right
-                  |  into wisdom
+                p.name {{ o.userName }}
+                .link
+                  | ask me
     el-row
       el-col(:lg="16", :sm='24')
         .hot
@@ -29,7 +28,7 @@
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
             h4
               i.fa.fa-retweet
-              |  {{o.title}}
+              |  {{o.title}} &nbsp;
               span.meta
                 | {{o.userName}}
 
@@ -127,7 +126,7 @@
       text-align: center;
       margin: 1em 0 0.5em 0;
       color: white;
-      font-weight: 700
+      // font-weight: 700
     }
   }
   .slides {
@@ -143,10 +142,11 @@
       font-size: 150%;
       .link {
         background: $highlight;
+        font-family: $logofont;
         color: white;
-        border-radius: .8em;
+        // border-radius: .8em;
         line-height: 2em;
-        padding: 0 5ch;
+        padding: 0 3ch;
       }
     }
   }
@@ -185,16 +185,16 @@
     }
   }
 
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
+  // .el-carousel__item:nth-child(2n) {
+  //   background-color: #99a9bf;
+  // }
 
-  .el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
-  }
+  // .el-carousel__item:nth-child(2n+1) {
+  //   background-color: #d3dce6;
+  // }
 
   .category {
-    border-radius: 1em;
+    border-radius: 0;
     h6 {
       margin: 0
     }

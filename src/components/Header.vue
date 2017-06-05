@@ -99,10 +99,10 @@
       setlocalstorage: function () {
         // this.username = window.localStorage.getItem('username')
         // this.local_storage = window.localStorage
-        console.log('setlocalstorage')
+        // console.log('setlocalstorage')
         window.addEventListener('message', (event) => {
-          console.log(event)
-          console.log(config.runtime.proxyHost)
+          // console.log(event)
+          // console.log(config.runtime.proxyHost)
           if (event.origin !== config.runtime.proxyHost) {
             console.log('Incorrect origin')
             return
@@ -112,7 +112,7 @@
           window.localStorage.setItem('username', event.data.username)
           window.localStorage.setItem('sso', event.data.sso)
           window.localStorage.setItem('sig', event.data.sig)
-          console.log(event.data.username)
+          // console.log(event.data.username)
           window.location.reload()
         }, false)
       }
@@ -139,7 +139,7 @@
 .header {
   .menu{
     padding: .5em 1em;
-    // background: none;
+    background: none;
   }
   .left {
     margin: auto;
@@ -149,10 +149,14 @@
     text-align: center;
     margin: auto;
     .logo{
-      font-family: 'Kadwa', serif;
+      color: $logocolor;
+      font-family: $logofont;
       text-decoration: none;
       font-size: 2.2rem;
-      color: gold;
+      padding: 0 1ch;
+      &:hover {
+        background: $fontcolor;
+      }
     }
   }
   .right{
