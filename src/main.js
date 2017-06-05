@@ -7,7 +7,8 @@ import App from './App'
 import router from './router'
 import Element from 'element-ui'
 import 'url-search-params-polyfill'
-
+import VueBus from 'vue-bus'
+Vue.use(VueBus)
 // import mavonEditor from 'mavon-editor'
 // import 'mavon-editor/dist/css/index.css'
 

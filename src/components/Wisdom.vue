@@ -161,6 +161,9 @@
           vm.$message.error('回覆失敗，請稍後重試。')
         })
       },
+      addTodo: function (e) {
+        console.log(e)
+      },
       goAnchor: function (anchor) {
         let anchorY = $(anchor).offset().top
         $('html, body').animate({
@@ -174,6 +177,7 @@
       }
     },
     created: function () {
+      this.$bus.on('add-todo', this.addTodo)
       if (this.type === 'private') this.deleteQ = true
       /* fetch topic by id */
       let id = this.topicId
