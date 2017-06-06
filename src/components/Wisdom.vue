@@ -19,7 +19,7 @@
       i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
     el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
-    |  {{ '#'+topicId }}
+    //- |  {{ '#'+topicId }}
 
     .reply(v-for='(post, index) of topicContent.posts')
       .authorName
