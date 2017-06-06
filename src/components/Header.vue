@@ -189,15 +189,9 @@
     }
   }
   .el-submenu.is-active .el-submenu__title {
-    border-bottom-color: #324157;
+    border-bottom:none;
   }
-  .el-menu--horizontal .el-submenu>.el-menu {
-    top:70px;
-    cursor: pointer;
-    right:17px;
-    min-width: 77%
-  }
-  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
+  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active{
     color: #48576a;
   }
 }
