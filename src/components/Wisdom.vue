@@ -1,6 +1,6 @@
 <template lang="pug">
 //- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
-#wisdom(:class='[type]')
+#wisdom(:class='[type]', v-if='!deleteCloseComponet')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
@@ -12,6 +12,7 @@
         el-button(size='mini', type='text', @click='visible2 = false') 取消
         el-button(type='primary', size='mini', @click='DeletePrivate') 确定
     el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
+    //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
 
     el-popover(ref='popover1', placement='top', width='400')
       h2 分享連結
@@ -57,6 +58,7 @@
         local_storage: {},
         visible2: false,
         deleteQ: false,
+        deleteCloseComponet: false,
         topicContent: {},
         shareLink: '',
         markdownText: '',
@@ -85,6 +87,12 @@
       }
     },
     methods: {
+      Delet: function () {
+        this.$bus.emit('Delete', {
+          type: 'Delete',
+          topicid: this.topicId
+        })
+      },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
       },
@@ -114,6 +122,11 @@
         axios.post(this.UrlLink(this.local_storage, 'DeletePrivate'), form, config)
         .then(() => {
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+          this.deleteCloseComponet = true
+          // this.$bus.emit('Delete', {
+          //   type: 'Delete',
+          //   topicid: this.topicId
+          // })
         })
         .catch(function (error) {
           console.log(error)
