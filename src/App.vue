@@ -32,6 +32,12 @@
           scrollTop: 0
         }, 1000)
       },
+      getAllUser: function () {
+        axios.get('https://talk.pdis.nat.gov.tw/groups/wiselike/members.json')
+        .then((response) => {
+          console.log(response)
+        })
+      },
       getUser: function () {
         axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
           var users = response.data
@@ -120,6 +126,7 @@
     mounted: function () {
       this.getUser()
       this.getActivity()
+      this.getAllUser()
     },
     created: function () {
       /* axios for IE11 */
