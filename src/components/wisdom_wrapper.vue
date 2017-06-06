@@ -79,8 +79,6 @@
         let len = this.loadBegin
         if (this.loadmore === true) {
           for (let i = this.loadBegin; i < (len + loadStep); i++) {
-            // let topic = await this.getDiscussionTopic(this.newTopics, i)
-            // if (topic !== null) topics.push(topic)
             this.wisdoms.push(this.newTopics[i].id)
             this.loadBegin++
           }
@@ -101,11 +99,22 @@
             /* drop first meta topic */
             let topicsFilter = []
             topics = topics.slice(1)
-            topics.filter((id) => {
-              if (this.topicId !== id.id) {
-                topicsFilter.push(id)
-              }
-            })
+
+            /* previous question */
+            if (this.type === 'myQuestion') {
+              topics.filter((name) => {
+                if (this.local_storage.username === name.last_poster_username) {
+                  topicsFilter.push(name)
+                }
+              })
+            } else {
+              /* filter reapt post */
+              topics.filter((id) => {
+                if (this.topicId !== id.id) {
+                  topicsFilter.push(id)
+                }
+              })
+            }
             resolve(topicsFilter)
           })
         })
@@ -137,10 +146,6 @@
       }
     },
     created: function () {
-      if (this.type === 'myQuestion') {
-        this.wisdoms.push(this.topicId)
-        return
-      }
       this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
