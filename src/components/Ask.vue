@@ -9,7 +9,7 @@
       
       el-input.input(v-model='title', auto-complete='off',type='textarea', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
       #editor
-        mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true')
+        mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true', :language = "'en'")
         el-tag.tag(type='primary') 欄位長度需大於10個字。
         //- el-button.button(style='float:right', type='primary', @click="tes") 測 試
         el-button.button(style='float:right', type='primary', @click="submit") 送 出

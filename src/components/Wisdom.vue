@@ -34,7 +34,7 @@
       el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
 
     #editor(v-if='reply')
-      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars")
+      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :language = "'en'")
       el-tag.tag(type='primary') 欄位長度需大於10個字。
       el-button.button(style='float:right', type='primary', @click="submit") 送 出
       el-button.button(style='float:right', @click="reply = false") 取 消
