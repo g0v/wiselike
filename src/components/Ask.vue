@@ -6,16 +6,6 @@
 
     el-dialog.askDialog.dim(title='建立新的問題', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       .anonymously(v-if='hasLoginAlert() === true') 您尚未登入網站，將以匿名提問！
-
-      //- el-alert(v-if='hasLoginAlert() === true', title='請先登入', type='error', show-icon='')
-      //- el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm')
-      //-   el-form-item(prop='title', label='標題')
-      //-     el-input(v-model='ruleForm.title', auto-complete='off',type='textarea', autosize="", placeholder='請輸入標題')
-      //-   el-form-item(prop='content', label='內容')
-      //-     el-input(v-model='ruleForm.content', auto-complete='off',type='textarea', :autosize="{ minRows: 10, maxRows: 30}", placeholder='請輸入內容')
-      //- .dialog-footer(slot='footer')
-      //-   el-button(type='text', @click='dialogFormVisible = false') 取 消
-      //-   el-button(type='primary', @click="submit('ruleForm')") 確 定
       
       el-input.input(v-model='title', auto-complete='off',type='textarea', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
       #editor
@@ -93,12 +83,13 @@
       }
     },
     methods: {
-      tes: function () {
-        this.$bus.emit('add-todo', {
-          title: this.title,
-          raw: this.markdownText
-        })
-      },
+      // tes: function () {
+      //   this.$bus.emit('add-todo', {
+      //     type: 'temporary',
+      //     title: this.title,
+      //     content: $('.v-show-content')[0].innerHTML
+      //   })
+      // },
       border: function (attribute, color) {
         let property = '5px solid ' + color
         setTimeout(function () { $(attribute).css('border', property) }, 100)
@@ -132,12 +123,11 @@
         form.append('raw', this.markdownText)
         axios.post(this.AskLink(this.local_storage), form, config)
         .then((val) => {
-          console.log(val.data.success)
-          this.topId = val.data.success
-          /* push mock data into wisdom */
-          // vm.$router.push({
-          //   path: '/user/' + this.username
-          // })
+          let id = val.data.success
+          this.$bus.emit('add-todo', {
+            type: 'myquestion',
+            topicid: id
+          })
           this.dialogFormVisible = false
           this.title = this.markdownText = ''
           vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
@@ -155,9 +145,6 @@
     },
     created: function () {
       this.local_storage = window.localStorage
-      // setTimeout(function () {
-      //   console.log('123123')
-      // }, 1500)
     }
   }
 </script>

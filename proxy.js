@@ -168,6 +168,7 @@ app.get('/users/:user/wisdoms', (req, res) => {
     })
 })
 
+/* ******************Ask a question *********************/
 app.post('/users/:user/wisdoms', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -198,9 +199,12 @@ app.post('/users/:user/wisdoms', (req, res) => {
         'post_ids[]': val.data.id
       }
     )
+    let topicID = val.data.topic_id
     /* change owner */
     axios.post(ChangeNameUrl, ChangeNameformData)
     .then((val) => {
+      val.data.success = topicID
+      console.log(val.data.success)
       res.status(200).send(val.data)
     })
     .catch(error => {
@@ -213,6 +217,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
   return null
 })
 
+/* ****************** Reply *********************/
 app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -296,6 +301,7 @@ app.listen(PROXY_PORT, () => {
   console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
+/* ****************** Create Profile *********************/
 app.post('/users/:user/createprofile', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -379,6 +385,7 @@ app.post('/users/:user/createprofile', (req, res) => {
   return null
 })
 
+/* ****************** Upload avatar *********************/
 app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -434,6 +441,7 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
   return null
 })
 
+/* ****************** Change User Introduction *********************/
 app.post('/users/:user/introduction', (req, res) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type')
   if (!verification(req)) {
@@ -463,7 +471,8 @@ app.post('/users/:user/introduction', (req, res) => {
   return null
 })
 
-app.post('/users/:user/category', (req, res) => { // set user category
+/* ****************** Set user Category tag *********************/
+app.post('/users/:user/category', (req, res) => {
   if (!verification(req)) {
     res.status(403)
     return res.json({'error': 'Please login'})
@@ -498,6 +507,7 @@ app.post('/users/:user/category', (req, res) => { // set user category
   return null
 })
 
+/* ****************** Change user Background Image *********************/
 app.post('/users/:user/background', upload.single('profile_background'), (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
@@ -551,6 +561,8 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
   })
   return null
 })
+
+/* ****************** Delete Question *********************/
 app.post('/users/:user/delete', (req, res) => { // set user category
   if (!verification(req)) {
     res.status(403)

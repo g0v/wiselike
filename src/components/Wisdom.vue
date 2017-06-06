@@ -1,6 +1,6 @@
 <template lang="pug">
 //- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
-.wisdom(:class='[type]')
+#wisdom(:class='[type]')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
@@ -17,7 +17,7 @@
       h2 分享連結
       el-input(v-model='shareLink', placeholder='请输入内容')
       i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
-    el-button.share(v-if="deleteQ === false", v-popover:popover1='') 分 享
+    el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
     |  {{ '#'+topicId }}
 
@@ -28,7 +28,7 @@
       .content(v-html='post.content')
 
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
-      el-button(type='primary', @click="reply = true") 我 要 回 覆
+      el-button(type='primary', @click="reply = true", v-if="!myQuestion") 我 要 回 覆
     div.center(v-else-if="local_storage.username === undefined")
       el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
 
@@ -61,6 +61,7 @@
         shareLink: '',
         markdownText: '',
         reply: false,
+        myQuestion: false,
         toolbars: {
           bold: true, // 粗体
           italic: true, // 斜体
@@ -161,14 +162,50 @@
           vm.$message.error('回覆失敗，請稍後重試。')
         })
       },
-      addTodo: function (e) {
-        console.log(e)
-      },
       goAnchor: function (anchor) {
         let anchorY = $(anchor).offset().top
         $('html, body').animate({
           scrollTop: anchorY
         }, 1000)
+      },
+      getData: function () {
+        let id = this.topicId
+        axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
+        .then((topic) => {
+          /* convert topic to wisdom */
+          this.local_storage = window.localStorage
+          this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
+          let wisdom = {
+            posts: [],
+            title: '',
+            topicId: 0,
+            category: ''
+          }
+          for (let post of topic.data.post_stream.posts) {
+            let wisdomPost = {
+              content: '',
+              author: '',
+              time: '',
+              icon: ''
+            }
+            wisdomPost.content = post.cooked
+            if (post.name === '') {
+              wisdomPost.author = post.username
+            } else {
+              wisdomPost.author = post.name
+            }
+            wisdomPost.time = post.created_at.replace(/T.*/, '')
+            if (post['avatar_template'].indexOf('https:') === -1) {
+              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
+            }
+            wisdom.posts.push(wisdomPost)
+          }
+          wisdom.title = topic.data.title
+          wisdom.topicId = topic.data.id
+          wisdom.category = this.type
+          /* save the wisdom */
+          this.topicContent = wisdom
+        })
       }
     },
     watch: {
@@ -177,46 +214,10 @@
       }
     },
     created: function () {
-      this.$bus.on('add-todo', this.addTodo)
       if (this.type === 'private') this.deleteQ = true
+      if (this.type === 'myQuestion') this.myQuestion = true
       /* fetch topic by id */
-      let id = this.topicId
-      axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
-      .then((topic) => {
-        /* convert topic to wisdom */
-        this.local_storage = window.localStorage
-        this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
-        let wisdom = {
-          posts: [],
-          title: '',
-          topicId: 0,
-          category: ''
-        }
-        for (let post of topic.data.post_stream.posts) {
-          let wisdomPost = {
-            content: '',
-            author: '',
-            time: '',
-            icon: ''
-          }
-          wisdomPost.content = post.cooked
-          if (post.name === '') {
-            wisdomPost.author = post.username
-          } else {
-            wisdomPost.author = post.name
-          }
-          wisdomPost.time = post.created_at.replace(/T.*/, '')
-          if (post['avatar_template'].indexOf('https:') === -1) {
-            wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
-          }
-          wisdom.posts.push(wisdomPost)
-        }
-        wisdom.title = topic.data.title
-        wisdom.topicId = topic.data.id
-        wisdom.category = this.type
-        /* save the wisdom */
-        this.topicContent = wisdom
-      })
+      this.getData()
     },
     mounted () {
       /* go to anchor if there's a highlight topic */
@@ -237,7 +238,7 @@
       margin: 1em;
     }
   }
-  .wisdom {
+  #wisdom {
     border: 1px solid #d1dbe5;
     border-radius: 4px;
     background-color: #fff;

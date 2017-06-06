@@ -1,5 +1,5 @@
 <template lang="pug">
-  .component(v-if='userId')
+  #wisdomcomponent(v-if='userId')
 
     .wisdom(v-if='!wisdoms.length')
       p 空空如也
@@ -24,15 +24,11 @@
 <script>
   import axios from 'axios'
   import wisdom from './Wisdom.vue'
-  // import wisdomprivate from './Wisdom_Private.vue'
-  // import wisdomreply from './Wisdom_Reply.vue'
   export default {
     name: 'wisdomWrapper',
     props: ['userId', 'type', 'topicId'],
     components: {
       wisdom
-      // wisdomprivate
-      // wisdomreply
     },
     data () {
       return {
@@ -70,17 +66,6 @@
           await this.loadWisdom()
         }
       },
-      // activityRoute: async function () {
-      //   if (this.type === 'public' && isNaN(this.$route.hash) === true) {
-      //     // this.wisdoms = []
-      //     this.routePosId = Number(this.$route.hash.replace(/#/, ''))
-      //     axios.get('https://talk.pdis.nat.gov.tw/t/' + this.routePosId + '.json?include_raw=1').then((val) => {
-      //       let pos = []
-      //       pos[0] = val
-      //       this.topic2wisdom(pos)
-      //     })
-      //   }
-      // },
       loadWisdom: async function () { // lazyload
         // let topics = []
         let total = this.newTopics.length
@@ -125,49 +110,7 @@
           })
         })
       },
-      // getDiscussionTopic: async function (url, i) { // 抓topic
-      //   return new Promise((resolve, reject) => {
-      //     let id = url
-      //     if (id[i].id !== this.routePosId) {
-      //       axios.get('https://talk.pdis.nat.gov.tw/t/' + id[i].id + '.json?include_raw=1').then((val) => {
-      //         resolve(val)
-      //       })
-      //     } else {
-      //       resolve(null)
-      //     }
-      //   })
-      // },
-      // topic2wisdom: async function (topics) {
-      //   let tempWisdoms = []
-      //   for (let topic of topics) {
-      //     let wisdom = {
-      //       posts: [],
-      //       title: '',
-      //       topicId: 0,
-      //       category: ''
-      //     }
-      //     for (let post of topic.data.post_stream.posts) {
-      //       let wisdomPost = {
-      //         content: '',
-      //         author: '',
-      //         time: '',
-      //         icon: ''
-      //       }
-      //       wisdomPost.content = post.cooked
-      //       wisdomPost.author = post.username
-      //       wisdomPost.time = post.created_at.replace(/T.*/, '')
-      //       if (post['avatar_template'].indexOf('https:') === -1) {
-      //         wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
-      //       }
-      //       wisdom.posts.push(wisdomPost)
-      //     }
-      //     wisdom.title = topic.data.title
-      //     wisdom.topicId = topic.data.id
-      //     wisdom.category = this.type
-      //     tempWisdoms.push(wisdom)
-      //   }
-      //   this.wisdoms = this.wisdoms.concat(tempWisdoms)
-      // },
+
       /* trigger 'load more' when window scroll to bottom */
       hitLoad: function () {
         let wBottom = window.pageYOffset + window.innerHeight
@@ -186,9 +129,18 @@
     watch: {
       userId: function () {
         this.getUserData()
+      },
+      topicId: function () {
+        if (this.type === 'myQuestion') {
+          this.wisdoms.push(this.topicId)
+        }
       }
     },
     created: function () {
+      if (this.type === 'myQuestion') {
+        this.wisdoms.push(this.topicId)
+        return
+      }
       this.getUserData()
       /* bind event 'scroll' to window */
       window.addEventListener('scroll', this.hitLoad)
@@ -198,7 +150,7 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
-.component {
+#wisdomcomponent {
   // margin: 2em auto;
   // max-width: $maxWidth;
   @media all and (max-width: $breakpoint) {

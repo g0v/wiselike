@@ -60,6 +60,8 @@
           wisdomWrapper(:type = '"private"', :userId = "user.userId", :topicId='topId')
         el-tab-pane(label='歷史問題', name='public')
           wisdomWrapper(:type = '"public"', :userId = "user.userId", :topicId='topId')
+        el-tab-pane(label='我的提問', name='myQuestion', v-if='myQuestion')
+          wisdomWrapper(:type = '"myQuestion"', :userId = "user.userId", :topicId='myQuestionID')
 
   .profile(v-else)
     h1 no such user
@@ -115,7 +117,9 @@
         backgroundimage: '',
         background: false,
         ProfileBackroundImage: '',
-        mode: 'public'
+        mode: 'public',
+        myQuestion: false,
+        myQuestionID: ''
       }
     },
     methods: {
@@ -281,6 +285,11 @@
         })
         /* push mock data into profile */
         this.newDesc = this.ruleForm.introduceraw
+      },
+      addTodo: function (e) {
+        this.myQuestion = true
+        this.myQuestionID = e.topicid
+        this.mode = 'myQuestion'
       }
     },
     watch: {
@@ -289,6 +298,7 @@
       }
     },
     created: function () {
+      this.$bus.on('add-todo', this.addTodo)
       this.ShowYourself()
       this.category()
     },
