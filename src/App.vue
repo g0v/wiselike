@@ -2,7 +2,7 @@
   #app
     Navbar.header(:users="users")
     transition(name='fade', mode='out-in')
-      router-view.view(:users="users", :topics="topicList", :tags="tags")
+      router-view.view(:users="users", :topics="topicList")
     el-button.page-up(@click='goAnchor', icon='arrow-up', size='large')
     Foot.footer
 </template>
@@ -109,51 +109,51 @@
       // },
       getActivity: function () {
         /* get recent activity */
-        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
-          .then((response) => {
-            /* get a list of topics under one category */
-            var topics = response.data.topic_list.topics
-            var tags = response.data.topic_list.tags
-            var all = '全部'
-            for (var i in tags) {
-              tags[i] = tags[i].split('-')[1]
-            }
-            tags.unshift(all)
-            this.tags = tags
-            let newTopicsFilter = []
-            topics.map((topic) => {
-              let newTopic = {}
-              newTopic.title = topic.title
-              newTopic.userName = topic.last_poster_username
-              newTopic.id = topic.id
-              newTopic.category = topic.category_id
-              /* filter posts_count > 1 */
-              if (topic.posts_count > 1 && newTopicsFilter.length < 10) {
-                newTopicsFilter.push(newTopic)
-              }
-            })
-            /* drop first topic which is actually meta */
-            this.topicList = newTopicsFilter
-            /* find the profile owner by category id from each topic */
-            return Promise.all(newTopicsFilter.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
-          }).then((responses) => {
-            for (let res of responses) {
-              /* sort the topics and then get the oldest one(meta) */
-              let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
-              /* split profile-username -> username */
-              let user = first.slug.split('-')[1]
-              /* pop out one topic, modify, then push back */
-              let oldTopic = this.topicList.splice(0, 1)
-              oldTopic[0].profile = user
-              this.topicList.push(oldTopic[0])
-            }
-          }).catch(err => console.log('getActivity error: ' + err))
+        // axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
+        //   .then((response) => {
+        //     /* get a list of topics under one category */
+        //     var topics = response.data.topic_list.topics
+        //     var tags = response.data.topic_list.tags
+        //     var all = '全部'
+        //     for (var i in tags) {
+        //       tags[i] = tags[i].split('-')[1]
+        //     }
+        //     tags.unshift(all)
+        //     this.tags = tags
+        //     let newTopicsFilter = []
+        //     topics.map((topic) => {
+        //       let newTopic = {}
+        //       newTopic.title = topic.title
+        //       newTopic.userName = topic.last_poster_username
+        //       newTopic.id = topic.id
+        //       newTopic.category = topic.category_id
+        //       /* filter posts_count > 1 */
+        //       if (topic.posts_count > 1 && newTopicsFilter.length < 10) {
+        //         newTopicsFilter.push(newTopic)
+        //       }
+        //     })
+        //     /* drop first topic which is actually meta */
+        //     this.topicList = newTopicsFilter
+        //     /* find the profile owner by category id from each topic */
+        //     return Promise.all(newTopicsFilter.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
+        //   }).then((responses) => {
+        //     for (let res of responses) {
+        //       /* sort the topics and then get the oldest one(meta) */
+        //       let first = res.data.topic_list.topics.sort((a, b) => a.id - b.id)[0]
+        //       /* split profile-username -> username */
+        //       let user = first.slug.split('-')[1]
+        //       /* pop out one topic, modify, then push back */
+        //       let oldTopic = this.topicList.splice(0, 1)
+        //       oldTopic[0].profile = user
+        //       this.topicList.push(oldTopic[0])
+        //     }
+        //   }).catch(err => console.log('getActivity error: ' + err))
       }
     },
     mounted: function () {
       // this.getUser()
       this.getAllUser()
-      this.getActivity()
+      // this.getActivity()
     },
     created: function () {
       /* axios for IE11 */

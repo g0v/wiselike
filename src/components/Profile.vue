@@ -247,21 +247,22 @@
       EditIntroduction: function (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            let vm = this
             axios.get('https://talk.pdis.nat.gov.tw' + this.topicUrl + '.json').then((val) => {
               this.id = val.data.post_stream.posts[0].id
-
               let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
               let form = new URLSearchParams()
               form.append('id', this.id)
               form.append('raw', this.ruleForm.introduceraw)
               axios.post(this.Link(this.local_storage), form, config)
-              .then(
-                this.Introedit = true,
-                this.sucessful()
-              )
+              .then(() => {
+                this.Introedit = true
+                vm.$message.success('成功更改簡介，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+                this.newDesc = this.ruleForm.introduceraw
+              })
               .catch(function (error) {
                 console.log(error)
-                this.$message.error('更改失敗，請稍後重試。')
+                vm.$message.error('更改失敗，請稍後重試。')
               })
             })
           }
@@ -278,15 +279,6 @@
         // for (let i in this.checkList) {
         //   this.checkList[i] = this.checkList[i].replace(/wiselike-/, '')
         // }
-      },
-      sucessful () {
-        this.$message({
-          showClose: true,
-          message: '成功更改簡介，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。',
-          type: 'success'
-        })
-        /* push mock data into profile */
-        this.newDesc = this.ruleForm.introduceraw
       },
       addTodo: function (e) {
         this.myQuestion = true
@@ -321,6 +313,8 @@
         }
         this.user = user
       })
+
+      /* Get user introduction and [wiselike-tag] */
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId + '/l/latest.json').then((post) => {
         let info = post.data.topic_list.topics[0]
         this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
@@ -333,13 +327,11 @@
         if (this.checkList.length === 0) {
           this.checkList[0] = '尚未選擇領域'
         }
-        // console.log(this.topicUrl)
       })
 
       this.$bus.on('add-todo', this.addTodo)
       this.ShowYourself()
       this.category()
-      console.log(this.$route.params.userId)
     },
     mounted: function () {
       this.List = this.checkList
