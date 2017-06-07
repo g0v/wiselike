@@ -11,7 +11,7 @@
   import Navbar from './components/Header.vue'
   import Foot from './components/Footer.vue'
   import axios from 'axios'
-  import config from '../config'
+  // import config from '../config'
   import $ from 'jquery'
   export default {
     name: 'app',
@@ -33,53 +33,80 @@
         }, 1000)
       },
       getAllUser: function () {
-        axios.get('https://talk.pdis.nat.gov.tw/groups/wiselike/members.json')
-        .then((response) => {
-          console.log(response)
-        })
-      },
-      getUser: function () {
-        axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
-          var users = response.data
-          this.users = []
-          users.forEach((val) => {
-            var tmp = {}
-            if (val['slug'].indexOf('profile-') > -1) {
-              tmp['Id'] = val['id']
-              tmp['description'] = val['description']
-              tmp['userId'] = val['slug'].substring(8)
-              tmp['topic_url'] = val['topic_url']
-              tmp['topic_count'] = val['topic_count']
-              axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
-                var tags = response.data.topic_list.tags
-                for (var i in tags) {
-                  tags[i] = tags[i].split('-')[1]
-                }
-                tmp['userCategory'] = tags
-                axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
-                  var user = response.data.user
-                  var tmp2 = {}
-                  tmp2['Id'] = tmp['userId']
-                  tmp2['userId'] = user['username'] // 英文名
-                  tmp2['userName'] = (user['name']) ? user['name'] : user['username'] // 中文名
-                  tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '1000')
-                  tmp2['userDescription'] = tmp['description']
-                  tmp2['topic_count'] = tmp['topic_count']
-                  tmp2['userCategory'] = tmp['userCategory']
-                  if (user.profile_background === undefined) {
-                    tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
-                  } else {
-                    tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
-                  }
-                  tmp2['topic_url'] = tmp['topic_url']
-                  this.users.push(tmp2)
-                })
-              })
-              // this.users.sort(function (a, b) { return a.topic_count - b.topic_count })
+        axios.get('https://talk.pdis.nat.gov.tw/groups/wiselike/members.json?limit=100000')
+        .then((Users) => {
+          let allUsers = Users.data.members
+          // let
+          // console.log(allUsers)
+          for (let users of allUsers) {
+            let user = {
+              id: '',
+              name: '',
+              nickname: '',
+              avatar: ''
             }
-          })
+            user.id = users.id
+            user.name = users.username
+            user.avatar = 'https://talk.pdis.nat.gov.tw' + users.avatar_template.replace(/{size}/, '1000')
+            /* check users.name data */
+            users.name !== '' ? (user.nickname = users.name) : (user.nickname = users.username)
+            this.users.push(user)
+            // console.log(user)
+          }
         })
+        // axios.get(config.runtime.proxyHost + '/users')
+        // .then((subCategory) => { // get user list
+        //   let Category = subCategory.data
+        //   let allProfile = []
+        //   Category.forEach((Profile) => {
+        //     if (Profile['name'].indexOf('profile-') > -1) allProfile.push(Profile)
+        //   })
+        //   /* sort by topic count */
+        //   this.topStar = allProfile.sort((a, b) => { return a.topic_count - b.topic_count }).reverse()
+        // })
       },
+      // getUser: function () {
+      //   axios.get(config.runtime.proxyHost + '/users').then((response) => { // get user list
+      //     var users = response.data
+      //     this.users = []
+      //     users.forEach((val) => {
+      //       var tmp = {}
+      //       if (val['slug'].indexOf('profile-') > -1) {
+      //         tmp['Id'] = val['id']
+      //         tmp['description'] = val['description']
+      //         tmp['userId'] = val['slug'].substring(8)
+      //         tmp['topic_url'] = val['topic_url']
+      //         tmp['topic_count'] = val['topic_count']
+      //         axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + val['slug'] + '.json').then((response) => {
+      //           var tags = response.data.topic_list.tags
+      //           for (var i in tags) {
+      //             tags[i] = tags[i].split('-')[1]
+      //           }
+      //           tmp['userCategory'] = tags
+      //           axios.get('https://talk.pdis.nat.gov.tw/users/' + tmp['userId'] + '.json').then((response) => {
+      //             var user = response.data.user
+      //             var tmp2 = {}
+      //             tmp2['Id'] = tmp['userId']
+      //             tmp2['userId'] = user['username'] // 英文名
+      //             tmp2['userName'] = (user['name']) ? user['name'] : user['username'] // 中文名
+      //             tmp2['userIcon'] = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '1000')
+      //             tmp2['userDescription'] = tmp['description']
+      //             tmp2['topic_count'] = tmp['topic_count']
+      //             tmp2['userCategory'] = tmp['userCategory']
+      //             if (user.profile_background === undefined) {
+      //               tmp2['userBg'] = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+      //             } else {
+      //               tmp2['userBg'] = 'https://talk.pdis.nat.gov.tw' + user.profile_background
+      //             }
+      //             tmp2['topic_url'] = tmp['topic_url']
+      //             this.users.push(tmp2)
+      //           })
+      //         })
+      //         // this.users.sort(function (a, b) { return a.topic_count - b.topic_count })
+      //       }
+      //     })
+      //   })
+      // },
       getActivity: function () {
         /* get recent activity */
         axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
@@ -124,9 +151,9 @@
       }
     },
     mounted: function () {
-      this.getUser()
-      this.getActivity()
+      // this.getUser()
       this.getAllUser()
+      this.getActivity()
     },
     created: function () {
       /* axios for IE11 */

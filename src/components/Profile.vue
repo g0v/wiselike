@@ -6,7 +6,7 @@
 
       .avatar
         div(v-if='ImageEdit')
-          img.avatar_image(:src="user.userIcon")
+          img.avatar_image(:src="user.avatar")
           el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
           el-button.button.backgroundimage(icon='picture', size='large', v-if='selfkey') 變更背景
           input.hide_input_background(@click='open1',type='file', @change='onbackgroundChange', v-if='selfkey')
@@ -22,7 +22,7 @@
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
-      h1.name {{ user.userName }}
+      h1.name {{ user.nickname }}
 
       .category
         el-card.box-card(v-if='!CateEdit')
@@ -51,19 +51,19 @@
         h3(v-if='Introedit') {{ newDesc || user.userDescription}}
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
 
-      ask(:userId = "user.userId", v-if='Introedit')
+      ask(:userId = "user.name", v-if='Introedit')
 
     .wrapped
-      wisdom(v-if='topId', :type='"top"', :userId='user.userId', :topicId='topId')
+      wisdom(v-if='topId', :type='"top"', :userId='user.name', :topicId='topId')
       el-tabs(v-model='mode')
         el-tab-pane(label='等待回答', name='private', v-if='selfkey')
-          wisdomWrapper(:type = '"private"', :userId = "user.userId", :topicId='topId')
+          wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId')
         el-tab-pane(label='歷史問題', name='public')
-          wisdomWrapper(:type = '"public"', :userId = "user.userId", :topicId='topId')
+          wisdomWrapper(:type = '"public"', :userId = "user.name", :topicId='topId')
         //- el-tab-pane(label='我的提問', name='myQuestion', v-if='myQuestion')
         //-   wisdomWrapper(:type = '"myQuestion"', :userId = "user.userId", :topicId='myQuestionID')
         el-tab-pane(label='我的提問', name='myQuestion')
-          wisdomWrapper(:type = '"myQuestion"', :userId = "user.userId", :topicId='topId || myQuestionID')
+          wisdomWrapper(:type = '"myQuestion"', :userId = "user.name", :topicId='topId || myQuestionID')
 
   .profile(v-else)
     h1 no such user
@@ -121,7 +121,9 @@
         ProfileBackroundImage: '',
         mode: 'public',
         myQuestion: false,
-        myQuestionID: ''
+        myQuestionID: '',
+        user: {},
+        topicUrl: ''
       }
     },
     methods: {
@@ -144,7 +146,7 @@
         })
       },
       CategoryLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.user.userId + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return config.runtime.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditCategory: function () {
         this.CateEdit = true
@@ -157,7 +159,7 @@
         }
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         let formd = new URLSearchParams()
-        formd.append('categoryUrl', this.user.topic_url)
+        formd.append('categoryUrl', this.topicUrl)
         formd.append('tag', list)
         axios.post(this.CategoryLink(this.local_storage), formd, config)
         .then(
@@ -176,7 +178,7 @@
         this.$message('頭像請使用 JPG 格式，上限 3MB')
       },
       imageLink: function (localstorage, type) {
-        return config.runtime.proxyHost + '/users/' + this.user.userId + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return config.runtime.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       Editimage () {
         /* turn on full screen loading */
@@ -240,12 +242,12 @@
         reader.readAsDataURL(file)
       },
       Link: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.user.userId + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return config.runtime.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditIntroduction: function (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            axios.get('https://talk.pdis.nat.gov.tw' + this.user.topic_url + '.json').then((val) => {
+            axios.get('https://talk.pdis.nat.gov.tw' + this.topicUrl + '.json').then((val) => {
               this.id = val.data.post_stream.posts[0].id
 
               let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
@@ -267,17 +269,15 @@
       },
       ShowYourself: function () {
         this.local_storage = window.localStorage
-        this.ruleForm.introduceraw = this.user.userDescription
-        this.selfkey = this.local_storage.username === this.user.userId
-        this.ProfileBackroundImage = this.user.userBg
-        if (this.user.userCategory === undefined || this.user.userCategory.length === 0) {
-          this.checkList[0] = '尚未選擇領域'
-        } else {
-          this.checkList = this.user.userCategory
-        }
-        for (let i in this.checkList) {
-          this.checkList[i] = this.checkList[i].replace(/wiselike-/, '')
-        }
+        this.ruleForm.introduceraw = this.newDesc
+        this.selfkey = this.local_storage.username === this.user.name
+        this.ProfileBackroundImage = this.user.background
+        // else {
+        //   this.checkList = this.user.userCategory
+        // }
+        // for (let i in this.checkList) {
+        //   this.checkList[i] = this.checkList[i].replace(/wiselike-/, '')
+        // }
       },
       sucessful () {
         this.$message({
@@ -300,21 +300,59 @@
       }
     },
     created: function () {
+      /* get user data */
+      axios.get('https://talk.pdis.nat.gov.tw/users/' + this.$route.params.userId + '.json').then((userdata) => {
+        let user = {
+          id: '',
+          name: '',
+          nickname: '',
+          avatar: '',
+          background: '',
+          description: ''
+        }
+        let profile = userdata.data.user
+        user.nickname = profile.name
+        user.name = profile.username
+        user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '1000')
+        if (profile.profile_background === undefined) {
+          user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+        } else {
+          user.background = 'https://talk.pdis.nat.gov.tw' + profile.profile_background
+        }
+        this.user = user
+      })
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId + '/l/latest.json').then((post) => {
+        let info = post.data.topic_list.topics[0]
+        this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
+        /* get user discription */
+        this.newDesc = info.excerpt
+        /* get user tag */
+        info.tags.forEach((tag) => {
+          this.checkList.push(tag.replace(/wiselike-/, ''))
+        })
+        if (this.checkList.length === 0) {
+          this.checkList[0] = '尚未選擇領域'
+        }
+        // console.log(this.topicUrl)
+      })
+
       this.$bus.on('add-todo', this.addTodo)
       this.ShowYourself()
       this.category()
+      console.log(this.$route.params.userId)
     },
     mounted: function () {
       this.List = this.checkList
     },
     computed: {
       user: function () {
-        let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId)
-        if (pos < 0) {
-          return false
-        } else {
-          return this.users[pos]
-        }
+        // console.log(this.$route.params.userId)
+        // let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId)
+        // if (pos < 0) {
+        //   return false
+        // } else {
+        //   return this.users[pos]
+        // }
       },
       topId: function () {
         return Number(this.$route.hash.replace(/#/, ''))

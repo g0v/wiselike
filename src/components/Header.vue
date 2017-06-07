@@ -123,10 +123,10 @@
     updated: function () {
       this.username = window.localStorage.getItem('username')
       this.users.filter((post) => {
-        (post.userId === this.username) && (this.checkprofile = false)
-        if (post.userId === this.username) {
+        (post.name === this.username) && (this.checkprofile = false)
+        if (post.name === this.username) {
           this.checkprofile = false
-          this.userIcon = post.userIcon
+          this.userIcon = post.avatar
         }
       })
     }
