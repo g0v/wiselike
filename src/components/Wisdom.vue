@@ -17,7 +17,8 @@
     el-popover(ref='popover1', placement='top', width='400')
       h2 分享連結
       el-input(v-model='shareLink', placeholder='请输入内容')
-      i.fa.fa-facebook-square.fa6(aria-hidden='true', @click='shareFB')
+      i.shareIcon(v-for='(share, index) of shares', :class="share", aria-hidden='true', @click='shareFB(share)')
+
     el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
     //- |  {{ '#'+topicId }}
@@ -83,7 +84,11 @@
           redo: true, // 下一步
           trash: true, // 清空
           htmlcode: true // 展示html源码
-        }
+        },
+        shares: [
+          'fa fa-facebook-square facebook',
+          'fa fa-twitter-square twitter'
+        ]
       }
     },
     methods: {
@@ -97,9 +102,21 @@
         window.open(config.runtime.proxyHost + '/login')
       },
 
-      shareFB: function () {
+      shareFB: function (share) {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
-        window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB')) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
+        let Twitterdescrip = descrip.substr(0, 70) + '...'
+        let url = encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB'))
+        if (share.indexOf('facebook') > 1) {
+          window.open('http://www.facebook.com/share.php?u=' + url + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
+        }
+        if (share.indexOf('twitter') > 1) {
+          window.open('https://www.twitter.com/intent/tweet?text=' + this.topicContent.title + '%0D%0A' + Twitterdescrip + '%0D%0A' + url, 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
+        }
+        // if (share.indexOf('line') > 1) {
+        //   console.log('123')
+        //   let url = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + descrip + '%0D%0A' + url
+        //   location.href = url
+        // }
       },
 
       UrlLink: function (localstorage, type) {
@@ -123,10 +140,6 @@
         .then(() => {
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
           this.deleteCloseComponet = true
-          // this.$bus.emit('Delete', {
-          //   type: 'Delete',
-          //   topicid: this.topicId
-          // })
         })
         .catch(function (error) {
           console.log(error)
@@ -329,10 +342,21 @@
     // font-weight: 700;
     background-color: red;
   }
-  .fa6 {
+  .shareIcon {
     font-size: 4em;
-    color: #3b5998;
   }
+  .facebook {
+    color: #3b5998;
+    margin-right: 0.1em;
+  }
+  .twitter {
+    color: #00abf1;
+    margin-right: 0.1em;
+  }
+  // .lineIcon {
+  //   // vertical-align: sub;
+  //   // background-image:url('https://talk.pdis.nat.gov.tw/uploads/default/original/1X/2548a723d8575b472299d12bddff4a6140dfaaa0.png')
+  // }
   .share {
     // float: right;
     color: white;
