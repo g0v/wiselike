@@ -99,7 +99,7 @@
 
       shareFB: function () {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
-        window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB')) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
+        window.open('http://www.facebook.com/share.php?u=' + encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB')) + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return false
       },
 
       UrlLink: function (localstorage, type) {
