@@ -13,6 +13,9 @@ yarn install
 # develop web
 yarn dev-web # port 8000
 
+# webpack-bundle-analyzer
+npm run build --report #http://127.0.0.1:8888/
+
 # .env
 cp .env.example .env
 # Then update .env for DISCOURSE_SSO_SECRET, DISCOURSE_API_KEY and DISCOURSE_API_USERNAME
