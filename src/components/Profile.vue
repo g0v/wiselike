@@ -305,7 +305,7 @@
         let profile = userdata.data.user
         user.nickname = profile.name
         user.name = profile.username
-        user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '1000')
+        user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '300')
         if (profile.profile_background === undefined) {
           user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
         } else {

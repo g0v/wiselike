@@ -47,7 +47,7 @@
             }
             user.id = users.id
             user.name = users.username
-            user.avatar = 'https://talk.pdis.nat.gov.tw' + users.avatar_template.replace(/{size}/, '1000')
+            user.avatar = 'https://talk.pdis.nat.gov.tw' + users.avatar_template.replace(/{size}/, '200')
             /* check users.name data */
             users.name !== '' ? (user.nickname = users.name) : (user.nickname = users.username)
             this.users.push(user)

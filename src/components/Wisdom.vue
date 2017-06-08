@@ -164,7 +164,7 @@
           .then((response) => {
             vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
             var user = response.data.user
-            temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '100')
+            temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '300')
             this.topicContent.posts.push(temporaryPost)
             this.markdownText = ''
             this.reply = false
@@ -209,7 +209,7 @@
             }
             wisdomPost.time = post.created_at.replace(/T.*/, '')
             if (post['avatar_template'].indexOf('https:') === -1) {
-              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '100')
+              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '300')
             }
             wisdom.posts.push(wisdomPost)
           }
@@ -331,6 +331,7 @@
   }
   .fa6 {
     font-size: 4em;
+    color: #3b5998;
   }
   .share {
     // float: right;
