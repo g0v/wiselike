@@ -28,7 +28,11 @@
         .authorName
           img.avatar(:src='post.icon')
           .meta {{post.author}}
-        .content(v-html='post.content')
+          
+        .content
+          .e(v-html='post.content')
+          .time(v-if='index === 0') {{post.time}} 提問
+          .time(v-else) {{post.time}} 回答
       div.replyCount(v-if='index === 0') 
         |{{replyCount}}個回答
         .line
@@ -325,6 +329,9 @@
       .tag {
         font-size: 1.2rem;
         margin: 1em;
+      }
+      .time {
+        color: #7d7a7a;
       }
     }
     .avatar {
