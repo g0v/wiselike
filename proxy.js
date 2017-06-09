@@ -19,7 +19,6 @@ const storage = multer.diskStorage({
     })
   }
 })
-
 const upload = multer({ storage: storage })
 require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
 
@@ -338,8 +337,10 @@ app.post('/users/:user/createprofile', (req, res) => {
   for (let i = 0; i < 2; i++) {
     let formdata = ''
     i === 0 ? (formdata = profileformData) : (formdata = inboxformData)
+    /* create profile and inbox */
     axios.post(Url, formdata)
     .then((val) => {
+      /* Get id from profile and inbox */
       axios.get(`${process.env.DISCOURSE_HOST}` + val.data.category.topic_url + `.json`)
       .then(response => {
         let id = response.data.post_stream.posts[0].id
@@ -360,11 +361,31 @@ app.post('/users/:user/createprofile', (req, res) => {
             'post[raw]': '建立一個完整的「簡介」可以讓更多人瞭解你，內容嘗試保持在 200 個字元內！'
           }
         )
+        /* Change profile and inbox owner */
         axios.post(ChangeNameUrl, ChangeNameformData)
         .then((val) => {
+          /* Change profile introduction '建立一個完整的「簡介」可以讓更多人瞭解你...' */
           axios.put(introductionUrl, introduction)
           .then((val) => {
-            res.status(200).send(val.data)
+            /* Add user to wiselike group once */
+            if (i === 0) {
+              let groupUrl = `${process.env.DISCOURSE_HOST}/groups/44/members.json`
+              let group = {
+                api_key: process.env.DISCOURSE_API_KEY,
+                api_username: process.env.DISCOURSE_API_USERNAME,
+                usernames: `${req.params.user}`
+              }
+              Prequest.put({
+                url: groupUrl,
+                formData: group
+              })
+              .then((val) => {
+                res.status(200).send(val)
+              })
+              .catch(error => {
+                res.status(433).send(error)
+              })
+            }
           })
           .catch(error => {
             res.status(433).send(error.response.data)
