@@ -36,7 +36,7 @@ module.exports = {
     cssSourceMap: false
   },
   runtime: {
-    proxyHost: 'https://proxy.wiselike.tw',
+    proxyHost: 'http://localhost:9000',
     webHost: 'http://localhost:8000'
   }
 }

@@ -7,3 +7,4 @@ yarn-error.log
 /.env
 yarn.lock
 note
+config/index.js
