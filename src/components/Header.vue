@@ -22,6 +22,7 @@
 </template>
 
 <script>
+  import { Loading } from 'element-ui'
   import Search from './Searchbar.vue'
   import config from '../../config'
   import axios from 'axios'
@@ -63,6 +64,7 @@
         window.location.reload()
       },
       CreateProfile: async function (event) {
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料建構中，請稍等' })
         this.local_storage = window.localStorage
         if (this.username === null) {
           this.warningmessage()
@@ -73,6 +75,7 @@
           form.append('local_storage', this.local_storage)
           axios.post(this.Link(this.local_storage), form, config)
           .then(() => {
+            loadingInstance.close()
             location.reload()
             vm.$router.push({
               path: '/user/' + this.username
@@ -80,23 +83,10 @@
           })
           .catch(function (error) {
             console.log(error)
-            vm.error()
+            loadingInstance.close()
+            this.$message.error('建立失敗，請稍後重試。')
           })
         }
-      },
-      error () {
-        this.$message({
-          showClose: true,
-          message: '建立失敗，請稍後重試。',
-          type: 'error'
-        })
-      },
-      sucessful () {
-        this.$message({
-          showClose: true,
-          message: '成功建立 Profile。',
-          type: 'success'
-        })
       },
       setlocalstorage: function () {
         // this.username = window.localStorage.getItem('username')
