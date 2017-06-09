@@ -23,11 +23,15 @@
 
     //- |  {{ '#'+topicId }}
 
-    .reply(v-for='(post, index) of topicContent.posts')
-      .authorName
-        img.avatar(:src='post.icon')
-        .meta {{post.author}}
-      .content(v-html='post.content')
+    div(v-for='(post, index) of topicContent.posts')
+      .reply
+        .authorName
+          img.avatar(:src='post.icon')
+          .meta {{post.author}}
+        .content(v-html='post.content')
+      div.replyCount(v-if='index === 0') 
+        |{{replyCount}}個回答
+        .line
 
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
       el-button(type='primary', @click="reply = true", v-if="!myQuestion") 我 要 回 覆
@@ -88,7 +92,8 @@
         shares: [
           'fa fa-facebook-square facebook',
           'fa fa-twitter-square twitter'
-        ]
+        ],
+        replyCount: 0
       }
     },
     methods: {
@@ -231,6 +236,8 @@
           wisdom.category = this.type
           /* save the wisdom */
           this.topicContent = wisdom
+          this.replyCount = this.topicContent.posts.length - 1
+          console.log(this.replyCount)
         })
       }
     },
@@ -324,6 +331,10 @@
       width: 70px;
       border-radius: 50%;
       vertical-align: middle;
+    }
+    .replyCount {
+      text-align: left;
+      margin: 2em 0 2em 0;
     }
     .line {
       border: 1px solid #d1dbe5;
