@@ -53,6 +53,7 @@
       },
       login: function (event) {
         window.open(config.runtime.proxyHost + '/login')
+        console.log(config.runtime.proxyHost)
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
