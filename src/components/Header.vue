@@ -62,14 +62,15 @@
         window.location.reload()
       },
       CreateProfile: async function (event) {
+        this.local_storage = window.localStorage
         if (this.username === null) {
           this.warningmessage()
         } else {
           let vm = this
-          axios({
-            method: 'post',
-            url: this.Link(this.local_storage)
-          })
+          let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+          let form = new URLSearchParams()
+          form.append('local_storage', this.local_storage)
+          axios.post(this.Link(this.local_storage), form, config)
           .then(() => {
             location.reload()
             vm.$router.push({
