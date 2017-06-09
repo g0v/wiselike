@@ -90,7 +90,7 @@ app.get('/sso_done', (req, res) => {
 Hello ${username}, you may close this window. It will be automatically closed in 3 seconds.
 <script>
 window.opener.postMessage(${data}, "${webHost}");
-// window.close();
+window.close();
 </script>
 `
   console.log(webHost)
