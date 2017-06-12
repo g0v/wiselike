@@ -17,7 +17,9 @@
     el-popover(ref='popover1', placement='top', width='400')
       h2 分享連結
       el-input(v-model='shareLink', placeholder='请输入内容')
-      i.shareIcon(v-for='(share, index) of shares', :class="share", aria-hidden='true', @click='shareFB(share)')
+      span(v-for='(share, index) of shares')
+        i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='shareFB(share)')
+        img.lineIcon(v-else, src='../assets/line.png', @click='shareFB(share)')
 
     el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
@@ -96,6 +98,7 @@
         shares: [
           'fa fa-facebook-square facebook',
           'fa fa-twitter-square twitter',
+          'line',
           'fa fa-envelope mail'
         ],
         replyCount: 0
@@ -125,11 +128,10 @@
         if (share.indexOf('mail') > 1) {
           window.location.href = 'mailto:?subject=' + this.topicContent.title + '&body=' + this.UrlLink(this.local_storage, 'shareLink')
         }
-        // if (share.indexOf('line') > 1) {
-        //   console.log('123')
-        //   let url = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + descrip + '%0D%0A' + url
-        //   location.href = url
-        // }
+        if (share.indexOf('line') > 1) {
+          let url = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + descrip + '%0D%0A' + url
+          location.href = url
+        }
       },
 
       UrlLink: function (localstorage, type) {
@@ -381,10 +383,10 @@
     font-size: 3.5em !important;
     vertical-align: text-bottom;
   }
-  // .lineIcon {
-  //   // vertical-align: sub;
-  //   // background-image:url('https://talk.pdis.nat.gov.tw/uploads/default/original/1X/2548a723d8575b472299d12bddff4a6140dfaaa0.png')
-  // }
+  .lineIcon {
+    vertical-align: sub;
+    margin-right: 0.5em;
+   }
   .share {
     // float: right;
     color: white;
