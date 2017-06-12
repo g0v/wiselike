@@ -7,14 +7,15 @@
         el-col.center(:sm='8', :xs='4')
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:sm='8', :xs='10')
-          el-menu-item.operation(v-if="!username", @click.native="login", index='0') Sign in
+          el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
-            el-menu-item.create(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
+            el-menu-item.create.text(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
             el-submenu.operation(v-else, index='2')
               template(slot='title')
-                img.avatar(:src='userIcon')
-                span.username {{username}}
-              el-menu-item(index='2-1')
+                img.avatar(:src='userIcon', :title='username')
+                //- span.username {{username}}
+                  el-button Light
+              el-menu-item(index='2-1', disabled='')
                 router-link.profile(:to="'/user/' + username") My Profile
               el-menu-item(index='2-2')
                 span.signout(@click="logout") Sign out
@@ -161,6 +162,11 @@
     .operation{
       float:right;
     }
+    .text {
+      color: #0f78f3;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
     .profile{
       display: block;
       font-size: 16px;
@@ -170,8 +176,7 @@
     }
     .avatar{
       display: inline-block;
-      width: 25px;
-      height: 25px;
+      width: 3em;
       border-radius: 4px;
       margin-right: 8px;
       vertical-align: middle;
