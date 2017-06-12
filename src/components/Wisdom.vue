@@ -115,8 +115,7 @@
       shareFB: function (share) {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
         let Twitterdescrip = descrip.substr(0, 70) + '...'
-        let url = encodeURIComponent(this.UrlLink(this.local_storage, 'shareFB'))
-        let shareLink = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
+        let url = encodeURIComponent(this.UrlLink(this.local_storage, 'shareLink'))
         if (share.indexOf('facebook') > 1) {
           window.open('http://www.facebook.com/share.php?u=' + url + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
         }
@@ -124,7 +123,7 @@
           window.open('https://www.twitter.com/intent/tweet?text=' + this.topicContent.title + '%0D%0A' + Twitterdescrip + '%0D%0A' + url, 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
         }
         if (share.indexOf('mail') > 1) {
-          window.location.href = 'mailto:?subject=' + this.topicContent.title + '&body=' + shareLink
+          window.location.href = 'mailto:?subject=' + this.topicContent.title + '&body=' + this.UrlLink(this.local_storage, 'shareLink')
         }
         // if (share.indexOf('line') > 1) {
         //   console.log('123')
@@ -134,13 +133,14 @@
       },
 
       UrlLink: function (localstorage, type) {
+        // console.log(this.$route.params.userId)
         let dele = config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
         let submit = config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
-        let shareFB = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
+        let shareLink = 'https://wiselike.tw/#/user/' + this.$route.params.userId + '#' + this.topicId
 
         if (type === 'DeletePrivate') return dele
         else if (type === 'submit') return submit
-        else if (type === 'shareFB') return shareFB
+        else if (type === 'shareLink') return shareLink
       },
 
       DeletePrivate: function () {
@@ -214,7 +214,7 @@
         .then((topic) => {
           /* convert topic to wisdom */
           this.local_storage = window.localStorage
-          this.shareLink = this.UrlLink(this.local_storage, 'shareFB')
+          this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
           let wisdom = {
             posts: [],
             title: '',
