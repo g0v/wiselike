@@ -46,7 +46,7 @@
               avatar: ''
             }
             user.id = users.id
-            user.name = users.username
+            user.name = users.username.toLowerCase()
             user.avatar = 'https://talk.pdis.nat.gov.tw' + users.avatar_template.replace(/{size}/, '200')
             /* check users.name data */
             users.name !== '' ? (user.nickname = users.name) : (user.nickname = users.username)
