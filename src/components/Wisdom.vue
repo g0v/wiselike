@@ -28,12 +28,12 @@
         .authorName
           img.avatar(:src='post.icon')
           .meta {{post.author}}
-          
+
         .content
           .e(v-html='post.content')
           .time(v-if='index === 0') {{post.time}} 提問
           .time(v-else) {{post.time}} 回答
-      div.replyCount(v-if='index === 0') 
+      div.replyCount(v-if='index === 0')
         |{{replyCount}}個回答
         .line
 
@@ -54,7 +54,7 @@
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
   import axios from 'axios'
-  import config from '../../config'
+  // import config from '../../config'
   import $ from 'jquery'
   export default {
     name: 'wisdom',
@@ -108,7 +108,8 @@
         })
       },
       login: function (event) {
-        window.open(config.runtime.proxyHost + '/login')
+        // window.open(config.runtime.proxyHost + '/login')
+        window.open(process.env.proxyHost + '/login')
       },
 
       shareFB: function (share) {
@@ -129,8 +130,10 @@
       },
 
       UrlLink: function (localstorage, type) {
-        let dele = config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
-        let submit = config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
+        // let dele = config.runtime.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let dele = process.env.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // let submit = config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
+        let submit = process.env.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
         let shareFB = 'https://wiselike.tw/#/user/' + this.userId + '#' + this.topicId
 
         if (type === 'DeletePrivate') return dele

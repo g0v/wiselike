@@ -41,7 +41,8 @@
     },
     methods: {
       AskLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&type=' + this.type
+        // return config.runtime.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&type=' + this.type
+        return process.env.proxyHost + '/users/inbox-' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicid + '&type=' + this.type
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
