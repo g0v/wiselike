@@ -25,7 +25,7 @@
 <script>
   import { Loading } from 'element-ui'
   import Search from './Searchbar.vue'
-  import config from '../../config'
+  // import config from '../../config'
   import axios from 'axios'
   export default {
     name: 'header',
@@ -51,11 +51,12 @@
         })
       },
       Link: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // return config.runtime.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return process.env.proxyHost + '/users/' + this.username + '/createprofile?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       login: function (event) {
-        window.open(config.runtime.proxyHost + '/login')
-        console.log(config.runtime.proxyHost)
+        // window.open(config.runtime.proxyHost + '/login')
+        window.open(process.env.proxyHost + '/login')
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
@@ -94,19 +95,16 @@
         // this.local_storage = window.localStorage
         // console.log('setlocalstorage')
         window.addEventListener('message', (event) => {
-          // console.log(event)
-          // console.log(config.runtime.proxyHost)
-          if (event.origin !== config.runtime.proxyHost) {
-            console.log('Incorrect origin')
-            return
+          // if (event.origin !== config.runtime.proxyHost) {
+          if (event.origin === process.env.proxyHost) {
+            this.username = event.data.username
+            window.localStorage.setItem('userIcon', this.userIcon)
+            window.localStorage.setItem('username', event.data.username)
+            window.localStorage.setItem('sso', event.data.sso)
+            window.localStorage.setItem('sig', event.data.sig)
+            // console.log(event.data.username)
+            window.location.reload()
           }
-          this.username = event.data.username
-          window.localStorage.setItem('userIcon', this.userIcon)
-          window.localStorage.setItem('username', event.data.username)
-          window.localStorage.setItem('sso', event.data.sso)
-          window.localStorage.setItem('sig', event.data.sig)
-          // console.log(event.data.username)
-          window.location.reload()
         }, false)
       }
     },

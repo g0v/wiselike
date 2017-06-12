@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const cors = require('cors')
 const querystring = require('querystring')
 const axios = require('axios')
-const config = require('./config')
+// const config = require('./config')
 const Prequest = require('request-promise')
 const fs = require('fs')
 const multer = require('multer')
@@ -85,7 +85,8 @@ app.get('/sso_done', (req, res) => {
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
-  let webHost = config.runtime.webHost
+  // let webHost = config.runtime.webHost
+  let webHost = process.env.webHost
   let body = `
 Hello ${username}, you may close this window. It will be automatically closed in 3 seconds.
 <script>
@@ -93,7 +94,6 @@ window.opener.postMessage(${data}, "${webHost}");
 window.close();
 </script>
 `
-  console.log(webHost)
   res.send(body)
 })
 

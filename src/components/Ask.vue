@@ -6,7 +6,7 @@
 
     el-dialog.askDialog.dim(title='建立新的問題', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       .anonymously(v-if='hasLoginAlert() === true') 您尚未登入網站，將以匿名提問！
-      
+
       el-input.input(v-model='title', auto-complete='off',type='textarea', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
       #editor
         mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true', :language = "'en'")
@@ -22,7 +22,7 @@
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
   import axios from 'axios'
-  import config from '../../config'
+  // import config from '../../config'
   import $ from 'jquery'
   export default {
     name: 'ask',
@@ -100,7 +100,8 @@
         this.border('.input', 'rgba(0, 75, 250, 0.38)')
       },
       AskLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // return config.runtime.proxyHost + '/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return process.env.proxyHost + '/users/' + this.userId + '/wisdoms?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       submit: function (formName) {
         this.local_storage = window.localStorage
@@ -169,7 +170,7 @@
     .button {
       margin-left: 1em
     }
-  
+
   }
   .input {
     margin-bottom: 1em;

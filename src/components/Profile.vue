@@ -75,7 +75,7 @@
   import wisdomWrapper from './wisdom_wrapper.vue'
   import ask from './Ask.vue'
   import axios from 'axios'
-  import config from '../../config'
+  // import config from '../../config'
   // import $ from 'jquery'
   export default {
     name: 'profile',
@@ -146,7 +146,8 @@
         })
       },
       CategoryLink: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // return config.runtime.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return process.env.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditCategory: function () {
         this.CateEdit = true
@@ -178,7 +179,8 @@
         this.$message('頭像請使用 JPG 格式，上限 3MB')
       },
       imageLink: function (localstorage, type) {
-        return config.runtime.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // return config.runtime.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return process.env.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       Editimage () {
         /* turn on full screen loading */
@@ -242,7 +244,8 @@
         reader.readAsDataURL(file)
       },
       Link: function (localstorage) {
-        return config.runtime.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        // return config.runtime.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        return process.env.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditIntroduction: function (formName) {
         this.$refs[formName].validate((valid) => {
