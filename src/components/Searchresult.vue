@@ -4,9 +4,9 @@
       h3(v-if='user_results !== null') {{count}} results of " {{search_string}} "
       h3(v-else) {{count}} results of " {{search_string}} ", try another keyword.
       .users
-        router-link.user(:to="'/user/' + user.userId", v-for='user in search_results', :key='user', :data='user')
-          img.avatar.shadow(:src='user.userIcon')
-          p.name {{user.userName}}
+        router-link.user(:to="'/user/' + user.name", v-for='user in search_results', :key='user', :data='user')
+          img.avatar.shadow(:src='user.avatar')
+          p.name {{user.nickname}}
     el-row.issue_search(v-if='category === "Issues"')
         .activity
           h3(v-if='issues_results !== null') {{count}} results of " {{search_string}} "
@@ -41,7 +41,7 @@ export default {
       this.search_string = str
       this.search_results = []
       var result = this.users.filter(function (o) {
-        return (reg.test(o.userName) || reg.test(o.userId))
+        return (reg.test(o.name) || reg.test(o.nickname))
       })
       if (result.length === 0) {
         return null
