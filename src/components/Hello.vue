@@ -26,7 +26,9 @@
                   router-link.user(:to="'/user/' + user.name")
                     img.avatar.shadow(:src='user.avatar')
                     p.name {{user.nickname}}
-              .swiper-pagination(slot='pagination')
+              //- .swiper-pagination(slot='pagination')
+              .swiper-button-prev(slot='button-prev')
+              .swiper-button-next(slot='button-next')
 
       el-col(:lg="8", :sm='24') <!-- Recent Activity -->
         .activity
@@ -77,7 +79,9 @@
           }
         },
         swiperOption2: {
-          pagination: '.swiper-pagination',
+          // pagination: '.swiper-pagination',
+          nextButton: '.swiper-button-next',
+          prevButton: '.swiper-button-prev',
           slidesPerView: 3,
           slidesPerColumn: 2,
           grabCursor: true,
