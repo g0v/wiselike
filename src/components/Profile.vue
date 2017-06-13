@@ -48,7 +48,7 @@
             el-button(@click='Introedit = true') 取 消
 
       .description
-        h3(v-if='Introedit') {{ newDesc || user.userDescription}}
+        h3(v-if='Introedit', v-html='newDesc')
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
 
       ask(:userId = "user.name", v-if='Introedit')
@@ -318,11 +318,15 @@
       })
 
       /* Get user introduction and [wiselike-tag] */
-      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId + '/l/latest.json').then((post) => {
+      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId.toLowerCase() + '.json')
+      .then((post) => {
         let info = post.data.topic_list.topics[0]
-        this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
         /* get user discription */
-        this.newDesc = info.excerpt
+        axios.get('https://talk.pdis.nat.gov.tw/t/' + info.id + '.json?include_raw=1')
+        .then((val) => {
+          this.newDesc = val.data.post_stream.posts[0].cooked
+        })
+        this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
         /* get user tag */
         info.tags.forEach((tag) => {
           this.checkList.push(tag.replace(/wiselike-/, ''))
