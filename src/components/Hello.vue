@@ -17,8 +17,9 @@
       el-col(:lg="16", :sm='24')
         .hot
           h3 Category
-          el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-            h6 {{tag}}
+          .buttonset
+            el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
+              h6 {{tag}}
           .users
             router-link.user(:to="'/user/' + user.name", v-for='user in selectedUsers', :key='user', :data='user')
               img.avatar.shadow(:src='user.avatar')
@@ -32,26 +33,6 @@
               |  {{o.title}} &nbsp;
               span.meta
                 | {{o.userName}}
-
-    //- el-row
-    //-   el-col(:lg="16", :sm='24')
-    //-     .hot
-    //-       h3 Category
-    //-       el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-    //-         h6 {{tag}}
-    //-       .users
-    //-         router-link.user(:to="'/user/' + user.userId", v-for='user in selectedUsers', :key='user', :data='user')
-    //-           img.avatar.shadow(:src='user.userIcon')
-    //-           p.name {{user.userName}}
-    //-   el-col(:lg="8", :sm='24')
-    //-     .activity
-    //-       h3 Recent Activity
-    //-       router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
-    //-         h4
-    //-           i.fa.fa-retweet
-    //-           |  {{o.title}} &nbsp;
-    //-           span.meta
-    //-             | {{o.userName}}
 
 </template>
 
@@ -111,28 +92,6 @@
           }
         })
       },
-      // showCategory: function (t) {
-      //   this.selectedUsers = []
-      //   console.log(t)
-      //   if (t !== '全部') {
-      //     for (var i in this.users) {
-      //       var category = this.users[i].userCategory
-      //       for (var j in category) {
-      //         if (category[j] === t) {
-      //           var tmp = {}
-      //           tmp['userId'] = this.users[i]['userId']
-      //           tmp['userName'] = this.users[i]['userName']
-      //           tmp['userIcon'] = this.users[i]['userIcon']
-      //           this.selectedUsers.push(tmp)
-      //         }
-      //       }
-      //     }
-      //     return this.selectedUsers
-      //   }
-      //   if (t === '全部') {
-      //     this.selectedUsers = this.users
-      //   }
-      // },
       showCategory: function (tag) {
         this.selectedUsers = []
         if (tag !== '全部') {
@@ -269,12 +228,15 @@
       }
     }
   }
-  .users { // Popular People
+  .buttonset{
+    text-align: center;
+  }
+  .users { // Category
     display: flex;
     flex-flow: row wrap;
     padding: 3em 0;
     .user {
-      flex: 0 25%;
+      flex: 0 33.3%;
       display: inline-block;
       &:hover {
         transform: scale(1.05, 1.05)
@@ -303,15 +265,6 @@
       }
     }
   }
-
-  // .el-carousel__item:nth-child(2n) {
-  //   background-color: #99a9bf;
-  // }
-
-  // .el-carousel__item:nth-child(2n+1) {
-  //   background-color: #d3dce6;
-  // }
-
   .category {
     border-radius: 0;
     h6 {
@@ -319,11 +272,32 @@
     }
   }
   @media all and (max-width: $breakpoint) {
+    h3{
+      font-size:1.6rem;
+      text-align: center;
+    }
+    h4{
+      font-size:1.5rem;
+    }
     .people, .hot, .activity{
       margin: 0 3ch;
     }
     .slides{
       margin: 5ch 3ch 0 3ch;
+    }
+    .user .avatar{
+      width: 8rem;
+      height: 8rem;
+    }
+    .users {
+      .name{
+        font-size: 1.5rem;
+      }
+    }
+    .category {
+      font-size: 1.5rem;
+      line-height: 2;
+      padding: 5px 20px;
     }
   }
 }

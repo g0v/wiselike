@@ -189,5 +189,10 @@
   .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active{
     color: #48576a;
   }
+  @media all and (max-width: $breakpoint) {
+    .center .logo{
+      font-size: 2.5rem;
+    }
+  }
 }
 </style>
