@@ -97,9 +97,9 @@
         window.addEventListener('message', (event) => {
           // if (event.origin !== config.runtime.proxyHost) {
           if (event.origin === process.env.proxyHost) {
-            this.username = event.data.username
+            this.username = event.data.username.toLowerCase()
             window.localStorage.setItem('userIcon', this.userIcon)
-            window.localStorage.setItem('username', event.data.username)
+            window.localStorage.setItem('username', event.data.username.toLowerCase())
             window.localStorage.setItem('sso', event.data.sso)
             window.localStorage.setItem('sig', event.data.sig)
             // console.log(event.data.username)

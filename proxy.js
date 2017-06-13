@@ -222,6 +222,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
+  let lowerMe = me.toLowerCase()
   if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
@@ -233,7 +234,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let topicid = req.query.topicid
   let type = req.query.type
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + me + `/` + topicid + `.json`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + lowerMe + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_API_KEY,
@@ -261,7 +262,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
         res.status(200).send(val.data)
       } else {
         /* change category */
-        axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${me}.json`)
+        axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${lowerMe}.json`)
         .then(response => {
           let id = response.data.topic_list.topics[0].category_id
           console.log(id)
@@ -368,13 +369,14 @@ app.post('/users/:user/createprofile', (req, res) => {
           /* Change profile introduction '建立一個完整的「簡介」可以讓更多人瞭解你...' */
           axios.put(introductionUrl, introduction)
           .then((val) => {
+            console.log(val.data.post.username)
             /* Add user to wiselike group once */
             if (i === 0) {
               let groupUrl = `${process.env.DISCOURSE_HOST}/groups/44/members.json`
               let group = {
                 api_key: process.env.DISCOURSE_API_KEY,
                 api_username: process.env.DISCOURSE_API_USERNAME,
-                usernames: `${req.params.user}`
+                usernames: val.data.post.username
               }
               Prequest.put({
                 url: groupUrl,
@@ -465,8 +467,10 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
 
 /* ****************** Change User Introduction *********************/
 app.post('/users/:user/introduction', (req, res) => {
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
@@ -495,12 +499,17 @@ app.post('/users/:user/introduction', (req, res) => {
 
 /* ****************** Set user Category tag *********************/
 app.post('/users/:user/category', (req, res) => {
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
-  axios.get(Url + `.json`)
+  // console.log(req.body.categoryUrl)
+  let introUrl = `${process.env.DISCOURSE_HOST}` + '/t/profile-' + me + '/' + req.body.introductionID
+  // let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
+  axios.get(introUrl + `.json`)
   .then(response => {
     let title = response.data.title
     let categoryid = response.data.category_id
@@ -515,7 +524,7 @@ app.post('/users/:user/category', (req, res) => {
         featuredLink: ''
       }
     )
-    axios.put(Url, category)
+    axios.put(introUrl, category)
     .then((val) => {
       res.status(200).send(val.data)
     })
