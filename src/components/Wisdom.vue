@@ -120,18 +120,22 @@
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
         let Twitterdescrip = descrip.substr(0, 70) + '...'
         let url = encodeURIComponent(this.UrlLink(this.local_storage, 'shareLink'))
+        /* facebook share */
         if (share.indexOf('facebook') > 1) {
           window.open('http://www.facebook.com/share.php?u=' + url + '&title=' + this.topicContent.title + '&description=' + descrip + '&picture=https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
         }
+        /* Twitter share */
         if (share.indexOf('twitter') > 1) {
           window.open('https://www.twitter.com/intent/tweet?text=' + this.topicContent.title + '%0D%0A' + Twitterdescrip + '%0D%0A' + url, 'sharer', 'toolbar=0,status=0,width=626,height=436'); return
         }
+        /* mail share */
         if (share.indexOf('mail') > 1) {
           window.location.href = 'mailto:?subject=' + this.topicContent.title + '&body=' + this.UrlLink(this.local_storage, 'shareLink')
         }
-        if (share.indexOf('line') > 1) {
+        /* line share */
+        if (share === 'line') {
           let url = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + descrip + '%0D%0A' + url
-          location.href = url
+          window.location.href = url
         }
       },
 
