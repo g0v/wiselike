@@ -1,42 +1,36 @@
 <template lang="pug">
 
   .hello
-    el-row
-      .slides
-        md-card
-          md-card-actions(v-md-ink-ripple='')
-          h3 Popular Users
-          md-card-media.swiper-inner
-            swiper(:options='swiperOption')
-              swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-                router-link.user.background(:to="'/user/' + o.name")
-                  el-badge(:value='o.topic_count')
-                    img.avatar.shadow(:src='o.avatar')
-                  p.name {{ o.nickname }}
-                  .link
-                    | ask me
-              .swiper-button-prev(slot='button-prev')
-              .swiper-button-next(slot='button-next')
+    el-row 
+      .slides <!-- Popular People -->
+        h3 Popular Users
+          swiper(:options='swiperOption1')
+            swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
+              router-link.user.background(:to="'/user/' + o.name")
+                el-badge(:value='o.topic_count')
+                  img.avatar.shadow(:src='o.avatar')
+                p.name {{ o.nickname }}
+                .link
+                  | ask me
+            .swiper-button-prev(slot='button-prev')
+            .swiper-button-next(slot='button-next')
     
-    el-row
-      el-col(:lg="16", :sm='24')
+    el-row 
+      el-col(:lg="16", :sm='24') <!-- Category -->
         .hot
-          md-card
-            md-card-actions(v-md-ink-ripple='')
-            h3 Category
-            .buttonset
-              el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-                h6 {{tag}}
-            md-card-media.swiper-inner
-              swiper(:options='swiperOption2')
-                swiper-slide.card(v-for='user in selectedUsers', :key='user', :data='user')
-                  .users
-                    router-link.user(:to="'/user/' + user.name")
-                      img.avatar.shadow(:src='user.avatar')
-                      p.name {{user.nickname}}
-                .swiper-pagination(slot='pagination')
+          h3 Category
+          .buttonset
+            el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
+              h6 {{tag}}
+            swiper(:options='swiperOption2')
+              swiper-slide.card(v-for='user in selectedUsers', :key='user', :data='user')
+                .users
+                  router-link.user(:to="'/user/' + user.name")
+                    img.avatar.shadow(:src='user.avatar')
+                    p.name {{user.nickname}}
+              .swiper-pagination(slot='pagination')
 
-      el-col(:lg="8", :sm='24')
+      el-col(:lg="8", :sm='24') <!-- Recent Activity -->
         .activity
           h3 Recent Activity
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '#' + o.id", :data="o", :key="o.title")
@@ -51,7 +45,6 @@
 <script>
   import axios from 'axios'
   import Vue from 'vue'
-  // import config from '../../config'
   import VueAwesomeSwiper from 'vue-awesome-swiper'
   Vue.use(VueAwesomeSwiper)
   import profile from './Profile.vue'
@@ -72,8 +65,7 @@
         topStar: [],
         sortUser: [],
         tags: [],
-        swiperOption: {
-          // pagination: '.swiper-pagination',
+        swiperOption1: {
           nextButton: '.swiper-button-next',
           prevButton: '.swiper-button-prev',
           slidesPerView: 1,
@@ -227,7 +219,7 @@
   .background {
     background-color: #333;
   }
-  .user { // Popular People
+  .user { // For Category users
     .avatar {
       width: 7em;
       height: 7em;
