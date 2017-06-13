@@ -185,7 +185,7 @@
           return
         }
         /* turn on full screen loading */
-        let loadingInstance = Loading.service({ fullscreen: true, text: '刪除中，請稍等' })
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料發送中，請稍等' })
         /* set form */
         let vm = this
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}

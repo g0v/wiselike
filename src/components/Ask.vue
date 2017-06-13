@@ -6,7 +6,9 @@
 
     el-dialog.askDialog.dim(title='建立新的問題', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       .anonymously(v-if='hasLoginAlert() === true') 您尚未登入網站，將以匿名提問！
-
+      .radio
+        el-checkbox(v-model='anonymousChecked')
+          span.text 選擇匿名提問
       el-input.input(v-model='title', auto-complete='off',type='textarea', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
       #editor
         mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true', :language = "'en'")
@@ -18,6 +20,7 @@
 </template>
 
 <script>
+  import { Loading } from 'element-ui'
   import wisdom from './Wisdom.vue'
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
@@ -40,6 +43,7 @@
         }
       }
       return {
+        anonymousChecked: false,
         ruleForm: {
           title: '',
           content: ''
@@ -116,12 +120,14 @@
           this.$message.error('內文欄位長度需大於10個字。')
           return
         }
-
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料發送中，請稍等' })
         let vm = this
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         let form = new URLSearchParams()
         form.append('title', this.title)
         form.append('raw', this.markdownText)
+        form.append('anonymous', this.anonymousChecked)
         axios.post(this.AskLink(this.local_storage), form, config)
         .then((val) => {
           let id = val.data.success
@@ -131,6 +137,8 @@
           })
           this.dialogFormVisible = false
           this.title = this.markdownText = ''
+          /* turn off full screen loading */
+          loadingInstance.close()
           vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         })
         .catch(function (error) {
@@ -152,6 +160,15 @@
 
 <style lang="scss" scoped>
 .ask {
+  .radio {
+    text-align: left;
+    margin-bottom: 1em;
+  }
+  .text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #20a0ff;
+  }
   .anonymously {
     margin-top: -1em;
     color: blue;

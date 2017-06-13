@@ -172,11 +172,17 @@ app.get('/users/:user/wisdoms', (req, res) => {
 app.post('/users/:user/wisdoms', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
-  let me = ''
-  if (sso === 'undefined' && sig === 'undefined') {
-    me = 'wiselike'
+  let me = getUsername(sso, sig)
+  let username = ''
+  // if (sso === 'undefined' && sig === 'undefined') {
+  //   me = 'wiselike'
+  // } else {
+  //   me = getUsername(sso, sig)
+  // }
+  if (req.body.anonymous === 'true') {
+    username = 'wiselike'
   } else {
-    me = getUsername(sso, sig)
+    username = me
   }
   let formData = querystring.stringify(
     {
@@ -187,6 +193,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       raw: req.body.raw
     }
   )
+  console.log(username)
   /* post question */
   axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
   .then((val) => {
@@ -195,7 +202,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
       {
         api_key: process.env.DISCOURSE_API_KEY,
         api_username: process.env.DISCOURSE_API_USERNAME,
-        username: me,
+        username: username,
         'post_ids[]': val.data.id
       }
     )
