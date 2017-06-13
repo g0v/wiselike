@@ -3,27 +3,39 @@
   .hello
     el-row
       .slides
+        md-card
+          md-card-actions(v-md-ink-ripple='')
           h3 Popular Users
-          el-carousel(trigger='click', type='card', height='400px', arrow='always')
-            el-carousel-item(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-              router-link.user.background(:to="'/user/' + o.name")
-                el-badge(:value='o.topic_count')
-                  img.avatar.shadow(:src='o.avatar')
-                p.name {{ o.nickname }}
-                .link
-                  | ask me
+          md-card-media.swiper-inner
+            swiper(:options='swiperOption')
+              swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
+                router-link.user.background(:to="'/user/' + o.name")
+                  el-badge(:value='o.topic_count')
+                    img.avatar.shadow(:src='o.avatar')
+                  p.name {{ o.nickname }}
+                  .link
+                    | ask me
+              .swiper-button-prev(slot='button-prev')
+              .swiper-button-next(slot='button-next')
     
     el-row
       el-col(:lg="16", :sm='24')
         .hot
-          h3 Category
-          .buttonset
-            el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-              h6 {{tag}}
-          .users
-            router-link.user(:to="'/user/' + user.name", v-for='user in selectedUsers', :key='user', :data='user')
-              img.avatar.shadow(:src='user.avatar')
-              p.name {{user.nickname}}
+          md-card
+            md-card-actions(v-md-ink-ripple='')
+            h3 Category
+            .buttonset
+              el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
+                h6 {{tag}}
+            md-card-media.swiper-inner
+              swiper(:options='swiperOption2')
+                swiper-slide.card(v-for='user in selectedUsers', :key='user', :data='user')
+                  .users
+                    router-link.user(:to="'/user/' + user.name")
+                      img.avatar.shadow(:src='user.avatar')
+                      p.name {{user.nickname}}
+                .swiper-pagination(slot='pagination')
+
       el-col(:lg="8", :sm='24')
         .activity
           h3 Recent Activity
@@ -38,7 +50,10 @@
 
 <script>
   import axios from 'axios'
+  import Vue from 'vue'
   // import config from '../../config'
+  import VueAwesomeSwiper from 'vue-awesome-swiper'
+  Vue.use(VueAwesomeSwiper)
   import profile from './Profile.vue'
   import wisdom from './Wisdom.vue'
   export default {
@@ -56,7 +71,27 @@
         activityTop10: [],
         topStar: [],
         sortUser: [],
-        tags: []
+        tags: [],
+        swiperOption: {
+          // pagination: '.swiper-pagination',
+          nextButton: '.swiper-button-next',
+          prevButton: '.swiper-button-prev',
+          slidesPerView: 1,
+          grabCursor: true,
+          paginationClickable: true,
+          spaceBetween: 30,
+          loop: true,
+          autoplay: 2500,
+          autoplayDisableOnInteraction: false
+        },
+        swiperOption2: {
+          pagination: '.swiper-pagination',
+          slidesPerView: 3,
+          slidesPerColumn: 2,
+          grabCursor: true,
+          paginationClickable: true,
+          spaceBetween: 30
+        }
       }
     },
     computed: {
@@ -192,22 +227,21 @@
   .background {
     background-color: #333;
   }
-  .user {
+  .user { // Popular People
     .avatar {
       width: 7em;
       height: 7em;
       border-radius: 50%;
-      margin: 0 auto;
+      margin: 10px auto;
       display: block;
     }
     .name {
       text-align: center;
-      margin: 1em 0 0.5em 0;
+      margin:0.8rem 0 0.5rem 0;
       color: white;
-      // font-weight: 700
     }
   }
-  .slides {
+  .slides { // Popular People
     margin: 3em 0;
     .user {
       background-size: cover;
@@ -222,22 +256,14 @@
         background: $highlight;
         font-family: $logofont;
         color: white;
-        // border-radius: .8em;
         line-height: 2em;
         padding: 0 3ch;
       }
     }
   }
-  .buttonset{
-    text-align: center;
-  }
   .users { // Category
-    display: flex;
-    flex-flow: row wrap;
-    padding: 3em 0;
+    padding: 1em 0 2em 0;
     .user {
-      flex: 0 33.3%;
-      display: inline-block;
       &:hover {
         transform: scale(1.05, 1.05)
       }
@@ -245,12 +271,11 @@
         margin: 1em auto 0.5em auto;
       }
       .name {
-        margin: 0;
         color: black;
       }
     }
   }
-  .activity {
+  .activity { // Recent Activity
     margin: 0 0 0 3ch;
     .say {
       display: block;
@@ -271,6 +296,7 @@
       margin: 0
     }
   }
+  
   @media all and (max-width: $breakpoint) {
     h3{
       font-size:1.6rem;
@@ -290,6 +316,9 @@
       height: 8rem;
     }
     .users {
+      .user {
+         flex: 0 33.3%;
+      }
       .name{
         font-size: 1.5rem;
       }
@@ -298,6 +327,9 @@
       font-size: 1.5rem;
       line-height: 2;
       padding: 5px 20px;
+    }
+    .buttonset{
+      text-align: center;
     }
   }
 }
