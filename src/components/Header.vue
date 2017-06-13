@@ -9,6 +9,7 @@
         el-col.right(:sm='8', :xs='10')
           el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
+            el-button.signout2.text(v-if="checkprofile", @click='logout') Sign out
             el-menu-item.create.text(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
             el-submenu.operation(v-else, index='2')
               template(slot='title')
@@ -16,9 +17,9 @@
                 //- span.username {{username}}
                   el-button Light
               el-menu-item(index='2-1', disabled='')
-                router-link.profile(:to="'/user/' + username") My Profile
+                router-link.submenu(:to="'/user/' + username") My Profile
               el-menu-item(index='2-2')
-                span.signout(@click="logout") Sign out
+                span.submenu(@click="logout") Sign out
 
 </template>
 
@@ -165,12 +166,15 @@
       font-size: 1.3rem;
       font-weight: 700;
     }
-    .profile{
+    .submenu{
       display: block;
       font-size: 16px;
     }
-    .signout{
-      font-size: 16px;
+    .signout2{
+      font-size: 1.3rem;
+      background-color: transparent;
+      border: 0;
+      margin-top: 0.5em;
     }
     .avatar{
       display: inline-block;
