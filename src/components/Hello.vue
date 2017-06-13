@@ -4,16 +4,14 @@
     el-row 
       .slides <!-- Popular People -->
         h3 Popular Users
-          swiper(:options='swiperOption1')
-            swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-              router-link.user.background(:to="'/user/' + o.name")
-                el-badge(:value='o.topic_count')
-                  img.avatar.shadow(:src='o.avatar')
-                p.name {{ o.nickname }}
-                .link
-                  | ask me
-            .swiper-button-prev(slot='button-prev')
-            .swiper-button-next(slot='button-next')
+        swiper(:options='swiperOption1')
+          swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
+            router-link.user.background(:to="'/user/' + o.name")
+              el-badge(:value='o.topic_count')
+                img.avatar.shadow(:src='o.avatar')
+              p.name {{ o.nickname }}
+              .link
+                | ask me
     
     el-row 
       el-col(:lg="16", :sm='24') <!-- Category -->
@@ -66,15 +64,17 @@
         sortUser: [],
         tags: [],
         swiperOption1: {
-          nextButton: '.swiper-button-next',
-          prevButton: '.swiper-button-prev',
-          slidesPerView: 1,
+          effect: 'coverflow',
           grabCursor: true,
-          paginationClickable: true,
-          spaceBetween: 30,
-          loop: true,
-          autoplay: 2500,
-          autoplayDisableOnInteraction: false
+          autoplay: 3000,
+          centeredSlides: true,
+          slidesPerView: 2,
+          coverflow: {
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1
+          }
         },
         swiperOption2: {
           pagination: '.swiper-pagination',
@@ -307,13 +307,8 @@
       width: 8rem;
       height: 8rem;
     }
-    .users {
-      .user {
-         flex: 0 33.3%;
-      }
-      .name{
-        font-size: 1.5rem;
-      }
+    .users .name {
+      font-size: 1.5rem;
     }
     .category {
       font-size: 1.5rem;
