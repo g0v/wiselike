@@ -18,8 +18,8 @@
       h2 分享連結
       el-input(v-model='shareLink', placeholder='请输入内容')
       span(v-for='(share, index) of shares')
-        i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='shareFB(share)')
-        img.lineIcon(v-else, src='../assets/line.png', @click='shareFB(share)')
+        i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
+        img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
 
     el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+  import { Loading } from 'element-ui'
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
   import axios from 'axios'
@@ -105,18 +106,19 @@
       }
     },
     methods: {
-      Delet: function () {
-        this.$bus.emit('Delete', {
-          type: 'Delete',
-          topicid: this.topicId
-        })
-      },
+      // test
+      // Delet: function () {
+      //   this.$bus.emit('Delete', {
+      //     type: 'Delete',
+      //     topicid: this.topicId
+      //   })
+      // },
       login: function (event) {
         // window.open(config.runtime.proxyHost + '/login')
         window.open(process.env.proxyHost + '/login')
       },
 
-      shareFB: function (share) {
+      sharing: function (share) {
         let descrip = this.topicContent.posts[0].content.substr(0, 200).replace(/<.>|<..>/g, '') + '...'
         let Twitterdescrip = descrip.substr(0, 70) + '...'
         let url = encodeURIComponent(this.UrlLink(this.local_storage, 'shareLink'))
@@ -134,8 +136,8 @@
         }
         /* line share */
         if (share === 'line') {
-          let url = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + descrip + '%0D%0A' + url
-          window.location.href = url
+          let lineurl = 'http://line.naver.jp/R/msg/text/?' + this.topicContent.title + '%0D%0A' + Twitterdescrip + '%0D%0A' + url
+          window.location.href = lineurl
         }
       },
 
@@ -151,6 +153,8 @@
       },
 
       DeletePrivate: function () {
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '刪除中，請稍等' })
         this.local_storage = window.localStorage
         this.visible2 = false
         let vm = this
@@ -159,15 +163,20 @@
         form.append('topid', this.topicId)
         axios.post(this.UrlLink(this.local_storage, 'DeletePrivate'), form, config)
         .then(() => {
+          /* turn off full screen loading */
+          loadingInstance.close()
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
           this.deleteCloseComponet = true
         })
         .catch(function (error) {
           console.log(error)
+          /* turn off full screen loading */
+          loadingInstance.close()
           vm.$message.error('刪除失敗，請稍後重試。')
         })
       },
 
+      /* reply question */
       submit: function () {
         /* cheack Character > 10 */
         let strLength = this.markdownText.replace(/\s/g, '')
@@ -175,12 +184,15 @@
           this.$message.error('欄位長度需大於10個字。')
           return
         }
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '刪除中，請稍等' })
         /* set form */
         let vm = this
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         let form = new URLSearchParams()
         form.append('raw', this.markdownText)
 
+        /* reply question via proxy.wiselike.tw */
         axios.post(this.UrlLink(this.local_storage, 'submit'), form, config)
         .then(() => {
           let date = new Date()
@@ -194,18 +206,23 @@
           temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
           temporaryPost.author = this.local_storage.username
 
+          /* create temporary data */
           axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
           .then((response) => {
-            vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
             var user = response.data.user
             temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '300')
             this.topicContent.posts.push(temporaryPost)
             this.markdownText = ''
             this.reply = false
+            /* turn off full screen loading */
+            loadingInstance.close()
+            vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
           })
         })
         .catch(function (error) {
           console.log(error)
+          /* turn off full screen loading */
+          loadingInstance.close()
           vm.$message.error('回覆失敗，請稍後重試。')
         })
       },

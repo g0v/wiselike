@@ -48,7 +48,7 @@
             el-button(@click='Introedit = true') 取 消
 
       .description
-        h3(v-if='Introedit', v-html='newDesc')
+        h3(v-if='Introedit', v-html='newDesc || ruleForm.introduceraw')
         el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
 
       ask(:userId = "user.name", v-if='Introedit')
@@ -123,7 +123,8 @@
         myQuestion: false,
         myQuestionID: '',
         user: {},
-        topicUrl: ''
+        topicUrl: '',
+        introductionID: ''
       }
     },
     methods: {
@@ -150,23 +151,32 @@
         return process.env.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditCategory: function () {
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料更改中，請稍等' })
         this.CateEdit = true
+        /* remove array[0] '尚未選擇領域' */
         if (this.checkList[0].indexOf('尚未選擇領域') > -1) {
           this.checkList = this.checkList.slice(1)
         }
         let list = []
+        /* Add 'wiselike' before category */
         for (let i in this.checkList) {
           list[i] = 'wiselike-' + this.checkList[i]
         }
+        /* form data type application/x-www-form-urlencoded */
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
         let formd = new URLSearchParams()
-        formd.append('categoryUrl', this.topicUrl)
+        formd.append('introductionID', this.introductionID)
         formd.append('tag', list)
+        /* change category via proxy.wiselike.tw */
         axios.post(this.CategoryLink(this.local_storage), formd, config)
-        .then(
+        .then(() => {
+          /* close loading */
+          loadingInstance.close()
           this.$message.success('成功更改，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
-        )
+        })
         .catch(function (error) {
+          loadingInstance.close()
           this.$message.error('成功失敗，請稍後重試。')
           console.log(error)
         })
@@ -185,7 +195,6 @@
       Editimage () {
         /* turn on full screen loading */
         let loadingInstance = Loading.service({ fullscreen: true, text: '資料上傳中，請稍等' })
-        this.fullscreenLoading = true
         this.background = false
         let config = {headers: {'Content-Type': 'multipart/form-data'}}
         let form = new FormData()
@@ -193,7 +202,7 @@
         this.imagefile ? (form.append('avatar', this.imagefile), url = this.imageLink(this.local_storage, 'avatar')) : (form.append('profile_background', this.backgroundimage), url = this.imageLink(this.local_storage, 'background'))
         axios.post(url, form, config)
         .then((val) => {
-          ((this.imagefile) && (this.user.userIcon = this.image))
+          ((this.imagefile) && (this.user.avatar = this.image))
           this.ImageEdit = true
           this.image = false
           /* turn off full screen loading */
@@ -273,8 +282,11 @@
       },
       ShowYourself: function () {
         this.local_storage = window.localStorage
-        this.ruleForm.introduceraw = this.newDesc
-        this.selfkey = this.local_storage.username === this.user.name
+        // this.ruleForm.introduceraw = this.newDesc
+        /* check username is not undefined */
+        if (this.user.name !== undefined) this.user.name = this.user.name.toLowerCase()
+        /* check user */
+        if (this.local_storage.username === this.user.name) this.selfkey = true
         this.ProfileBackroundImage = this.user.background
         // else {
         //   this.checkList = this.user.userCategory
@@ -324,9 +336,10 @@
         /* get user discription */
         axios.get('https://talk.pdis.nat.gov.tw/t/' + info.id + '.json?include_raw=1')
         .then((val) => {
-          this.newDesc = val.data.post_stream.posts[0].cooked
+          this.ruleForm.introduceraw = val.data.post_stream.posts[0].raw
         })
         this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
+        this.introductionID = info.id
         /* get user tag */
         info.tags.forEach((tag) => {
           this.checkList.push(tag.replace(/wiselike-/, ''))
