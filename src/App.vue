@@ -69,7 +69,6 @@
           axios.get(this.proxyUrlLink('subscribeStatus'))
           .then((val) => {
             this.watchCategory = val.data
-            console.log('app')
           })
         }
       }

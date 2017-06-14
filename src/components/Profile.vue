@@ -54,14 +54,16 @@
               el-button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
               el-button(@click='Introedit = true') 取 消
 
-      
-      .subscribe
-        el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus')
-          span.text 訂 閱
-        el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus')
-          span.text 取消訂閱
+      .Subscribe-Ask(v-if='login')
+        .subscribe
+          el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus')
+            span.text 訂 閱
+          el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus')
+            span.text 取消訂閱
 
-      ask(:userId = "user.name", v-if='Introedit')
+        ask(:userId = "user.name", v-if='Introedit')
+      .unlogin(v-else)
+        el-button(type="warning", @click.native="Login") 請 先 登 入 方 可 提 問
 
     .wrapped
       wisdom(v-if='topId', :type='"top"', :userId='user.name', :topicId='topId')
@@ -134,7 +136,8 @@
         topicUrl: '',
         introductionID: '',
         categoryID: '',
-        subscribeStatus: ''
+        subscribeStatus: '',
+        login: false
       }
     },
     methods: {
@@ -150,6 +153,9 @@
         else if (link === 'subscribe') return subscribe
         else if (link === 'introduction') return introduction
       },
+      Login: function () {
+        window.open(process.env.proxyHost + '/login')
+      },
       subscribe: function () {
         /* turn on full screen loading */
         let loadingInstance = Loading.service({ fullscreen: true, text: '資料更改中，請稍等' })
@@ -164,7 +170,8 @@
           /* close loading */
           loadingInstance.close()
           this.subscribeStatus = !this.subscribeStatus
-          this.$message.success('成功訂閱，未來每一個提問，將通知你。')
+          if (this.subscribeStatus) this.$message.success('成功訂閱，未來每一個提問，將通知你。')
+          else this.$message.warning('取消訂閱')
         })
         .catch(function (error) {
           loadingInstance.close()
@@ -222,7 +229,6 @@
         })
       },
       warningText: function (type) {
-        console.log(type)
         if (type === 'avatar') {
           this.ImageEdit = false
         }
@@ -317,6 +323,8 @@
         if (this.user.name !== undefined) this.user.name = this.user.name.toLowerCase()
         /* confirm login user */
         if (this.local_storage.username === this.user.name) this.selfkey = true
+        /* check user login status */
+        this.login = this.local_storage.username !== undefined
         this.ProfileBackroundImage = this.user.background
       },
       /* receive ask component data : show in myquestion */
