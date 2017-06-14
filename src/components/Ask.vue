@@ -131,7 +131,7 @@
         axios.post(this.AskLink(this.local_storage), form, config)
         .then((val) => {
           let id = val.data.success
-          this.$bus.emit('add-todo', {
+          this.$bus.emit('from-Ask', {
             type: 'myquestion',
             topicid: id
           })

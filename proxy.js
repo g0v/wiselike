@@ -210,9 +210,24 @@ app.post('/users/:user/wisdoms', (req, res) => {
     /* change owner */
     axios.post(ChangeNameUrl, ChangeNameformData)
     .then((val) => {
-      val.data.success = topicID
-      console.log(val.data.success)
-      res.status(200).send(val.data)
+      /* watching topic */
+      let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
+      let watchformData = querystring.stringify(
+        {
+          api_key: process.env.DISCOURSE_SUPER_API_KEY,
+          api_username: me,
+          notification_level: 3
+        }
+      )
+      axios.post(watchUrl, watchformData)
+      .then((val) => {
+        console.log(topicID)
+        val.data.success = topicID
+        res.status(200).send(val.data)
+      })
+      .catch(error => {
+        res.status(433).send(error.response.data)
+      })
     })
     .catch(error => {
       res.status(433).send(error.response.data)
@@ -234,8 +249,6 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  // console.log(req.body.raw)
-  // res.send(req.body)
   res.send(req.body.raw)
 
   let topicid = req.query.topicid
@@ -262,9 +275,28 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
         'post_ids[]': val.data.id
       }
     )
+    let topicID = topicid
     /* change owner */
     axios.post(ChangeNameUrl, ChangeNameformData)
     .then((val) => {
+      let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
+      let watchformData = querystring.stringify(
+        {
+          api_key: process.env.DISCOURSE_SUPER_API_KEY,
+          api_username: me,
+          notification_level: 3
+        }
+      )
+      /* watching topic */
+      axios.post(watchUrl, watchformData)
+      .then((val) => {
+        console.log(watchUrl)
+      })
+      .catch(error => {
+        res.status(433).send(error.response.data)
+      })
+
+      /* if first reply need change to profile category */
       if (type === 'public' || type === 'top') {
         res.status(200).send(val.data)
       } else {
@@ -625,3 +657,30 @@ app.post('/users/:user/delete', (req, res) => { // set user category
   return null
 })
 
+/* ****************** subscribe *********************/
+app.post('/users/:user/subscribe', (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  let categoryID = req.body.categoryID
+  /* watching topic */
+  // https://talk.pdis.nat.gov.tw/category/22/notifications
+  let watchUrl = `${process.env.DISCOURSE_HOST}/category/` + categoryID + '/notifications'
+  let watchformData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_SUPER_API_KEY,
+      api_username: me,
+      notification_level: 3
+    }
+  )
+  axios.post(watchUrl, watchformData)
+  .then((val) => {
+    console.log(categoryID)
+    val.data.success = categoryID
+    res.status(200).send(val.data)
+  })
+  .catch(error => {
+    res.status(433).send(error.response.data)
+  })
+  return null
+})

@@ -3,16 +3,18 @@
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
 
     .info.dim(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
+      
+      .backgroundImage
+        el-button.button.backgroundimage(icon='picture', size='large', v-if='selfkey') 變更背景
+        input.hide_input_background(@click="warningText('background')",type='file', @change='onFileChange', v-if='selfkey')
+        .background_button
+          el-button(type='primary' @click='Editimage', v-if='background') 送 出
+          el-button(@click='cancelBackground', v-if='background') 取 消
 
       .avatar
         div(v-if='ImageEdit')
           img.avatar_image(:src="user.avatar")
-          el-button.button.absolute(@click='open', icon='edit', size='large', v-if='selfkey && !background')
-          el-button.button.backgroundimage(icon='picture', size='large', v-if='selfkey') 變更背景
-          input.hide_input_background(@click='open1',type='file', @change='onbackgroundChange', v-if='selfkey')
-          .background_button
-            el-button(type='primary' @click='Editimage', v-if='background') 送 出
-            el-button(@click='cancelBackground', v-if='background') 取 消
+          el-button.button.absolute(@click="warningText('avatar')", icon='edit', size='large', v-if='selfkey && !background')
         div(v-else)
           div(v-if='!image')
             .el-icon-plus.avatar-uploader-icon
@@ -22,7 +24,8 @@
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
-      h1.name {{ user.nickname }}
+
+      h3.name {{ user.nickname }}
 
       .category
         el-card.box-card(v-if='!CateEdit')
@@ -40,16 +43,21 @@
           el-button.button(@click='CateEdit = false', icon='edit', size='large', v-if=' selfkey')
 
       .introduction
-        el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
-          el-form-item.acenter(prop='introduceraw')
-            el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-          div
-            el-button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
-            el-button(@click='Introedit = true') 取 消
+        .description
+          h3(v-if='Introedit', v-html='newDesc || ruleForm.introduceraw')
+          el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
+        .edit
+          el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
+            el-form-item.acenter(prop='introduceraw')
+              el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
+            div
+              el-button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
+              el-button(@click='Introedit = true') 取 消
 
-      .description
-        h3(v-if='Introedit', v-html='newDesc || ruleForm.introduceraw')
-        el-button.button(@click='Introedit = false', icon='edit', size='large', v-if='Introedit && selfkey')
+      
+      .subscribe
+        el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on')
+          span.text 訂 閱
 
       ask(:userId = "user.name", v-if='Introedit')
 
@@ -60,8 +68,6 @@
           wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId')
         el-tab-pane(label='歷史問題', name='public')
           wisdomWrapper(:type = '"public"', :userId = "user.name", :topicId='topId')
-        //- el-tab-pane(label='我的提問', name='myQuestion', v-if='myQuestion')
-        //-   wisdomWrapper(:type = '"myQuestion"', :userId = "user.userId", :topicId='myQuestionID')
         el-tab-pane(label='我的提問', name='myQuestion')
           wisdomWrapper(:type = '"myQuestion"', :userId = "user.name", :topicId='topId || myQuestionID')
 
@@ -124,13 +130,45 @@
         myQuestionID: '',
         user: {},
         topicUrl: '',
-        introductionID: ''
+        introductionID: '',
+        categoryID: ''
       }
     },
     methods: {
+      proxyUrlLink: function (link, type) {
+        let localstorage = window.localStorage
+        let category = process.env.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let image = process.env.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let subscribe = process.env.proxyHost + '/users/' + this.user.name + '/subscribe?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let introduction = process.env.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+
+        if (link === 'category') return category
+        else if (link === 'image') return image
+        else if (link === 'subscribe') return subscribe
+        else if (link === 'introduction') return introduction
+      },
+      subscribe: function () {
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料更改中，請稍等' })
+        let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+        let formd = new URLSearchParams()
+        /* watching category need categoryid */
+        formd.append('categoryID', this.categoryID)
+        axios.post(this.proxyUrlLink('subscribe'), formd, config)
+        .then(() => {
+          /* close loading */
+          loadingInstance.close()
+          this.$message.success('成功訂閱，未來每一個提問，將通知你。')
+        })
+        .catch(function (error) {
+          loadingInstance.close()
+          this.$message.error('訂閱失敗，請稍後重試。')
+          console.log(error)
+        })
+      },
       cancelBackground: function () {
         this.background = false
-        this.ProfileBackroundImage = this.user.userBg
+        this.ProfileBackroundImage = this.user.background
       },
       AddCategory: function () {
         this.cities.push(this.addcategory)
@@ -145,10 +183,6 @@
             }
           })
         })
-      },
-      CategoryLink: function (localstorage) {
-        // return config.runtime.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
-        return process.env.proxyHost + '/users/' + this.user.name + '/category?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditCategory: function () {
         /* turn on full screen loading */
@@ -169,7 +203,7 @@
         formd.append('introductionID', this.introductionID)
         formd.append('tag', list)
         /* change category via proxy.wiselike.tw */
-        axios.post(this.CategoryLink(this.local_storage), formd, config)
+        axios.post(this.proxyUrlLink('category'), formd, config)
         .then(() => {
           /* close loading */
           loadingInstance.close()
@@ -181,25 +215,21 @@
           console.log(error)
         })
       },
-      open () {
-        this.ImageEdit = false
-        this.$message('頭像請使用 JPG 格式，上限 2MB')
+      warningText: function (type) {
+        console.log(type)
+        if (type === 'avatar') {
+          this.ImageEdit = false
+        }
+        this.$message('檔案請使用 JPG/PNG 格式，上限 2MB')
       },
-      open1 () {
-        this.$message('頭像請使用 JPG 格式，上限 3MB')
-      },
-      imageLink: function (localstorage, type) {
-        // return config.runtime.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
-        return process.env.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
-      },
-      Editimage () {
+      Editimage: function () {
         /* turn on full screen loading */
         let loadingInstance = Loading.service({ fullscreen: true, text: '資料上傳中，請稍等' })
         this.background = false
         let config = {headers: {'Content-Type': 'multipart/form-data'}}
         let form = new FormData()
         let url = ''
-        this.imagefile ? (form.append('avatar', this.imagefile), url = this.imageLink(this.local_storage, 'avatar')) : (form.append('profile_background', this.backgroundimage), url = this.imageLink(this.local_storage, 'background'))
+        this.imagefile ? (form.append('avatar', this.imagefile), url = this.proxyUrlLink('image', 'avatar')) : (form.append('profile_background', this.backgroundimage), url = this.proxyUrlLink('image', 'background'))
         axios.post(url, form, config)
         .then((val) => {
           ((this.imagefile) && (this.user.avatar = this.image))
@@ -216,45 +246,40 @@
           console.log(error)
         })
       },
-      onbackgroundChange (e) {
+      onFileChange: function (e) {
         let files = e.target.files || e.dataTransfer.files
+        /* check file */
         if (!files.length) return
-        this.backgroundimage = files[0]
-        this.background = true
+        let imgfile = files[0]
+        /* check image type only jpeg or png */
+        const isJPG = imgfile.type === 'image/jpeg' || 'image/png'
+        /* check image size < 2MB */
+        const isLt2M = imgfile.size / 1024 / 1024 < 2
+        if (!isJPG) {
+          this.$message.error('圖片請使用 JPG/PNG 格式!')
+          this.errimage = false
+          return
+        } else if (!isLt2M) {
+          this.$message.error('圖片大小上限 2MB!')
+          this.errimage = false
+          return
+        } else this.errimage = true
         let reader = new FileReader()
         let vm = this
+        /* check type is avatar or backgroundimage */
+        let type = e.target.className.indexOf('background') > -1
         reader.onload = (e) => {
-          vm.ProfileBackroundImage = e.target.result
-          // console.log(vm.ProfileBackroundImage)
+          /* if backgroundimage do this */
+          if (type) {
+            vm.backgroundimage = files[0]
+            vm.background = true
+            vm.ProfileBackroundImage = e.target.result
+          } else {
+            vm.image = e.target.result
+            vm.imagefile = files[0]
+          }
         }
         reader.readAsDataURL(files[0])
-      },
-      onFileChange (e) {
-        let files = e.target.files || e.dataTransfer.files
-        if (!files.length) return
-        this.imagefile = files[0]
-        this.createImage(files[0])
-        const isJPG = this.imagefile.type === 'image/jpeg'
-        const isLt2M = this.imagefile.size / 1024 / 1024 < 2
-        if (!isJPG) {
-          this.$message.error('頭像圖片請使用 JPG 格式!')
-          this.errimage = false
-        } else if (!isLt2M) {
-          this.$message.error('頭像大小上限 2MB!')
-          this.errimage = false
-        } else this.errimage = true
-      },
-      createImage (file) {
-        let reader = new FileReader()
-        let vm = this
-        reader.onload = (e) => {
-          vm.image = e.target.result
-        }
-        reader.readAsDataURL(file)
-      },
-      Link: function (localstorage) {
-        // return config.runtime.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
-        return process.env.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
       },
       EditIntroduction: function (formName) {
         this.$refs[formName].validate((valid) => {
@@ -266,7 +291,7 @@
               let form = new URLSearchParams()
               form.append('id', this.id)
               form.append('raw', this.ruleForm.introduceraw)
-              axios.post(this.Link(this.local_storage), form, config)
+              axios.post(this.proxyUrlLink('introduction'), form, config)
               .then(() => {
                 this.Introedit = true
                 vm.$message.success('成功更改簡介，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
@@ -282,20 +307,14 @@
       },
       ShowYourself: function () {
         this.local_storage = window.localStorage
-        // this.ruleForm.introduceraw = this.newDesc
         /* check username is not undefined */
         if (this.user.name !== undefined) this.user.name = this.user.name.toLowerCase()
-        /* check user */
+        /* confirm login user */
         if (this.local_storage.username === this.user.name) this.selfkey = true
         this.ProfileBackroundImage = this.user.background
-        // else {
-        //   this.checkList = this.user.userCategory
-        // }
-        // for (let i in this.checkList) {
-        //   this.checkList[i] = this.checkList[i].replace(/wiselike-/, '')
-        // }
       },
-      addTodo: function (e) {
+      /* receive ask component data : show in myquestion */
+      receiveAskData: function (e) {
         this.myQuestion = true
         this.myQuestionID = e.topicid
         this.mode = 'myQuestion'
@@ -320,6 +339,7 @@
         let profile = userdata.data.user
         user.nickname = profile.name
         user.name = profile.username
+        /* set avatar size 300px */
         user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '300')
         if (profile.profile_background === undefined) {
           user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
@@ -339,7 +359,10 @@
           this.ruleForm.introduceraw = val.data.post_stream.posts[0].raw
         })
         this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
+        /* get introduction post id */
         this.introductionID = info.id
+        /* get profile category id */
+        this.categoryID = info.category_id
         /* get user tag */
         info.tags.forEach((tag) => {
           this.checkList.push(tag.replace(/wiselike-/, ''))
@@ -349,7 +372,7 @@
         }
       })
 
-      this.$bus.on('add-todo', this.addTodo)
+      this.$bus.on('from-Ask', this.receiveAskData)
       this.ShowYourself()
       this.category()
     },
@@ -357,15 +380,6 @@
       this.List = this.checkList
     },
     computed: {
-      user: function () {
-        // console.log(this.$route.params.userId)
-        // let pos = this.users.map(e => e.userId).indexOf(this.$route.params.userId)
-        // if (pos < 0) {
-        //   return false
-        // } else {
-        //   return this.users[pos]
-        // }
-      },
       topId: function () {
         return Number(this.$route.hash.replace(/#/, ''))
       }
@@ -388,6 +402,15 @@
     max-width: $maxWidth;
     margin: 1em auto;
   }
+  .backgroundImage {
+    text-align: right;
+    position: absolute;
+    z-index: 8888 !important;
+    right: 2em;
+    .background_button {
+      top: 3em;
+    }
+  }
   .catagoryInput {
     max-width: 30%;
     margin: 2em 0 1em 0;
@@ -397,11 +420,7 @@
     margin: 0 auto;
   }
   .checkbox {
-    // background-color: rgba(0, 0, 0, 0.47);
-    // color: #ffc233;
-    // font-weight: 700;
     margin: 0 1ch;
-    // font-size: 1rem;
     border-radius: 0;
   }
   .hide_input {
@@ -424,9 +443,8 @@
     border: 1px solid red;
     height: 2em;
     width: 6.5em;
-    // filter: alpha(opacity=0);
     position: absolute !important;
-    right: 1.1em;
+    right: 0em;
   }
   .info {
     background-size: cover;
@@ -443,7 +461,6 @@
       line-height: 178px;
       text-align: center;
       border: 3px dashed #d9d9d9;
-      // border-radius: 6px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -460,9 +477,22 @@
     }
     .name {
       font-size: 3rem;
+      margin: 0.5em;
     }
-    p, .name {
+    p {
       padding: 0 calc((100% - #{$maxWidth}) / 2);
+    }
+    .subscribe {
+      margin: 1em;
+      .subscribebutton {
+        background-color: rgba(255, 89, 89, 0.53);
+        border-color: rgba(255, 73, 73, 0);
+        width: 9em;
+      }
+      .text {
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
     }
   }
   .input {
@@ -471,13 +501,6 @@
   .right {
     text-align: right !important;
     margin-right: 10em;
-  }
-  .background_button {
-    position: absolute;
-    right: 1.2em !important;
-    top: 4em !important;
-    line-height: 0.5 !important;
-    font-size: 0.5em !important;
   }
   .button {
     background-color: rgba(247, 239, 239, 0.49);
@@ -497,21 +520,11 @@
     flex-flow: row nowrap;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
   }
   .acenter {
     position: inherit !important;
-  }
-  // .ask {
-  //   margin-left: calc(50% - 3em);
-  //   margin-top: -4em;
-  //   z-index: 999;
-  //   margin: 0 auto;
-  //   position: absolute;
-  // }
-  .backgroundimage {
-    position: absolute;
-    right: 1em;
   }
 }
 .wrapped {
