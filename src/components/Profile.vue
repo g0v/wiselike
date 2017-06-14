@@ -56,8 +56,10 @@
 
       
       .subscribe
-        el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on')
+        el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus')
           span.text 訂 閱
+        el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus')
+          span.text 取消訂閱
 
       ask(:userId = "user.name", v-if='Introedit')
 
@@ -85,7 +87,7 @@
   // import $ from 'jquery'
   export default {
     name: 'profile',
-    props: ['users'],
+    props: ['users', 'watchCategory'],
     components: {
       wisdom,
       wisdomWrapper,
@@ -131,7 +133,8 @@
         user: {},
         topicUrl: '',
         introductionID: '',
-        categoryID: ''
+        categoryID: '',
+        subscribeStatus: ''
       }
     },
     methods: {
@@ -154,10 +157,13 @@
         let formd = new URLSearchParams()
         /* watching category need categoryid */
         formd.append('categoryID', this.categoryID)
+        /* subscribe:false or unsubscribe:true */
+        formd.append('subscribeStatus', this.subscribeStatus)
         axios.post(this.proxyUrlLink('subscribe'), formd, config)
         .then(() => {
           /* close loading */
           loadingInstance.close()
+          this.subscribeStatus = !this.subscribeStatus
           this.$message.success('成功訂閱，未來每一個提問，將通知你。')
         })
         .catch(function (error) {
@@ -352,6 +358,7 @@
       /* Get user introduction and [wiselike-tag] */
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId.toLowerCase() + '.json')
       .then((post) => {
+        let vm = this
         let info = post.data.topic_list.topics[0]
         /* get user discription */
         axios.get('https://talk.pdis.nat.gov.tw/t/' + info.id + '.json?include_raw=1')
@@ -363,6 +370,10 @@
         this.introductionID = info.id
         /* get profile category id */
         this.categoryID = info.category_id
+        this.subscribeStatus = this.watchCategory.some(function (value, index, array) {
+          return value === vm.categoryID
+        })
+        // console.log(subscribeStatus)
         /* get user tag */
         info.tags.forEach((tag) => {
           this.checkList.push(tag.replace(/wiselike-/, ''))
@@ -489,9 +500,13 @@
         border-color: rgba(255, 73, 73, 0);
         width: 9em;
       }
+      .unsubscribebutton {
+        background-color: #324157;
+        border-color: rgba(255, 73, 73, 0);
+        width: 9em;
+      }
       .text {
         font-size: 1.2rem;
-        font-weight: 700;
       }
     }
   }

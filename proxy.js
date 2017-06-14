@@ -167,6 +167,27 @@ app.get('/users/:user/wisdoms', (req, res) => {
       return res.status(error.response.status).json(error.response.data)
     })
 })
+/* ****************** subscribestatus *********************/
+app.get('/users/:user/subscribestatus', (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  // let username = req.params.user
+  axios.get(
+    process.env.DISCOURSE_HOST + '/u/' + me + '.json', {
+      params: {
+        api_key: process.env.DISCOURSE_SUPER_API_KEY,
+        api_username: me
+      }
+    })
+    .then(response => {
+      res.status(200).send(response.data.user.watched_category_ids)
+    })
+    .catch(error => {
+      console.log(error)
+      return res.status(error.response.status).json(error.response.data)
+    })
+})
 
 /* ******************Ask a question *********************/
 app.post('/users/:user/wisdoms', (req, res) => {
@@ -663,19 +684,27 @@ app.post('/users/:user/subscribe', (req, res) => {
   let sig = req.query.sig
   let me = getUsername(sso, sig)
   let categoryID = req.body.categoryID
+  let subscribeStatus = req.body.subscribeStatus
+  let notificationlevel = ''
+  /* subscribe:false or unsubscribe:true */
+  // subscribeStatus ? (notificationlevel = 1) : (notificationlevel = 3)
+  if (subscribeStatus === 'true') {
+    notificationlevel = 1
+  } else {
+    notificationlevel = 3
+  }
   /* watching topic */
-  // https://talk.pdis.nat.gov.tw/category/22/notifications
   let watchUrl = `${process.env.DISCOURSE_HOST}/category/` + categoryID + '/notifications'
   let watchformData = querystring.stringify(
     {
       api_key: process.env.DISCOURSE_SUPER_API_KEY,
       api_username: me,
-      notification_level: 3
+      notification_level: notificationlevel
     }
   )
   axios.post(watchUrl, watchformData)
   .then((val) => {
-    console.log(categoryID)
+    console.log(watchformData)
     val.data.success = categoryID
     res.status(200).send(val.data)
   })
