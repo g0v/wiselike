@@ -166,7 +166,7 @@
         this.getUserData()
       },
       topicId: function () {
-        if (this.type === 'myQuestion') {
+        if (this.type === 'myQuestion' || 'private') {
           this.wisdoms.push(this.topicId)
         }
       }

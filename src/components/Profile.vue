@@ -67,7 +67,7 @@
       wisdom(v-if='topId', :type='"top"', :userId='user.name', :topicId='topId')
       el-tabs(v-model='mode', v-if='!topId')
         el-tab-pane(label='等待回答', name='private', v-if='selfkey')
-          wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId')
+          wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId || myQuestionID')
         el-tab-pane(label='歷史問題', name='public')
           wisdomWrapper(:type = '"public"', :userId = "user.name", :topicId='topId')
         el-tab-pane(label='我的提問', name='myQuestion')
