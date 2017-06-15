@@ -157,6 +157,7 @@
         window.open(process.env.proxyHost + '/login')
       },
       subscribe: function () {
+        let vm = this
         /* turn on full screen loading */
         let loadingInstance = Loading.service({ fullscreen: true, text: '資料更改中，請稍等' })
         let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
@@ -170,12 +171,12 @@
           /* close loading */
           loadingInstance.close()
           this.subscribeStatus = !this.subscribeStatus
-          if (this.subscribeStatus) this.$message.success('成功訂閱，未來每一個提問，將通知你。')
-          else this.$message.warning('取消訂閱')
+          if (this.subscribeStatus) vm.$message.success('成功訂閱，未來每一個提問，將通知你。')
+          else vm.$message.warning('取消訂閱')
         })
         .catch(function (error) {
           loadingInstance.close()
-          this.$message.error('訂閱失敗，請稍後重試。')
+          vm.$message.error('訂閱失敗，請稍後重試。')
           console.log(error)
         })
       },
@@ -378,9 +379,11 @@
         this.introductionID = info.id
         /* get profile category id */
         this.categoryID = info.category_id
-        this.subscribeStatus = this.watchCategory.some(function (value, index, array) {
-          return value === vm.categoryID
-        })
+        if (this.watchCategory.length > 0) {
+          this.subscribeStatus = this.watchCategory.some(function (value, index, array) {
+            return value === vm.categoryID
+          })
+        }
         // console.log(subscribeStatus)
         /* get user tag */
         info.tags.forEach((tag) => {
