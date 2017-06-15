@@ -2,7 +2,7 @@
   el-row.component
     el-col.logos(:lg='8', :sm='24')
       router-link.logo(to='/', exact='', title="Home")
-        img(src='https://talk.pdis.nat.gov.tw/uploads/default/original/1X/b5e4c37b44fd9b15ff8751061d1648bfb5048291.PNG', alt='logo')
+        img(src='../assets/wiselikelogo.png', alt='logo')
       a.logo(href="https://github.com/g0v/wiselike", title="Github", target="_blank")
         i.fa.fa-github
       a.el-button(href="https://github.com/g0v/wiselike/issues", title="Issue", target="_blank")

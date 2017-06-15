@@ -151,10 +151,11 @@
           let tags = response.data.topic_list.tags
           let all = '全部'
           for (var i in tags) {
-            tags[i] = tags[i].split('-')[1]
+            if (tags[i].indexOf('wiselike') > -1) {
+              this.tags.push(tags[i].replace(/wiselike-/, ''))
+            }
           }
-          tags.unshift(all)
-          this.tags = tags
+          this.tags.unshift(all)
           let newTopicsFilter = []
           topics.map((topic) => {
             let newTopic = {}
