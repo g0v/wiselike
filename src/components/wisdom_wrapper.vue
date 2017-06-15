@@ -99,7 +99,6 @@
             /* drop first meta topic */
             let topicsFilter = []
             topics = topics.slice(1)
-
             /* previous question */
             if (this.type === 'myQuestion') {
               topics.filter((name) => {
@@ -107,6 +106,33 @@
                   topicsFilter.push(name)
                 }
               })
+              /* private question need check localstorage delete data, can't be repeated */
+            } else if (this.type === 'private') {
+              let time = new Date().getTime() / 1000
+              /* get localstorage delete data */
+              let localstorageDelete = JSON.parse(window.localStorage.getItem('delete'))
+              let deleteTopicId = []
+              /* if localstorage delete data is not null */
+              if (localstorageDelete !== null) {
+                for (let data of localstorageDelete) {
+                  /* check in 60 seconds data */
+                  if (time - data.time < 60) {
+                    deleteTopicId.push(data.topicid)
+                  }
+                }
+              }
+              /* if data in 60s */
+              if (deleteTopicId.length > 0) {
+                /* filter reapt data */
+                topics.filter((id) => {
+                  let verify = deleteTopicId.some(function (value, index, array) {
+                    return value === id.id
+                  })
+                  if (!verify) {
+                    topicsFilter.push(id)
+                  }
+                })
+              } else topicsFilter = topics
             } else {
               /* filter reapt post */
               topics.filter((id) => {

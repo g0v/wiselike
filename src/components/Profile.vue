@@ -56,10 +56,8 @@
 
       .Subscribe-Ask(v-if='login')
         .subscribe
-          el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus')
-            span.text 訂 閱
-          el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus')
-            span.text 取消訂閱
+          el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus') 訂 閱
+          el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus') 取消訂閱
 
         ask(:userId = "user.name", v-if='Introedit')
       .unlogin(v-else)
@@ -333,75 +331,94 @@
         this.myQuestion = true
         this.myQuestionID = e.topicid
         this.mode = 'myQuestion'
+      },
+      getUserData: function () {
+        /* get user data */
+        axios.get('https://talk.pdis.nat.gov.tw/users/' + this.$route.params.userId + '.json').then((userdata) => {
+          let user = {
+            id: '',
+            name: '',
+            nickname: '',
+            avatar: '',
+            background: '',
+            description: ''
+          }
+          let profile = userdata.data.user
+          user.nickname = profile.name
+          user.name = profile.username
+          /* set avatar size 300px */
+          user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '300')
+          if (profile.profile_background === undefined) {
+            user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+          } else {
+            user.background = 'https://talk.pdis.nat.gov.tw' + profile.profile_background
+          }
+          this.user = user
+        })
+
+        /* Get user introduction and [wiselike-tag] */
+        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId.toLowerCase() + '.json')
+        .then((post) => {
+          let vm = this
+          let info = post.data.topic_list.topics[0]
+          /* get user discription */
+          axios.get('https://talk.pdis.nat.gov.tw/t/' + info.id + '.json?include_raw=1')
+          .then((val) => {
+            this.ruleForm.introduceraw = val.data.post_stream.posts[0].raw
+          })
+          this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
+          /* get introduction post id */
+          this.introductionID = info.id
+          /* get profile category id */
+          this.categoryID = info.category_id
+          if (this.watchCategory.length > 0) {
+            this.subscribeStatus = this.watchCategory.some(function (value, index, array) {
+              return value === vm.categoryID
+            })
+          }
+          // console.log(subscribeStatus)
+          /* get user tag */
+          info.tags.forEach((tag) => {
+            this.checkList.push(tag.replace(/wiselike-/, ''))
+          })
+          if (this.checkList.length === 0) {
+            this.checkList[0] = '尚未選擇領域'
+          }
+        })
+
+        this.$bus.on('from-Ask', this.receiveAskData)
+        this.ShowYourself()
+        this.category()
       }
     },
     watch: {
       user: function () {
         this.ShowYourself()
+      },
+      /* route change user */
+      '$route' (to, from) {
+        /* reset init data like init() */
+        Object.assign(this.$data, this.$options.data())
+        /* get user data */
+        this.getUserData()
       }
     },
     created: function () {
-      /* get user data */
-      axios.get('https://talk.pdis.nat.gov.tw/users/' + this.$route.params.userId + '.json').then((userdata) => {
-        let user = {
-          id: '',
-          name: '',
-          nickname: '',
-          avatar: '',
-          background: '',
-          description: ''
-        }
-        let profile = userdata.data.user
-        user.nickname = profile.name
-        user.name = profile.username
-        /* set avatar size 300px */
-        user.avatar = 'https://talk.pdis.nat.gov.tw' + profile.avatar_template.replace(/{size}/, '300')
-        if (profile.profile_background === undefined) {
-          user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
-        } else {
-          user.background = 'https://talk.pdis.nat.gov.tw' + profile.profile_background
-        }
-        this.user = user
-      })
-
-      /* Get user introduction and [wiselike-tag] */
-      axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId.toLowerCase() + '.json')
-      .then((post) => {
-        let vm = this
-        let info = post.data.topic_list.topics[0]
-        /* get user discription */
-        axios.get('https://talk.pdis.nat.gov.tw/t/' + info.id + '.json?include_raw=1')
-        .then((val) => {
-          this.ruleForm.introduceraw = val.data.post_stream.posts[0].raw
-        })
-        this.topicUrl = '/t/profile-' + this.$route.params.userId + '/' + info.id
-        /* get introduction post id */
-        this.introductionID = info.id
-        /* get profile category id */
-        this.categoryID = info.category_id
-        if (this.watchCategory.length > 0) {
-          this.subscribeStatus = this.watchCategory.some(function (value, index, array) {
-            return value === vm.categoryID
-          })
-        }
-        // console.log(subscribeStatus)
-        /* get user tag */
-        info.tags.forEach((tag) => {
-          this.checkList.push(tag.replace(/wiselike-/, ''))
-        })
-        if (this.checkList.length === 0) {
-          this.checkList[0] = '尚未選擇領域'
-        }
-      })
-
-      this.$bus.on('from-Ask', this.receiveAskData)
-      this.ShowYourself()
-      this.category()
+      this.getUserData()
     },
     mounted: function () {
       this.List = this.checkList
     },
     computed: {
+      user: function () {
+        console.log(this.$route.params.userId)
+        let pos = this.users.map(e => e.name).indexOf(this.$route.params.userId)
+        if (pos < 0) {
+          return false
+        } else {
+          return this.users[pos]
+        }
+      },
       topId: function () {
         return Number(this.$route.hash.replace(/#/, ''))
       }
@@ -428,7 +445,6 @@
     text-align: right;
     position: absolute;
     z-index: 8888 !important;
-    right: 2em;
     .background_button {
       top: 3em;
     }
@@ -509,12 +525,14 @@
       .subscribebutton {
         background-color: rgba(255, 89, 89, 0.53);
         border-color: rgba(255, 73, 73, 0);
-        width: 9em;
+        width: 8em;
+        font-size: 1em;
       }
       .unsubscribebutton {
         background-color: #324157;
         border-color: rgba(255, 73, 73, 0);
-        width: 9em;
+        width: 8em;
+        font-size: 1em;
       }
       .text {
         font-size: 1.2rem;

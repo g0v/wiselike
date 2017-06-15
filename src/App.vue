@@ -78,6 +78,18 @@
       this.getWatchCategory()
       /* axios for IE11 */
       es6promise.polyfill()
+      let time = new Date().getTime() / 1000
+
+      /* localstorage delete data keep 60s */
+      let localstorageDelete = JSON.parse(window.localStorage.getItem('delete'))
+      /* if localstorage delete data is not null */
+      if (localstorageDelete !== null) {
+        let lastdelete = localstorageDelete[localstorageDelete.length - 1].time
+        /* if last data over 60s remove delete */
+        if (time - lastdelete > 60) {
+          window.localStorage.removeItem('delete')
+        }
+      }
     }
   }
 </script>
