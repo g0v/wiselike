@@ -70,6 +70,7 @@ export default {
         }
       }
     }
+
     /* if data in 60s */
     if (deleteTopicId.length > 0) {
       /* filter reapt data */
@@ -83,10 +84,11 @@ export default {
         }
         /* if Local Storagedata the same data with topics */
         if (topics.length - (index + 1) === 0 && verifyCheck === false) {
-          topicsFilter = 'empty'
+          topicsFilter = 'AlltheSame'
         }
       })
     } else topicsFilter = topics
+    // console.log(topicsFilter)
     return topicsFilter
   }
 }
