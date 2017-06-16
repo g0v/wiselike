@@ -22,6 +22,7 @@
 </template>
 
 <script>
+  import LocalStorage from '../js/LocalStorage.js'
   import axios from 'axios'
   import wisdom from './Wisdom.vue'
   export default {
@@ -83,10 +84,9 @@
             this.loadBegin++
           }
         }
-        // await this.topic2wisdom(topics)
         this.loading = false
         /* get topic list from next page of category */
-        if (this.loadBegin === total && total !== 0) {
+        if (this.loadBegin === total && total !== 0 && total > 28) {
           this.loadBegin = 0
           this.page += 1
           this.newTopics = await this.getDiscussionCategory(this.profileLink + this.page)
@@ -94,49 +94,43 @@
       },
       getDiscussionCategory: async function (url) { // 抓取作者全部的category
         return new Promise((resolve, reject) => {
-          axios.get(url).then((val) => {
+          let vm = this
+          axios.get(url).then(async function (val) {
             let topics = val['data']['topic_list']['topics']
+
             /* drop first meta topic */
             let topicsFilter = []
             topics = topics.slice(1)
-            /* previous question */
-            if (this.type === 'myQuestion') {
-              topics.filter((name) => {
-                if (this.local_storage.username === name.last_poster_username) {
-                  topicsFilter.push(name)
-                }
-              })
-              /* private question need check localstorage delete data, can't be repeated */
-            } else if (this.type === 'private') {
-              let time = new Date().getTime() / 1000
-              /* get localstorage delete data */
-              let localstorageDelete = JSON.parse(window.localStorage.getItem('delete'))
-              let deleteTopicId = []
-              /* if localstorage delete data is not null */
-              if (localstorageDelete !== null) {
-                for (let data of localstorageDelete) {
-                  /* check in 60 seconds data */
-                  if (time - data.time < 60) {
-                    deleteTopicId.push(data.topicid)
-                  }
-                }
+
+            /* get local storage delete data */
+            let LocalStoragedata = await LocalStorage.getLocalStorage('delete', topics)
+
+            /* private question need check localstorage delete data, can't be repeated */
+            if (vm.type === 'private' || 'myQuestion') {
+              /* if Local Storagedata has data do this */
+              if (LocalStoragedata.length > 0 && LocalStoragedata !== 'empty') {
+                topicsFilter = LocalStoragedata
+              } else if (LocalStoragedata === 'empty') {
+              /* if Local Storagedata the same data with topics */
+                topicsFilter = []
+              } else {
+                topicsFilter = topics
               }
-              /* if data in 60s */
-              if (deleteTopicId.length > 0) {
-                /* filter reapt data */
-                topics.filter((id) => {
-                  let verify = deleteTopicId.some(function (value, index, array) {
-                    return value === id.id
-                  })
-                  if (!verify) {
-                    topicsFilter.push(id)
+              /* previous question */
+              if (vm.type === 'myQuestion') {
+                let topicsNameFilter = topicsFilter
+                topicsFilter = []
+                /* keep author user */
+                topicsNameFilter.filter((data) => {
+                  if (vm.local_storage.username === data.last_poster_username.toLowerCase()) {
+                    topicsFilter.push(data)
                   }
                 })
-              } else topicsFilter = topics
+              }
             } else {
               /* filter reapt post */
               topics.filter((id) => {
-                if (this.topicId !== id.id) {
+                if (vm.topicId !== id.id) {
                   topicsFilter.push(id)
                 }
               })
@@ -166,7 +160,7 @@
         this.getUserData()
       },
       topicId: function () {
-        if (this.type === 'myQuestion' || 'private') {
+        if (this.type === 'myQuestion') {
           this.wisdoms.push(this.topicId)
         }
       }

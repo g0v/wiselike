@@ -12,7 +12,7 @@
         el-button(size='mini', type='text', @click='visible2 = false') 取消
         el-button(type='primary', size='mini', @click='DeletePrivate') 确定
     el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
-    el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
+    //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
 
     el-popover(ref='popover1', placement='top', width='400')
       h2 分享連結
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+  import LocalStorage from '../js/LocalStorage.js'
   import { Loading } from 'element-ui'
   import { mavonEditor } from 'mavon-editor'
   import '../css/index.css'
@@ -106,35 +107,6 @@
       }
     },
     methods: {
-      // test
-      Delet: function () {
-        /* create new timestamp */
-        let time = new Date().getTime() / 1000
-        let deleteData = []
-        /* defined data type */
-        let deletetopic = {
-          /* current time */
-          time: time,
-          /* delete topic id */
-          topicid: this.topicId
-        }
-        /* get localstorage delete data */
-        let localstorageDelete = JSON.parse(window.localStorage.getItem('delete'))
-        /* if localstorage delete data is not null */
-        if (localstorageDelete !== null) {
-          for (let data of localstorageDelete) {
-            /* only recorded for 60 seconds data */
-            if (time - data.time < 60) {
-              deleteData.push(data)
-            }
-          }
-        }
-        /* create new delete data */
-        deleteData.push(deletetopic)
-        /* write to localstorage */
-        window.localStorage.setItem('delete', JSON.stringify(deleteData))
-        console.log(JSON.parse(window.localStorage.getItem('delete')))
-      },
 
       login: function (event) {
         // window.open(config.runtime.proxyHost + '/login')
@@ -190,31 +162,9 @@
           loadingInstance.close()
           vm.$message.success('成功刪除，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
 
-          /* create new timestamp */
-          let time = new Date().getTime() / 1000
-          let deleteData = []
-          /* defined data type */
-          let deletetopic = {
-            /* current time */
-            time: time,
-            /* delete topic id */
-            topicid: this.topicId
-          }
-          /* get localstorage delete data */
-          let localstorageDelete = JSON.parse(window.localStorage.getItem('delete'))
-          /* if localstorage delete data is not null */
-          if (localstorageDelete !== null) {
-            for (let data of localstorageDelete) {
-              /* only recorded for 60 seconds data */
-              if (time - data.time < 60) {
-                deleteData.push(data)
-              }
-            }
-          }
-          /* create new delete data */
-          deleteData.push(deletetopic)
-          /* write to localstorage */
-          window.localStorage.setItem('delete', JSON.stringify(deleteData))
+          /* create localstorage record delete data */
+          LocalStorage.setLocalStorage('delete', this.topicId)
+
           /* close component */
           this.deleteCloseComponet = true
         })

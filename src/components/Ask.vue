@@ -9,7 +9,7 @@
       .radio
         el-checkbox(v-model='anonymousChecked')
           span.text 選擇匿名提問
-      el-input.input(v-model='title', auto-complete='off',type='textarea', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
+      el-input.input(v-model='title', auto-complete='off', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
       #editor
         mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true', :language = "'en'")
         el-tag.tag(type='primary') 欄位長度需大於10個字。
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+  import LocalStorage from '../js/LocalStorage.js'
   import { Loading } from 'element-ui'
   import wisdom from './Wisdom.vue'
   import { mavonEditor } from 'mavon-editor'
@@ -135,6 +136,9 @@
             type: 'myquestion',
             topicid: id
           })
+          /* create localstorage record Ask topicid */
+          LocalStorage.setLocalStorage('Ask', id)
+
           this.dialogFormVisible = false
           this.title = this.markdownText = ''
           /* turn off full screen loading */
