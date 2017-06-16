@@ -36,7 +36,7 @@ export default {
       /* current time */
       time: time,
       /* delete topic id */
-      topicid: topicID
+      id: topicID
     }
     /* get localstorage delete data */
     let localstorageDelete = JSON.parse(window.localStorage.getItem(type))
@@ -66,7 +66,7 @@ export default {
       for (let data of localstorageDelete) {
         /* check in 60 seconds data */
         if (time - data.time < 120) {
-          deleteTopicId.push(data.topicid)
+          deleteTopicId.push(data.id)
         }
       }
     }
@@ -88,6 +88,15 @@ export default {
         }
       })
     } else topicsFilter = topics
+
+    if (type === 'Ask' && deleteTopicId.length > 0) {
+      if (topicsFilter === 'AlltheSame') {
+        topicsFilter = (localstorageDelete.reverse())
+      } else {
+        let temp = topicsFilter
+        topicsFilter = (localstorageDelete.reverse()).concat(temp)
+      }
+    }
     // console.log(topicsFilter)
     return topicsFilter
   }

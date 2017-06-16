@@ -13,8 +13,8 @@
             div(slot='content') auto-loading?
             el-switch(on-text="on", off-text="off", v-model="autoload")
       //- get one wisdom at once by id
-      wisdom(v-for='(wisdom, idx) of wisdoms', :type='type', :key='idx', :userId='userId', :topicId='wisdom')
-
+      wisdom(v-if='!addNewtopic', v-for='(wisdom, idx) of wisdoms', :type='type', :key='idx', :userId='userId', :topicId='wisdom')
+      wisdom(v-if='addNewtopic', v-for='(wisdom, idx) of wisdoms', :type='type', :key='idx', :userId='userId', :topicId='wisdom')
     //- load more button
     el-button.loader(type="primary", v-on:click="loadWisdom", v-loading="loading", v-show="loadmore")
       i.el-icon-arrow-down
@@ -41,7 +41,8 @@
         loadmore: false,
         autoload: true,
         routePosId: 0,
-        title: {private: '等待回答', public: '歷史問題'}
+        title: {private: '等待回答', public: '歷史問題'},
+        addNewtopic: false
       }
     },
     computed: {
@@ -113,17 +114,14 @@
                   topics.push(data)
                 }
               })
-              /* get local storage delete data */
-              // let localstorageAsk = await JSON.parse(window.localStorage.getItem(type))
-              // let LocalStoragedata = await LocalStorage.getLocalStorage('Ask', topics)
-              // for (let data of localstorageAsk) {
-              //   let
-              // }
-
-              // console.log(LocalStorageAsk)
             }
-            if (vm.type === 'private' || 'myQuestion') {
+            if (vm.type === 'private' || vm.type === 'myQuestion') {
             /* private question need check localstorage delete data, can't be repeated */
+              /* get local storage delete data */
+              let LocalStoragedataAsk = await LocalStorage.getLocalStorage('Ask', topics)
+              if (LocalStoragedataAsk !== null) {
+                topics = LocalStoragedataAsk
+              }
               /* get local storage delete data */
               let LocalStoragedata = await LocalStorage.getLocalStorage('delete', topics)
               /* if Local Storagedata has data do this */
@@ -135,8 +133,10 @@
               } else {
                 topicsFilter = topics
               }
-            } else {
+              // return topicsFilter
+            } else if (vm.type === 'public') {
               /* filter reapt post */
+              topicsFilter = []
               topics.filter((id) => {
                 if (vm.topicId !== id.id) {
                   topicsFilter.push(id)
@@ -168,9 +168,8 @@
         this.getUserData()
       },
       topicId: function () {
-        if (this.type === 'myQuestion') {
-          this.wisdoms.push(this.topicId)
-        }
+        this.getUserData()
+        this.addNewtopic = true
       }
     },
     created: function () {
