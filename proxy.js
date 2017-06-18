@@ -43,15 +43,15 @@ function getProfile (sso, sig) {
   console.log(profile)
   return profile
 }
-function verification (req) {
-  let sso = req.query.sso
-  let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  if (me === undefined || req.params.user !== me) {
-    return false
-  }
-  return true
-}
+// function verification (req) {
+//   let sso = req.query.sso
+//   let sig = req.query.sig
+//   let me = getUsername(sso, sig)
+//   if (me === undefined || req.params.user !== me) {
+//     return false
+//   }
+//   return true
+// }
 function getUsername (sso, sig) {
   let profile = getProfile(sso, sig)
   return profile.username
@@ -655,7 +655,10 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
 
 /* ****************** Delete Question *********************/
 app.post('/users/:user/delete', (req, res) => { // set user category
-  if (!verification(req)) {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
