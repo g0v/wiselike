@@ -44,7 +44,7 @@ export default {
     if (localstorageDelete !== null) {
       for (let data of localstorageDelete) {
         /* only recorded for 60 seconds data */
-        if (time - data.time < 120) {
+        if (time - data.time < 60) {
           Data.push(data)
         }
       }
@@ -65,7 +65,7 @@ export default {
     if (localstorageDelete !== null) {
       for (let data of localstorageDelete) {
         /* check in 60 seconds data */
-        if (time - data.time < 120) {
+        if (time - data.time < 60) {
           deleteTopicId.push(data.id)
         }
       }
