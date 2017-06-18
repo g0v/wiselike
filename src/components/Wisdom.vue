@@ -1,6 +1,6 @@
 <template lang="pug">
 //- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
-#wisdom(:class='[type]', v-if='!deleteCloseComponet')
+#wisdom(:class='[type]', v-if='!deleteCloseComponet && topicContent.title')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}

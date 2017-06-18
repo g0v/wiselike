@@ -123,16 +123,17 @@
                 topics = LocalStoragedataAsk
               }
               /* get local storage delete data */
-              let LocalStoragedata = await LocalStorage.getLocalStorage('delete', topics)
+              topicsFilter = await LocalStorage.GetLocalStorageDelete('delete', topics)
               /* if Local Storagedata has data do this */
-              if (LocalStoragedata.length > 0 && LocalStoragedata !== 'AlltheSame') {
-                topicsFilter = LocalStoragedata
-              } else if (LocalStoragedata === 'AlltheSame') {
-              /* if Local Storagedata the same data with topics */
-                topicsFilter = []
-              } else {
-                topicsFilter = topics
-              }
+              // if (LocalStoragedata.length > 0 && LocalStoragedata !== 'AlltheSame') {
+              //   topicsFilter = LocalStoragedata
+              // } else if (LocalStoragedata === 'AlltheSame') {
+              // /* if Local Storagedata the same data with topics */
+              //   topicsFilter = []
+              // } else {
+              //   topicsFilter = topics
+              // }
+              // topicsFilter = LocalStoragedata
               // return topicsFilter
             } else if (vm.type === 'public') {
               /* filter reapt post */

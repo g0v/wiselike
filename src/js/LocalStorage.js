@@ -54,6 +54,74 @@ export default {
     /* write to localstorage */
     window.localStorage.setItem(type, JSON.stringify(Data))
   },
+  GetLocalStorage: async function (type, topics) {
+    let time = new Date().getTime() / 1000
+    /* get localstorage delete data */
+    let localstorage = await JSON.parse(window.localStorage.getItem(type))
+    let TopicId = []
+    /* if localstorage delete data is not null */
+    if (localstorage !== null) {
+      for (let data of localstorage) {
+        /* check in 60 seconds data */
+        if (time - data.time < 60) {
+          TopicId.push(data.id)
+        }
+      }
+    } else TopicId = []
+    return TopicId
+  },
+  GetLocalStorageDelete: async function (type, topics) {
+    let verifyCheck = false
+    let topicsFilter = []
+    /* if data in 60s */
+    let deleteTopicId = await this.GetLocalStorage(type, topics)
+    if (deleteTopicId.length > 0) {
+      /* filter reapt data */
+      topics.filter((id, index) => {
+        let verify = deleteTopicId.some(function (value, index, array) {
+          return value === id.id
+        })
+        if (!verify) {
+          topicsFilter.push(id)
+          verifyCheck = true
+        }
+        /* if Local Storagedata the same data with topics */
+        if (topics.length - (index + 1) === 0 && verifyCheck === false) {
+          topicsFilter = []
+        }
+      })
+      /* if no match data */
+    } else topicsFilter = topics
+    return topicsFilter
+  },
+  GetLocalStorageAsk: async function (type, topics) {
+    // let verifyCheck = false
+    // let topicsFilter = []
+    // let username = window.localStorage.getItem('username')
+    // /* if data in 60s */
+    // let AskTopicId = await this.GetLocalStorage(type, topics)
+    // if (AskTopicId.length > 0) {
+    //   /* filter reapt data */
+    //   topics.filter((id, index) => {
+    //     if (username === id.last_poster_username.toLowerCase()) {
+    //       topics.push(data)
+    //     }
+    //     let verify = AskTopicId.some(function (value, index, array) {
+    //       return value === id.id
+    //     })
+    //     if (!verify) {
+    //       topicsFilter.push(id)
+    //       verifyCheck = true
+    //     }
+    //     /* if Local Storagedata the same data with topics */
+    //     if (topics.length - (index + 1) === 0 && verifyCheck === false) {
+    //       topicsFilter = []
+    //     }
+    //   })
+    //   /* if no match data */
+    // } else topicsFilter = topics
+    // return topicsFilter
+  },
   getLocalStorage: async function (type, topics) {
     let verifyCheck = false
     let topicsFilter = []
