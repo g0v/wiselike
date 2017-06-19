@@ -1,6 +1,7 @@
 // import axios from 'axios'
+let keeptime = 60
 export default {
-  setLocalStorage: function (type, topicID) {
+  setLocalStorage: function (type, topicID, data) {
     /* create new timestamp */
     let time = new Date().getTime() / 1000
     let Data = []
@@ -9,7 +10,8 @@ export default {
       /* current time */
       time: time,
       /* delete topic id */
-      id: topicID
+      id: topicID,
+      data: data
     }
     /* get localstorage delete data */
     let localstorageDelete = JSON.parse(window.localStorage.getItem(type))
@@ -17,7 +19,7 @@ export default {
     if (localstorageDelete !== null) {
       for (let data of localstorageDelete) {
         /* only recorded for 60 seconds data */
-        if (time - data.time < 60) {
+        if (time - data.time < keeptime) {
           Data.push(data)
         }
       }
@@ -26,6 +28,7 @@ export default {
     Data.push(DataType)
     /* write to localstorage */
     window.localStorage.setItem(type, JSON.stringify(Data))
+    console.log(JSON.parse(window.localStorage.getItem(type)))
   },
   GetLocalStorage: async function (type, topics) {
     let time = new Date().getTime() / 1000
@@ -36,7 +39,7 @@ export default {
     if (localstorage !== null) {
       for (let data of localstorage) {
         /* check in 60 seconds data */
-        if (time - data.time < 60) {
+        if (time - data.time < keeptime) {
           TopicId.push(data.id)
         }
       }
@@ -79,9 +82,19 @@ export default {
     if (localstorageDelete !== null) {
       let lastdelete = localstorageDelete[localstorageDelete.length - 1].time
       /* if last data over 60s remove delete */
-      if (time - lastdelete > 60) {
+      if (time - lastdelete > keeptime) {
         window.localStorage.removeItem(type)
       }
+    }
+  },
+  LocalStorageRepply: async function (type, topics, data) {
+    let localstoragereply = await this.GetLocalStorage(type, topics)
+    // console.log(localstoragereply)
+    let replyStartBehind = localstoragereply.reverse()
+    if (replyStartBehind.length > 0) {
+      replyStartBehind.filter((id, index) => {
+        console.log(id)
+      })
     }
   }
   // GetLocalStorageDelete: async function (type, topics) {

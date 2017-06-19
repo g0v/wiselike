@@ -217,6 +217,7 @@
             /* turn off full screen loading */
             loadingInstance.close()
             vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
+            LocalStorage.setLocalStorage('reply', this.topicId, this.topicContent)
           })
         })
         .catch(function (error) {
@@ -264,6 +265,8 @@
             }
             wisdom.posts.push(wisdomPost)
           }
+          // LocalStorageRepply
+          LocalStorage.LocalStorageRepply('reply', this.topicId, wisdom)
           wisdom.title = topic.data.title
           wisdom.topicId = topic.data.id
           wisdom.category = this.type
