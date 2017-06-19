@@ -40,7 +40,11 @@ export default {
       for (let data of localstorage) {
         /* check in 60 seconds data */
         if (time - data.time < keeptime) {
-          TopicId.push(data.id)
+          if (type === 'reply') {
+            TopicId.push(data)
+          } else {
+            TopicId.push(data.id)
+          }
         }
       }
     } else TopicId = []
@@ -90,12 +94,17 @@ export default {
   LocalStorageRepply: async function (type, topics, data) {
     let localstoragereply = await this.GetLocalStorage(type, topics)
     // console.log(localstoragereply)
-    let replyStartBehind = localstoragereply.reverse()
-    if (replyStartBehind.length > 0) {
-      replyStartBehind.filter((id, index) => {
-        console.log(id)
+    let reply = null
+    if (localstoragereply.length > 0) {
+      localstoragereply.filter((id, index) => {
+        // console.log(id)
+        // console.log(topics)
+        if (id.id === topics) {
+          reply = id
+        }
       })
-    }
+    } else reply = null
+    return reply
   }
   // GetLocalStorageDelete: async function (type, topics) {
   //   let verifyCheck = false

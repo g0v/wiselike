@@ -204,12 +204,13 @@
           }
           temporaryPost.content = $('.v-show-content')[0].innerHTML
           temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
-          temporaryPost.author = this.local_storage.username
+          // temporaryPost.author = this.local_storage.username
 
           /* create temporary data */
           axios.get('https://talk.pdis.nat.gov.tw/users/' + this.local_storage.username + '.json')
           .then((response) => {
             var user = response.data.user
+            temporaryPost.author = user.name
             temporaryPost.icon = 'https://talk.pdis.nat.gov.tw' + user['avatar_template'].replace(/{size}/, '300')
             this.topicContent.posts.push(temporaryPost)
             this.markdownText = ''
@@ -233,48 +234,55 @@
           scrollTop: anchorY
         }, 1000)
       },
-      getData: function () {
+      getData: async function () {
         let id = this.topicId
-        axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
-        .then((topic) => {
-          /* convert topic to wisdom */
+        let wis = await LocalStorage.LocalStorageRepply('reply', this.topicId)
+        if (wis !== null) {
+          this.topicContent = wis.data
+          this.replyCount = wis.data.posts.length - 1
           this.local_storage = window.localStorage
           this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
-          let wisdom = {
-            posts: [],
-            title: '',
-            topicId: 0,
-            category: ''
-          }
-          for (let post of topic.data.post_stream.posts) {
-            let wisdomPost = {
-              content: '',
-              author: '',
-              time: '',
-              icon: ''
+        } else {
+          axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
+          .then((topic) => {
+            /* convert topic to wisdom */
+            this.local_storage = window.localStorage
+            this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
+            let wisdom = {
+              posts: [],
+              title: '',
+              topicId: 0,
+              category: ''
             }
-            wisdomPost.content = post.cooked
-            if (post.name === '') {
-              wisdomPost.author = post.username
-            } else {
-              wisdomPost.author = post.name
+            for (let post of topic.data.post_stream.posts) {
+              let wisdomPost = {
+                content: '',
+                author: '',
+                time: '',
+                icon: ''
+              }
+              wisdomPost.content = post.cooked
+              if (post.name === '') {
+                wisdomPost.author = post.username
+              } else {
+                wisdomPost.author = post.name
+              }
+              wisdomPost.time = post.created_at.replace(/T.*/, '')
+              if (post['avatar_template'].indexOf('https:') === -1) {
+                wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '300')
+              }
+              wisdom.posts.push(wisdomPost)
             }
-            wisdomPost.time = post.created_at.replace(/T.*/, '')
-            if (post['avatar_template'].indexOf('https:') === -1) {
-              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '300')
-            }
-            wisdom.posts.push(wisdomPost)
-          }
-          // LocalStorageRepply
-          LocalStorage.LocalStorageRepply('reply', this.topicId, wisdom)
-          wisdom.title = topic.data.title
-          wisdom.topicId = topic.data.id
-          wisdom.category = this.type
-          /* save the wisdom */
-          this.topicContent = wisdom
-          this.replyCount = this.topicContent.posts.length - 1
-          // console.log(this.replyCount)
-        })
+            // LocalStorageRepply
+            wisdom.title = topic.data.title
+            wisdom.topicId = topic.data.id
+            wisdom.category = this.type
+            /* save the wisdom */
+            this.topicContent = wisdom
+            this.replyCount = this.topicContent.posts.length - 1
+            // console.log(this.replyCount)
+          })
+        }
       }
     },
     watch: {
