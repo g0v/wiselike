@@ -23,7 +23,7 @@
 
     el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
-    //- |  {{ '#'+topicId }}
+    //- | {{ '#'+topicId }}
 
     div(v-for='(post, index) of topicContent.posts')
       .reply

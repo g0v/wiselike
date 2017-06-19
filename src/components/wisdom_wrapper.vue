@@ -108,7 +108,7 @@
               /* previous question */
               let topicsNameFilter = topics
               topics = []
-              /* keep author user */
+              /* keep author */
               topicsNameFilter.filter((data) => {
                 if (vm.local_storage.username === data.last_poster_username.toLowerCase()) {
                   topics.push(data)
@@ -116,25 +116,8 @@
               })
             }
             if (vm.type === 'private' || vm.type === 'myQuestion') {
-            /* private question need check localstorage delete data, can't be repeated */
-              /* get local storage delete data */
-              let LocalStoragedataAsk = await LocalStorage.getLocalStorage('Ask', topics)
-              if (LocalStoragedataAsk !== null) {
-                topics = LocalStoragedataAsk
-              }
-              /* get local storage delete data */
-              topicsFilter = await LocalStorage.GetLocalStorageDelete('delete', topics)
-              /* if Local Storagedata has data do this */
-              // if (LocalStoragedata.length > 0 && LocalStoragedata !== 'AlltheSame') {
-              //   topicsFilter = LocalStoragedata
-              // } else if (LocalStoragedata === 'AlltheSame') {
-              // /* if Local Storagedata the same data with topics */
-              //   topicsFilter = []
-              // } else {
-              //   topicsFilter = topics
-              // }
-              // topicsFilter = LocalStoragedata
-              // return topicsFilter
+            /* private question need check localstorage delete data, can't be repeated and Ask data need check */
+              topicsFilter = await LocalStorage.LocalStorageFilter(topics)
             } else if (vm.type === 'public') {
               /* filter reapt post */
               topicsFilter = []
