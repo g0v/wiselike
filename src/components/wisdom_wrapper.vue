@@ -114,10 +114,18 @@
                   topics.push(data)
                 }
               })
+              topicsFilter = await LocalStorage.LocalStorageFilter(topics)
             }
-            if (vm.type === 'private' || vm.type === 'myQuestion') {
+            if (vm.type === 'private') {
             /* private question need check localstorage delete data, can't be repeated and Ask data need check */
               topicsFilter = await LocalStorage.LocalStorageFilter(topics)
+              /* notification question */
+              if (topicsFilter.length > 0) {
+                vm.$bus.emit('from-wisdom-wrapper-infor', {
+                  type: 'private',
+                  topicid: topicsFilter.length
+                })
+              }
             } else if (vm.type === 'public') {
               /* filter reapt post */
               topicsFilter = []

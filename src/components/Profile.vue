@@ -66,8 +66,13 @@
     .wrapped
       wisdom(v-if='topId', :type='"top"', :userId='user.name', :topicId='topId')
       el-tabs(v-model='mode', v-if='!topId')
-        el-tab-pane(label='等待回答', name='private', v-if='selfkey')
+        el-tab-pane(v-if='selfkey')
+          span(slot='label', name='private', @click="information('private')")
+            i.el-icon-information(v-if='infor')
+            | 等待回答
           wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId || myQuestionID')
+        //- el-tab-pane(label='等待回答', name='private', v-if='selfkey')
+        //-   wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId || myQuestionID')
         el-tab-pane(label='歷史問題', name='public')
           wisdomWrapper(:type = '"public"', :userId = "user.name", :topicId='topId')
         el-tab-pane(label='我的提問', name='myQuestion')
@@ -135,7 +140,8 @@
         introductionID: '',
         categoryID: '',
         subscribeStatus: '',
-        login: false
+        login: false,
+        infor: false
       }
     },
     methods: {
@@ -332,6 +338,10 @@
         this.myQuestionID = e.topicid
         this.mode = 'myQuestion'
       },
+      information: function (e) {
+        /* notification question */
+        e.topicid > 0 ? this.infor = true : this.infor = false
+      },
       getUserData: function () {
         /* get user data */
         axios.get('https://talk.pdis.nat.gov.tw/users/' + this.$route.params.userId + '.json').then((userdata) => {
@@ -387,6 +397,8 @@
         })
 
         this.$bus.on('from-Ask', this.receiveAskData)
+        /* notification question */
+        this.$bus.on('from-wisdom-wrapper-infor', this.information)
         this.ShowYourself()
         this.category()
       }
@@ -574,5 +586,9 @@
 .wrapped {
   margin: 2em auto;
   max-width: $maxWidth;
+  .el-icon-information {
+    color: red;
+    font-size: 1.5em;
+  }
 }
 </style>

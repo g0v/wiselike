@@ -81,6 +81,7 @@
       es6promise.polyfill()
       LocalStorage.ClearLocalStorage('delete')
       LocalStorage.ClearLocalStorage('Ask')
+      LocalStorage.ClearLocalStorage('reply')
     }
   }
 </script>
