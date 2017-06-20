@@ -236,53 +236,59 @@
       },
       getData: async function () {
         let id = this.topicId
-        let wis = await LocalStorage.LocalStorageRepply('reply', this.topicId)
-        if (wis !== null) {
-          this.topicContent = wis.data
-          this.replyCount = wis.data.posts.length - 1
-          this.local_storage = window.localStorage
-          this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
-        } else {
-          axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
-          .then((topic) => {
-            /* convert topic to wisdom */
-            this.local_storage = window.localStorage
-            this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
-            let wisdom = {
-              posts: [],
-              title: '',
-              topicId: 0,
-              category: ''
+        let vm = this
+        // let wis = await LocalStorage.LocalStorageRepply('reply', this.topicId)
+        // if (wis !== null) {
+        //   this.topicContent = wis.data
+        //   this.replyCount = wis.data.posts.length - 1
+        //   this.local_storage = window.localStorage
+        //   this.shareLink = this.UrlLink(this.local_storage, 'shareLink')
+        // } else {
+        axios.get('https://talk.pdis.nat.gov.tw/t/' + id + '.json?include_raw=1')
+        .then(async function (topic) {
+          /* convert topic to wisdom */
+          vm.local_storage = window.localStorage
+          vm.shareLink = vm.UrlLink(vm.local_storage, 'shareLink')
+          let wisdom = {
+            posts: [],
+            title: '',
+            topicId: 0,
+            category: ''
+          }
+          for (let post of topic.data.post_stream.posts) {
+            let wisdomPost = {
+              content: '',
+              author: '',
+              time: '',
+              icon: ''
             }
-            for (let post of topic.data.post_stream.posts) {
-              let wisdomPost = {
-                content: '',
-                author: '',
-                time: '',
-                icon: ''
-              }
-              wisdomPost.content = post.cooked
-              if (post.name === '') {
-                wisdomPost.author = post.username
-              } else {
-                wisdomPost.author = post.name
-              }
-              wisdomPost.time = post.created_at.replace(/T.*/, '')
-              if (post['avatar_template'].indexOf('https:') === -1) {
-                wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '300')
-              }
-              wisdom.posts.push(wisdomPost)
+            wisdomPost.content = post.cooked
+            if (post.name === '') {
+              wisdomPost.author = post.username
+            } else {
+              wisdomPost.author = post.name
             }
-            // LocalStorageRepply
-            wisdom.title = topic.data.title
-            wisdom.topicId = topic.data.id
-            wisdom.category = this.type
-            /* save the wisdom */
-            this.topicContent = wisdom
-            this.replyCount = this.topicContent.posts.length - 1
-            // console.log(this.replyCount)
-          })
-        }
+            wisdomPost.time = post.created_at.replace(/T.*/, '')
+            if (post['avatar_template'].indexOf('https:') === -1) {
+              wisdomPost.icon = 'https://talk.pdis.nat.gov.tw' + post.avatar_template.replace(/{size}/, '300')
+            }
+            wisdom.posts.push(wisdomPost)
+          }
+          // LocalStorageRepply
+          wisdom.title = topic.data.title
+          wisdom.topicId = topic.data.id
+          wisdom.category = vm.type
+          let localstorageReply = await LocalStorage.LocalStorageReply('reply', vm.topicId, wisdom)
+          if (localstorageReply !== null) {
+            wisdom = localstorageReply.data
+          }
+          // console.log
+          /* save the wisdom */
+          vm.topicContent = wisdom
+          vm.replyCount = vm.topicContent.posts.length - 1
+          // console.log(this.replyCount)
+        })
+        // }
       }
     },
     watch: {

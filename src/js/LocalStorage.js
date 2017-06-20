@@ -28,7 +28,6 @@ export default {
     Data.push(DataType)
     /* write to localstorage */
     window.localStorage.setItem(type, JSON.stringify(Data))
-    console.log(JSON.parse(window.localStorage.getItem(type)))
   },
   GetLocalStorage: async function (type, topics) {
     let time = new Date().getTime() / 1000
@@ -91,43 +90,20 @@ export default {
       }
     }
   },
-  LocalStorageRepply: async function (type, topics, data) {
+  LocalStorageReply: async function (type, topics, data) {
+    /* localstorage reply data keep 60s */
     let localstoragereply = await this.GetLocalStorage(type, topics)
-    // console.log(localstoragereply)
     let reply = null
     if (localstoragereply.length > 0) {
+      /* find local storage reply same topicid data */
       localstoragereply.filter((id, index) => {
-        // console.log(id)
-        // console.log(topics)
         if (id.id === topics) {
-          reply = id
+          if (id.data.posts.length > data.posts.length) {
+            reply = id
+          }
         }
       })
     } else reply = null
     return reply
   }
-  // GetLocalStorageDelete: async function (type, topics) {
-  //   let verifyCheck = false
-  //   let topicsFilter = []
-  //   /* if data in 60s */
-  //   let deleteTopicId = await this.GetLocalStorage(type, topics)
-  //   if (deleteTopicId.length > 0) {
-  //     /* filter reapt data */
-  //     topics.filter((id, index) => {
-  //       let verify = deleteTopicId.some(function (value, index, array) {
-  //         return value === id.id
-  //       })
-  //       if (!verify) {
-  //         topicsFilter.push(id)
-  //         verifyCheck = true
-  //       }
-  //       /* if Local Storagedata the same data with topics */
-  //       if (topics.length - (index + 1) === 0 && verifyCheck === false) {
-  //         topicsFilter = []
-  //       }
-  //     })
-  //     /* if no match data */
-  //   } else topicsFilter = topics
-  //   return topicsFilter
-  // }
 }
