@@ -304,9 +304,9 @@
     },
     mounted () {
       /* go to anchor if there's a highlight topic */
-      if (this.type === 'top') {
-        this.goAnchor('.top')
-      }
+      // if (this.type === 'top') {
+      //   this.goAnchor('.top')
+      // }
     }
   }
 </script>

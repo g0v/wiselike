@@ -7,6 +7,7 @@
         el-col.center(:sm='8', :xs='4')
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:sm='8', :xs='10')
+          el-menu-item.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
           el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
             el-button.signout2.text(v-if="checkprofile", @click='logout') Sign out
@@ -44,6 +45,11 @@
       }
     },
     methods: {
+      howtouse: function () {
+        this.$router.push({
+          path: '/howtouse'
+        })
+      },
       warningmessage: function () {
         this.$message({
           showClose: true,

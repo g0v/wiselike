@@ -32,6 +32,12 @@ export default new Router({
       name: 'Search_result',
       // component: Searchresult
       component: resolve => require(['../components/Searchresult.vue'], resolve)
+    },
+    {
+      path: '/howtouse',
+      name: 'howtouse',
+      // component: Profile
+      component: resolve => require(['../components/Howtouse.vue'], resolve)
     }
   ]
 })
