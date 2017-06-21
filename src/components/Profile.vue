@@ -327,7 +327,9 @@
         /* check username is not undefined */
         if (this.user.name !== undefined) this.user.name = this.user.name.toLowerCase()
         /* confirm login user */
-        if (this.local_storage.username === this.user.name) this.selfkey = true
+        if ((this.local_storage.username === this.user.name) && (this.user.name !== undefined) && (this.local_storage.username !== undefined)) {
+          this.selfkey = true
+        }
         /* check user login status */
         this.login = this.local_storage.username !== undefined
         this.ProfileBackroundImage = this.user.background

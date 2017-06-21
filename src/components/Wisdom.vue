@@ -287,6 +287,11 @@
           vm.topicContent = wisdom
           vm.replyCount = vm.topicContent.posts.length - 1
           // console.log(this.replyCount)
+          setTimeout(() => {
+            if (vm.type === 'top') {
+              vm.goAnchor('.top')
+            }
+          }, 1000)
         })
         // }
       }
