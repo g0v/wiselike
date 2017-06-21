@@ -13,16 +13,6 @@ module.exports = {
       env_production : {
         NODE_ENV: 'production'
       }
-    },
-
-    // Second application
-    {
-      name      : 'WEB',
-      script    : 'web.js',
-      watch     : ['web.js', 'dist'],
-      env_production : {
-        NODE_ENV: 'production'
-      }
     }
   ]
 };
