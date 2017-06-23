@@ -40,6 +40,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../global.scss';
 .el-select .el-input {
     width: 90px;
 }
@@ -48,5 +49,10 @@ export default {
 }
 .el-input-group__append{
   padding: 0 5px;
+}
+@media all and (max-width: $breakpoint){
+  .el-input-group {
+    width: 25em;
+}
 }
 </style>

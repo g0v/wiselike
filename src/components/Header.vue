@@ -2,11 +2,11 @@
   .header
     el-menu.menu(theme='dark', mode='horizontal')
       el-row.row-bg(type='flex', justify='space-between')
-        el-col.left(:sm='8', :xs='10')
-          Search(:users="users")
-        el-col.center(:sm='8', :xs='4')
+        el-col.left(:sm='8', :xs='7')
+          Search.nav(:users="users")
+        el-col.center(:sm='8', :xs='10')
           router-link.logo(to='/', exact='') wiselike
-        el-col.right(:sm='8', :xs='10')
+        el-col.right(:sm='8', :xs='7')
           el-menu-item.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
           el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
@@ -200,8 +200,18 @@
     color: #48576a;
   }
   @media all and (max-width: $breakpoint) {
-    .center .logo{
-      font-size: 2.5rem;
+    .center .logo {
+      font-size: 1.8rem;
+      padding: 0;
+    }
+    .menu {
+        padding: 0 0.5em;
+    }
+    .nav {
+      display: none;
+    }
+    .right .avatar {
+      width: 2em;
     }
   }
 }

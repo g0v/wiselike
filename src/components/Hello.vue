@@ -3,6 +3,7 @@
   .hello
     el-row 
       .slides <!-- Popular People -->
+        Searchbar.bar(:users="users")
         h3 Popular Users
         swiper(:options='swiperOption1')
           swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
@@ -49,12 +50,14 @@
   Vue.use(VueAwesomeSwiper)
   import profile from './Profile.vue'
   import wisdom from './Wisdom.vue'
+  import Searchbar from './Searchbar.vue'
   export default {
     name: 'hello',
     props: ['users', 'topics'],
     components: {
       wisdom,
-      profile
+      profile,
+      Searchbar
     },
     data () {
       return {
@@ -79,11 +82,11 @@
           }
         },
         swiperOption2: {
-          // pagination: '.swiper-pagination',
           nextButton: '.swiper-button-next',
           prevButton: '.swiper-button-prev',
           slidesPerView: 3,
           slidesPerColumn: 2,
+          autoplay: 3000,
           grabCursor: true,
           paginationClickable: true,
           spaceBetween: 30
@@ -296,14 +299,14 @@
   
   @media all and (max-width: $breakpoint) {
     h3{
-      font-size:1.5rem;
-      text-align: center;
+      font-size:1.2rem;
+      // text-align: center;
     }
     .people, .hot, .activity{
       margin: 0 3ch;
     }
     .slides{
-      margin: 5ch 3ch 0 3ch;
+      margin: 2ch 3ch 0 3ch;
         .user {
           font-size: 120%;
           .link{
@@ -324,7 +327,16 @@
       padding: 5px 20px;
       margin: 3px;
     }
+    .bar {
+      // text-align: center;
+    }
+  }
+  @media all and (min-width: $breakpoint) {
+    .bar {
+      display: none;
+    }
   }
 }
+
 
 </style>
