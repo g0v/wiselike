@@ -296,32 +296,33 @@
   
   @media all and (max-width: $breakpoint) {
     h3{
-      font-size:1.6rem;
-      text-align: center;
-    }
-    h4{
       font-size:1.5rem;
+      text-align: center;
     }
     .people, .hot, .activity{
       margin: 0 3ch;
     }
     .slides{
       margin: 5ch 3ch 0 3ch;
+        .user {
+          font-size: 120%;
+          .link{
+            padding: 0 1ch;
+          }
+        }
     }
     .user .avatar{
-      width: 8rem;
-      height: 8rem;
+      width: 4rem;
+      height: 4rem;
     }
     .users .name {
-      font-size: 1.5rem;
+      font-size: 1rem;
     }
     .category {
-      font-size: 1.5rem;
+      font-size: 0.5rem;
       line-height: 2;
       padding: 5px 20px;
-    }
-    .buttonset{
-      text-align: center;
+      margin: 3px;
     }
   }
 }
