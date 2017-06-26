@@ -140,7 +140,7 @@
         // console.log(this.$route.params.userId)
         let dele = process.env.proxyHost + '/users/' + this.userId + '/delete?sso=' + localstorage.sso + '&sig=' + localstorage.sig
         let submit = process.env.proxyHost + '/users/' + this.userId + '/wisdoms/topic?sso=' + localstorage.sso + '&sig=' + localstorage.sig + '&topicid=' + this.topicId + '&type=' + this.type
-        let shareLink = 'https://wiselike.tw/#/user/' + this.$route.params.userId + '#' + this.topicId
+        let shareLink = 'https://wiselike.tw/#/user/' + this.$route.params.userId.replace(/-.*/, '') + '-' + this.topicId
 
         if (type === 'DeletePrivate') return dele
         else if (type === 'submit') return submit
