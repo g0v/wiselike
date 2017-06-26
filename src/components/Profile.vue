@@ -141,7 +141,8 @@
         categoryID: '',
         subscribeStatus: '',
         login: false,
-        infor: false
+        infor: false,
+        routeUserId: ''
       }
     },
     methods: {
@@ -346,7 +347,7 @@
       },
       getUserData: function () {
         /* get user data */
-        axios.get('https://talk.pdis.nat.gov.tw/users/' + this.$route.params.userId + '.json').then((userdata) => {
+        axios.get('https://talk.pdis.nat.gov.tw/users/' + this.routeUserId + '.json').then((userdata) => {
           let user = {
             id: '',
             name: '',
@@ -369,7 +370,7 @@
         })
 
         /* Get user introduction and [wiselike-tag] */
-        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.$route.params.userId.toLowerCase() + '.json')
+        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.routeUserId.toLowerCase() + '.json')
         .then((post) => {
           let vm = this
           let info = post.data.topic_list.topics[0]
@@ -418,6 +419,8 @@
       }
     },
     created: function () {
+      // console.log(this.$route.params.userId)
+      this.routeUserId = this.$route.params.userId.replace(/-.*/, '')
       this.getUserData()
     },
     mounted: function () {
@@ -425,16 +428,17 @@
     },
     computed: {
       user: function () {
-        console.log(this.$route.params.userId)
-        let pos = this.users.map(e => e.name).indexOf(this.$route.params.userId)
-        if (pos < 0) {
-          return false
-        } else {
-          return this.users[pos]
-        }
+        // let pos = this.users.map(e => e.name).indexOf(this.$route.params.userId)
+        // if (pos < 0) {
+        //   return false
+        // } else {
+        //   console.log(this.users[pos])
+        //   return this.users[pos]
+        // }
       },
       topId: function () {
-        return Number(this.$route.hash.replace(/#/, ''))
+        // console.log(this.$route.params.userId.split('-')[1])
+        return Number(this.$route.params.userId.split('-')[1])
       }
     }
   }

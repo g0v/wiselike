@@ -11,7 +11,7 @@
         .activity
           h3(v-if='issues_results !== null') {{count}} results of " {{search_string}} "
           h3(v-else) {{count}} results of " {{search_string}} ", try another keyword.
-          router-link.say.shadow(v-for='o in search_results', :to="'/user/' + o.userName + '#' + o.id", :data="o", :key="o.title")
+          router-link.say.shadow(v-for='o in search_results', :to="'/user/' + o.userName + '-' + o.id", :data="o", :key="o.title")
             h4
               i.fa.fa-retweet
               |  {{o.title}}
