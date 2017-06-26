@@ -28,8 +28,8 @@
                     img.avatar.shadow(:src='user.avatar')
                     p.name {{user.nickname}}
               //- .swiper-pagination(slot='pagination')
-              .swiper-button-prev(slot='button-prev')
-              .swiper-button-next(slot='button-next')
+              .swiper-button-prev.swiper-button-black(slot='button-prev')
+              .swiper-button-next.swiper-button-black(slot='button-next')
 
       el-col(:lg="8", :sm='24') <!-- Recent Activity -->
         .activity
@@ -318,17 +318,26 @@
       width: 4rem;
       height: 4rem;
     }
+    .users {
+      padding: 0;
+    }
     .users .name {
       font-size: 1rem;
+    }
+    .swiper-button-next,.swiper-button-prev{
+      background-size: 18px 44px;
+    }
+    .swiper-button-next{
+      right: -3px;
+    }
+    .swiper-button-prev{
+      left: -3px;
     }
     .category {
       font-size: 0.5rem;
       line-height: 2;
       padding: 5px 20px;
       margin: 3px;
-    }
-    .bar {
-      // text-align: center;
     }
   }
   @media all and (min-width: $breakpoint) {

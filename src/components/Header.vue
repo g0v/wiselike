@@ -4,10 +4,11 @@
       el-row.row-bg(type='flex', justify='space-between')
         el-col.left(:sm='8', :xs='7')
           Search.nav(:users="users")
+          el-menu-item.desktop.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
         el-col.center(:sm='8', :xs='10')
           router-link.logo(to='/', exact='') wiselike
         el-col.right(:sm='8', :xs='7')
-          el-menu-item.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
+          el-menu-item.mobile.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
           el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
           template(v-else)
             el-button.signout2.text(v-if="checkprofile", @click='logout') Sign out
@@ -15,8 +16,6 @@
             el-submenu.operation(v-else, index='2')
               template(slot='title')
                 img.avatar(:src='userIcon', :title='username')
-                //- span.username {{username}}
-                  el-button Light
               el-menu-item(index='2-1', disabled='')
                 router-link.submenu(:to="'/user/' + username") My Profile
               el-menu-item(index='2-2')
@@ -27,7 +26,6 @@
 <script>
   import { Loading } from 'element-ui'
   import Search from './Searchbar.vue'
-  // import config from '../../config'
   import axios from 'axios'
   export default {
     name: 'header',
@@ -136,8 +134,13 @@
 @import '../global.scss';
 .header {
   .menu{
-    padding: .5em 1em;
+    padding: 0.5em 1em;
     background: none;
+  }
+  .text {
+    color: #0f78f3;
+    font-size: 1.3rem;
+    font-weight: 700;
   }
   .left {
     margin: auto;
@@ -167,11 +170,6 @@
     .operation{
       float:right;
     }
-    .text {
-      color: #0f78f3;
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
     .submenu{
       display: block;
       font-size: 16px;
@@ -199,19 +197,34 @@
   .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active{
     color: #48576a;
   }
+  // .el-menu--horizontal.el-menu--dark .el-menu-item:hover, .el-menu--horizontal.el-menu--dark .el-submenu__title:hover {
+      
+  // }
   @media all and (max-width: $breakpoint) {
     .center .logo {
       font-size: 1.8rem;
       padding: 0;
     }
     .menu {
-        padding: 0 0.5em;
+        padding: 0.5em 0.5em;
     }
     .nav {
       display: none;
     }
+    .mobile{
+      display: none;
+    }
     .right .avatar {
       width: 2em;
+    }
+    .text {
+      font-size: 1rem;
+      padding: 0;
+    }
+  }
+  @media all and (min-width: $breakpoint) {
+    .desktop{
+      display: none;
     }
   }
 }
