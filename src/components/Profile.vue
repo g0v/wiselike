@@ -346,6 +346,7 @@
         e.topicid > 0 ? this.infor = true : this.infor = false
       },
       getUserData: function () {
+        this.routeUserId = this.$route.params.userId.replace(/-.*/, '')
         /* get user data */
         axios.get('https://talk.pdis.nat.gov.tw/users/' + this.routeUserId + '.json').then((userdata) => {
           let user = {
@@ -420,7 +421,6 @@
     },
     created: function () {
       // console.log(this.$route.params.userId)
-      this.routeUserId = this.$route.params.userId.replace(/-.*/, '')
       this.getUserData()
     },
     mounted: function () {
