@@ -4,24 +4,25 @@
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
-
+    
   .question
-    el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
-      h2 確認刪除此問題？
-      div(style='text-align: right; margin: 0')
-        el-button(size='mini', type='text', @click='visible2 = false') 取消
-        el-button(type='primary', size='mini', @click='DeletePrivate') 确定
-    el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
-    //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
+    .share-button
+      el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+        h2 確認刪除此問題？
+        div(style='text-align: right; margin: 0')
+          el-button(size='mini', type='text', @click='visible2 = false') 取消
+          el-button(type='primary', size='mini', @click='DeletePrivate') 確定
+      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
+      //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
 
-    el-popover(ref='popover1', placement='top', width='400')
-      h2 分享連結
-      el-input(v-model='shareLink', placeholder='请输入内容')
-      span(v-for='(share, index) of shares')
-        i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
-        img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
+      el-popover(ref='popover1', placement='top', width='400')
+        h2 分享連結
+        el-input(v-model='shareLink', placeholder='请输入内容')
+        span(v-for='(share, index) of shares')
+          i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
+          img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
 
-    el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
+      el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
 
     //- | {{ '#'+topicId }}
 
@@ -42,7 +43,7 @@
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
       el-button(type='primary', @click="reply = true", v-if="!myQuestion") 我 要 回 覆
     div.center(v-else-if="local_storage.username === undefined")
-      el-button(@click.native="login",type="warning") 請 先 登 入 方 可 留 言
+      el-button(@click.native="login",type="warning") 登 入 後 留 言
 
     #editor(v-if='reply')
       mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :language = "'en'")
@@ -386,7 +387,7 @@
       }
     }
     .avatar {
-      width: 70px;
+      width: 80px;
       border-radius: 50%;
       vertical-align: middle;
     }
@@ -455,5 +456,24 @@
     height: 3em;
     width: 100%;
   }
-
+  @media all and (max-width: $breakpoint) {
+    #wisdom {
+      .title {
+        font-size: 1rem;
+      }
+      .reply {
+        padding: 0;
+        .authorName {
+          left: -30px;
+        }
+      }
+      .avatar {
+        width: 50px;
+      }
+      .meta {
+        font-size: 70%;
+        background: none;
+      }
+    }    
+  }
 </style>
