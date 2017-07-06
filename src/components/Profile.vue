@@ -25,7 +25,7 @@
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
 
-      h3.name {{ user.nickname }}
+      h3.name {{ user.nickname || user.name }}
 
       .category
         el-card.box-card(v-if='!CateEdit')
