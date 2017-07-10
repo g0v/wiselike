@@ -48,8 +48,8 @@
     computed: {
       profileLink: function () {
         return (this.type === 'public')
-          ? 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId.toLowerCase() + '/l/latest.json?page='
-          : 'https://talk.pdis.nat.gov.tw/c/wiselike/inbox-' + this.userId.toLowerCase() + '/l/latest.json?page='
+          ? 'https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.userId.toLowerCase().replace(/_/g, '-') + '/l/latest.json?page='
+          : 'https://talk.pdis.nat.gov.tw/c/wiselike/inbox-' + this.userId.toLowerCase().replace(/_/g, '-') + '/l/latest.json?page='
       }
     },
     methods: {

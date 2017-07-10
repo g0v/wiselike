@@ -265,7 +265,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  let lowerMe = me.toLowerCase()
+  let lowerMe = me.toLowerCase().replace(/_/g, '-')
   if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})

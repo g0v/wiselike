@@ -371,7 +371,7 @@
         })
 
         /* Get user introduction and [wiselike-tag] */
-        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.routeUserId.toLowerCase() + '.json')
+        axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/profile-' + this.routeUserId.toLowerCase().replace(/_/g, '-') + '.json')
         .then((post) => {
           let vm = this
           let info = post.data.topic_list.topics[0]

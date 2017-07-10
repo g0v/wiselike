@@ -178,7 +178,7 @@
       },
 
       /* reply question */
-      submit: function () {
+      submit: function (e) {
         /* cheack Character > 10 */
         let strLength = this.markdownText.replace(/\s/g, '')
         if (strLength.length < 10) {
@@ -203,7 +203,8 @@
             time: '',
             icon: ''
           }
-          temporaryPost.content = $('.v-show-content')[0].innerHTML
+          // temporaryPost.content = $('.v-show-content')[0].innerHTML
+          temporaryPost.content = this.markdownText
           temporaryPost.time = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate())
           // temporaryPost.author = this.local_storage.username
 
@@ -280,6 +281,7 @@
           wisdom.topicId = topic.data.id
           wisdom.category = vm.type
           let localstorageReply = await LocalStorage.LocalStorageReply('reply', vm.topicId, wisdom)
+          // console.log(localstorageReply)
           if (localstorageReply !== null) {
             wisdom = localstorageReply.data
           }
