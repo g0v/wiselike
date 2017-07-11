@@ -185,6 +185,7 @@
   #editor {
     height: 50vh;
     margin-bottom: 3em;
+    text-align: left;
     .mavon {
       margin-bottom: 1em;
     }
