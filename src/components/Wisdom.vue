@@ -356,6 +356,9 @@
     .question {
       text-align: right;
       padding: 0 1em;
+      a {
+        color: #33f;
+      }
     }
     .reply {
       padding: 0 3em;
