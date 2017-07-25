@@ -716,3 +716,27 @@ app.post('/users/:user/subscribe', (req, res) => {
   })
   return null
 })
+
+/* ****************** RENAME *********************/
+app.post('/users/:user/rename', (req, res) => {
+  let sso = req.query.sso
+  let sig = req.query.sig
+  let me = getUsername(sso, sig)
+  let ReNameUrl = `${process.env.DISCOURSE_HOST}/u/` + me + '.json'
+  let ReNameData = querystring.stringify(
+    {
+      api_key: process.env.DISCOURSE_SUPER_API_KEY,
+      api_username: process.env.DISCOURSE_API_USERNAME,
+      name: req.body.name
+    }
+  )
+  axios.put(ReNameUrl, ReNameData)
+  .then((val) => {
+    val.data.success = req.body.name
+    res.status(200).send(val.data)
+  })
+  .catch(error => {
+    res.status(433).send(error.response.data)
+  })
+  return null
+})

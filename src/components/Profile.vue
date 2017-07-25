@@ -24,8 +24,15 @@
             button.avatar_button(@click='Editimage', v-if='errimage === true') 送 出
             button.avatar_button(@click='ImageEdit = true, image = false') 取 消
 
-
-      h3.name {{ user.nickname || user.name }}
+      .username
+        .description
+          h3.name(v-if='Rename') {{ originalname || user.nickname || user.name }}
+          el-button.button(@click='Getrename', icon='edit', size='large', v-if='Rename && selfkey')
+        .edit(v-if='!Rename && selfkey')
+          el-input.inputname(v-model='originalname')
+          div
+            el-button(type='primary', @click="Editrename") 送 出
+            el-button(@click='Rename = true') 取 消
 
       .category
         el-card.box-card(v-if='!CateEdit')
@@ -50,7 +57,6 @@
           el-form.demo-ruleForm(:model='ruleForm', :rules='rules', ref='ruleForm', :show-message='!Introedit', v-if='!Introedit && selfkey')
             el-form-item.acenter(prop='introduceraw')
               el-input.input(v-model='ruleForm.introduceraw', auto-complete='off', type='textarea', :autosize="{ minRows: 5, maxRows: 15}")
-            div
               el-button(type='primary', @click="EditIntroduction('ruleForm')") 送 出
               el-button(@click='Introedit = true') 取 消
 
@@ -142,7 +148,9 @@
         subscribeStatus: '',
         login: false,
         infor: false,
-        routeUserId: ''
+        routeUserId: '',
+        Rename: true,
+        originalname: ''
       }
     },
     methods: {
@@ -152,11 +160,38 @@
         let image = process.env.proxyHost + '/users/' + this.user.name + '/' + type + '?sso=' + localstorage.sso + '&sig=' + localstorage.sig
         let subscribe = process.env.proxyHost + '/users/' + this.user.name + '/subscribe?sso=' + localstorage.sso + '&sig=' + localstorage.sig
         let introduction = process.env.proxyHost + '/users/' + this.user.name + '/introduction?sso=' + localstorage.sso + '&sig=' + localstorage.sig
+        let rename = process.env.proxyHost + '/users/' + this.user.name + '/rename?sso=' + localstorage.sso + '&sig=' + localstorage.sig
 
         if (link === 'category') return category
         else if (link === 'image') return image
         else if (link === 'subscribe') return subscribe
         else if (link === 'introduction') return introduction
+        else if (link === 'rename') return rename
+      },
+      Getrename: function () {
+        this.Rename = false
+        this.originalname = this.originalname || this.user.nickname || this.user.name
+        console.log(this.originalname)
+      },
+      Editrename: function () {
+        let vm = this
+        /* turn on full screen loading */
+        let loadingInstance = Loading.service({ fullscreen: true, text: '資料更改中，請稍等' })
+        let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
+        let formd = new URLSearchParams()
+        formd.append('name', this.originalname)
+        axios.post(this.proxyUrlLink('rename'), formd, config)
+        .then(() => {
+          /* close loading */
+          this.Rename = true
+          loadingInstance.close()
+          vm.$message.success('成功更改名稱')
+        })
+        .catch(function (error) {
+          loadingInstance.close()
+          vm.$message.error('更改失敗，請稍後重試。')
+          console.log(error)
+        })
       },
       Login: function () {
         window.open(process.env.proxyHost + '/login')
@@ -559,6 +594,10 @@
   }
   .input {
     margin-bottom: 1em;
+  }
+  .inputname {
+      width: 15em;
+      margin: 1em;
   }
   .right {
     text-align: right !important;
