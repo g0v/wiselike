@@ -292,6 +292,7 @@
   }
   .category {
     border-radius: 0;
+    margin-top: 5px;
     h6 {
       margin: 0
     }
