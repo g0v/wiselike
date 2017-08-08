@@ -100,7 +100,6 @@ export default {
   h3 {
     text-align: center;
     margin-top: 50px;
-    font-family: 'Kadwa', serif;
   }
   .users { 
     display: flex;
