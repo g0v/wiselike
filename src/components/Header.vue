@@ -134,7 +134,7 @@
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
 @import '../global.scss';
 .header {
-  padding: 1em;
+  padding-top: 1em;
   .search{
     float:right;
     margin-right:1rem;
@@ -154,6 +154,7 @@
     text-decoration: none;
     font-size: 2.2rem;
     padding: 0 1ch;
+    vertical-align: -webkit-baseline-middle;
   }
   .avatar{
     display: inline-block;
