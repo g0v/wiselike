@@ -4,7 +4,7 @@ $fa-font-path:"../../node_modules/font-awesome/fonts";
 
 /* theme size */
 $maxWidth: 1120px;
-// $breakpoint: 768px;
+$mobilebreakpoint: 768px;
 $breakpoint: 1200px;
 
 /* theme font */
@@ -53,9 +53,9 @@ h1, h2, h3, h4, h5, h6, p, .meta {
 // }
 body {
     /***************** Hide Google Translate top row */
-    > .skiptranslate {
+    // > .skiptranslate {
         // display: none;
-    }
+    // }
     /***************** Style Google Translate corner */
     > #google_translate_element {
         font-size: 3rem;
@@ -123,6 +123,15 @@ body {
 #wisdom {
   img {
     max-width: 100%;
+  }
+}
+.header {
+  .el-dialog--small {
+    width: 100% !important;
+    top: 0% !important;
+  }
+  .el-dialog__body {
+    padding: 1em;
   }
 }
 // ********************** transition

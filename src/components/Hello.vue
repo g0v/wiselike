@@ -3,7 +3,7 @@
   .hello
     el-row 
       .slides <!-- Popular People -->
-        Searchbar.bar(:users="users")
+        // Searchbar.bar(:users="users")
         h3 Popular Users
         swiper(:options='swiperOption1')
           swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')

@@ -45,14 +45,14 @@ export default {
     width: 90px;
 }
 .el-input-group {
-    width: 13rem;
+    width: 25em;
 }
 .el-input-group__append{
   padding: 0 5px;
 }
-@media all and (max-width: $breakpoint){
+@media all and (max-width: $mobilebreakpoint){
   .el-input-group {
-    width: 25em;
-}
+    width: 21em;
+  }
 }
 </style>

@@ -1,25 +1,24 @@
 <template lang="pug">
   .header
-    el-menu.menu(theme='dark', mode='horizontal')
-      el-row.row-bg(type='flex', justify='space-between')
-        el-col.left(:sm='8', :xs='7')
-          Search.nav(:users="users")
-          el-menu-item.desktop.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
-        el-col.center(:sm='8', :xs='10')
-          router-link.logo(to='/', exact='') wiselike
-        el-col.right(:sm='8', :xs='7')
-          el-menu-item.mobile.operation.text(v-if="!username", @click.native="howtouse", index='0') 如何登入
-          el-menu-item.operation.text(v-if="!username", @click.native="login", index='0') Sign in
-          template(v-else)
-            el-button.signout2.text(v-if="checkprofile", @click='logout') Sign out
-            el-menu-item.create.text(v-if="checkprofile", @click="CreateProfile", index='1') Create My Profile
-            el-submenu.operation(v-else, index='2')
-              template(slot='title')
-                img.avatar(:src='userIcon', :title='username')
-              el-menu-item(index='2-1', disabled='')
-                router-link.submenu(:to="'/user/' + username") My Profile
-              el-menu-item(index='2-2')
-                span.submenu(@click="logout") Sign out
+    router-link.logo(to='/', exact='') wiselike
+    span.right
+      el-button.mob(type="text", icon='search', @click='dialogTableVisible = true')
+      el-dialog.dialog( v-model='dialogTableVisible', :modal-append-to-body='false', :show-close='false')
+        Search(:users="users")
+      el-button.text(type="warning", v-if="!username", @click.native="login", index='0') Sign in
+      el-button.text(type="warning", v-if="!username", @click.native="howtouse", index='0') ?
+      span(v-if="username")
+        el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') Create
+        el-button.text.mobtext(v-if="checkprofile", @click='logout') LogOut
+
+      el-dropdown(trigger='click')
+        span.el-dropdown-link 
+          img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
+        el-dropdown-menu(slot='dropdown')
+          el-dropdown-item: router-link.submenu(:to="'/user/' + username") My Profile
+          el-dropdown-item: span.submenu(@click="logout") Log Out
+    .search
+      Search.nav(:users="users")
 
 </template>
 
@@ -35,10 +34,12 @@
     },
     data () {
       return {
+        dialogTableVisible: false,
         myKey: '',
         username: '',
         userIcon: '',
         checkprofile: true,
+        visible2: false,
         local_storage: ''
       }
     },
@@ -133,98 +134,69 @@
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
 @import '../global.scss';
 .header {
-  .menu{
-    padding: 0.5em 1em;
-    background: none;
+  padding: 1em;
+  .search{
+    float:right;
+    margin-right:1rem;
   }
-  .text {
-    color: #0f78f3;
+  
+  .mob{
+    margin-right:0.5em;
+    color: $logocolor;
     font-size: 1.3rem;
     font-weight: 700;
+    padding: 0.3em;
+    vertical-align: middle;
   }
-  .left {
-    margin: auto;
-    text-align: left;
+  .logo{
+    color: $logocolor;
+    font-family: $logofont;
+    text-decoration: none;
+    font-size: 2.2rem;
+    padding: 0 1ch;
   }
-  .center{
-    text-align: center;
-    margin: auto;
-    .logo{
-      color: $logocolor;
-      font-family: $logofont;
-      text-decoration: none;
-      font-size: 2.2rem;
-      padding: 0 1ch;
-      &:hover {
-        background: $fontcolor;
-      }
-    }
+  .avatar{
+    display: inline-block;
+    width: 3em;
+    border-radius: 4px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .text {
+    color: whilte;
+    font-size: 1.3rem;
+    font-weight: 500;
   }
   .right{
-    text-align: right;
-    margin: auto;
-    .create{
-      margin-right: 6px;
-      float:right;
-    }
-    .operation{
-      float:right;
-    }
-    .submenu{
-      display: block;
-      font-size: 16px;
-    }
-    .signout2{
-      font-size: 1.3rem;
-      background-color: transparent;
-      border: 0;
-      margin-top: 0.5em;
-    }
-    .avatar{
-      display: inline-block;
-      width: 3em;
-      border-radius: 4px;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-    .username{
-      font-size: 16px;
-    }
+    float:right;
+    margin-right: 2em;    
   }
-  .el-submenu.is-active .el-submenu__title {
-    border-bottom:none;
-  }
-  .el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item.is-active{
-    color: #48576a;
-  }
-  // .el-menu--horizontal.el-menu--dark .el-menu-item:hover, .el-menu--horizontal.el-menu--dark .el-submenu__title:hover {
-      
-  // }
-  @media all and (max-width: $breakpoint) {
-    .center .logo {
-      font-size: 1.8rem;
-      padding: 0;
-    }
-    .menu {
-        padding: 0.5em 0.5em;
+  @media all and (max-width: $mobilebreakpoint) {
+    .logo{
+      font-size: 1.5rem;
     }
     .nav {
-      display: none;
-    }
-    .mobile{
       display: none;
     }
     .right .avatar {
       width: 2em;
     }
     .text {
-      font-size: 1rem;
-      padding: 0;
+      font-size: 1.2rem;
+      padding: 0.3em;
+    }
+    .mobtext{
+      font-size: 0.9rem !important;
+      padding: 0.3em !important;
+      margin: 0.1em !important;
     }
   }
-  @media all and (min-width: $breakpoint) {
-    .desktop{
+  @media all and (min-width: $mobilebreakpoint) {
+    .mob{
       display: none;
+    }
+    .search{
+      font-size: 2rem;
     }
   }
 }
