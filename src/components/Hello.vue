@@ -7,13 +7,14 @@
         h3 Popular Users
         swiper(:options='swiperOption1')
           swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-            router-link.user.background(:to="'/user/' + o.name")
+            router-link.user.background(:to="'/user/' + o.name", :style="{ backgroundImage: `url(${o.background})`}")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.avatar')
               p.name {{ o.nickname }}
               .link
                 | ask me
-    
+          .swiper-button-prev.swiper-button-white(slot='button-prev')
+          .swiper-button-next.swiper-button-white(slot='button-next')
     el-row 
       el-col(:lg="16", :sm='24') <!-- Category -->
         .hot
@@ -69,17 +70,25 @@
         sortUser: [],
         tags: [],
         swiperOption1: {
-          effect: 'coverflow',
-          grabCursor: true,
-          autoplay: 3000,
-          centeredSlides: true,
-          slidesPerView: 2,
-          coverflow: {
-            rotate: 50,
-            stretch: 0,
-            depth: 100,
-            modifier: 1
-          }
+          // effect: 'coverflow',
+          // grabCursor: true,
+          autoplay: 9000,
+          // centeredSlides: true,
+          // slidesPerView: 2,
+          // coverflow: {
+          //   rotate: 50,
+          //   stretch: 0,
+          //   depth: 100,
+          //   modifier: 1
+          // }
+          nextButton: '.swiper-button-next',
+          prevButton: '.swiper-button-prev',
+          // pagination: '.swiper-pagination',
+          paginationClickable: true,
+          // Disable preloading of all images
+          preloadImages: false,
+          // Enable lazy loading
+          lazyLoading: true
         },
         swiperOption2: {
           nextButton: '.swiper-button-next',
@@ -122,7 +131,19 @@
           for (let i = 0; i < 3; i++) {
             let name = this.sortUser[i].name.replace(/profile-/, '')
             // console.log(user.name.indexOf(name))
-            if (user.name.indexOf(name) > -1) this.topStar.push(user)
+            if (user.name.indexOf(name) > -1) {
+              axios.get('https://talk.pdis.nat.gov.tw/users/' + name + '.json').then((userdata) => {
+                let profile = userdata.data.user
+                /* set avatar size 300px */
+                if (profile.profile_background === undefined) {
+                  user.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                } else {
+                  user.background = 'https://talk.pdis.nat.gov.tw' + profile.profile_background
+                }
+                this.topStar.push(user)
+                console.log(this.topStar)
+              })
+            }
           }
         })
       },

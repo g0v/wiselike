@@ -51,7 +51,8 @@
               id: '',
               name: '',
               nickname: '',
-              avatar: ''
+              avatar: '',
+              background: ''
             }
             user.id = users.id
             user.name = users.username.toLowerCase()
