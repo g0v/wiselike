@@ -180,6 +180,9 @@
   @media all and (max-width: $breakpoint) {
     margin: 2em 3ch;
   }
+  @media all and (max-width: $mobilebreakpoint) {
+    margin: 0.5em !important;
+  }
   .text {
     font-size: 1em;
   }

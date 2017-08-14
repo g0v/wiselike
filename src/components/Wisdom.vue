@@ -31,6 +31,7 @@
         .authorName
           img.avatar(:src='post.icon')
           .meta {{post.author}}
+          // span {{post.author}}
 
         .content
           .e(v-html='post.content')
@@ -326,7 +327,9 @@
     margin: 1em;
     height: 20em;
     .button {
-      margin: 1em;
+      margin:0.5em;
+      padding: 0.5em;
+      float: left !important;
     }
   }
   #wisdom {
@@ -481,4 +484,28 @@
       }
     }    
   }
+@media all and (max-width: $mobilebreakpoint) {
+  #wisdom {
+    .meta {
+      font-size: 1.2rem;
+      background: none;
+      position: absolute;
+      top: 0.5em;
+      left: 4.5em;
+      width: 6em;
+      padding: 0;
+      text-align: left;
+      font-weight: 700;
+    }
+    .reply {
+      .content {
+        border-left: none;
+        padding: 0 0 0 1ch;
+        margin: 3em 0 ;
+        line-height: 2rem;
+        text-align: left;
+      }
+    }
+  }    
+}
 </style>
