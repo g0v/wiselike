@@ -7,6 +7,7 @@
         h3 Popular Users
         swiper(:options='swiperOption1')
           swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
+           .dim(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
             router-link.user.background(:to="'/user/' + o.name", :style="{ backgroundImage: `url(${o.background})`}")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.avatar')
@@ -313,7 +314,9 @@
   }
   .category {
     border-radius: 0;
-    margin-top: 5px;
+    margin: 5px 5px 0 0;
+    padding: 0.5em;
+    font-size:1.5rem;
     h6 {
       margin: 0
     }
@@ -356,10 +359,9 @@
       left: -3px;
     }
     .category {
-      font-size: 0.5rem;
+      font-size: 1.2rem;
       line-height: 2;
-      padding: 5px 20px;
-      margin: 3px;
+      padding: 0.2em;
     }
   }
   @media all and (min-width: $breakpoint) {

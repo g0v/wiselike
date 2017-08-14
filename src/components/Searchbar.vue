@@ -52,7 +52,7 @@ export default {
 }
 @media all and (max-width: $mobilebreakpoint){
   .el-input-group {
-    width: 21em;
+    width: 100%;
   }
 }
 </style>
