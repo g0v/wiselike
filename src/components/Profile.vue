@@ -497,7 +497,7 @@
   .backgroundImage {
     text-align: right;
     position: absolute;
-    z-index: 8888 !important;
+    z-index: 105 !important;
     .background_button {
       top: 3em;
     }

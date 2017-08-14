@@ -163,6 +163,7 @@
 </script>
 
 <style lang="scss" scoped>
+@import '../global.scss';
 .ask {
   .radio {
     text-align: left;
@@ -199,6 +200,19 @@
     width: 50%;
     margin-right: 50%;
     // border: 5px solid rgba(0, 75, 250, 0.38);
+  }
+}
+@media all and (max-width: $mobilebreakpoint) {
+  .ask {
+    #editor {
+      .button {
+        padding: 0.5em;
+        float: left !important;
+      }
+    }
+    .input {
+      width: 100%;
+    }
   }
 }
 </style>

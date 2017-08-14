@@ -119,6 +119,19 @@ body {
   .el-dialog--small {
     width: 80% !important;
   }
+  @media all and (max-width: $mobilebreakpoint) {
+    .el-dialog--small {
+      width: 95% !important;
+      .el-dialog__body {
+        padding: 0.5em;
+        .v-note-wrapper {
+          min-width: 100%;
+          min-height: 100%;
+          z-index: 9500;
+        }
+      }
+    }
+  }
 }
 #wisdom {
   img {

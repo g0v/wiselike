@@ -130,7 +130,7 @@
     opacity: 1;
     -webkit-transition: .3s;
     transition: .3s;
-    z-index: 999;
+    z-index: 100;
   }
 }
 @media all and (max-width: $mobilebreakpoint) {
