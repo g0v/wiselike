@@ -656,6 +656,9 @@
         }
       }
     }
+    .button {
+      padding:0.5rem;
+    }
   }
 }
 </style>

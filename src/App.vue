@@ -133,4 +133,12 @@
     z-index: 999;
   }
 }
+@media all and (max-width: $mobilebreakpoint) {
+  #app {
+    .page-up {
+      font-size: 1rem;
+      padding: 0 0 0 0.2em;
+    }
+  }
+}
 </style>
