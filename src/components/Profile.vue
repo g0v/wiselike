@@ -636,4 +636,26 @@
     font-size: 1.5em;
   }
 }
+@media all and (max-width: $mobilebreakpoint) {
+  .profile {
+    .info {
+      .avatar_image {
+        width: 150px;
+        height: 150px;
+      }
+      .name {
+        font-size: 1.5rem;
+        margin: 0.5em;
+      }
+      .introduction {
+        .description {
+          h3 {
+            font-size:1rem;
+            margin:0.5em;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

@@ -7,7 +7,6 @@
         h3 Popular Users
         swiper(:options='swiperOption1')
           swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-           .dim(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
             router-link.user.background(:to="'/user/' + o.name", :style="{ backgroundImage: `url(${o.background})`}")
               el-badge(:value='o.topic_count')
                 img.avatar.shadow(:src='o.avatar')
