@@ -5,14 +5,16 @@
       el-button.mob(type="text", icon='search', @click='dialogTableVisible = true')
       el-dialog.dialog( v-model='dialogTableVisible', :modal-append-to-body='false', :show-close='false')
         Search(:users="users")
-      el-button.text(type="warning", v-if="!username", @click.native="login", index='0') Sign in
-      el-button.text(type="warning", v-if="!username", @click.native="howtouse", index='0') ?
-      span(v-if="username")
+
+      template(v-if="username")
         el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') Create
         el-button.text.mobtext(v-if="checkprofile", @click='logout') LogOut
+      template(v-else)
+        el-button.text(@click.native="login", index='0') Sign in
+        el-button.text(@click.native="howtouse", index='0') ?
 
       el-dropdown(trigger='click')
-        span.el-dropdown-link 
+        span.el-dropdown-link
           img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
         el-dropdown-menu(slot='dropdown')
           el-dropdown-item: router-link.submenu(:to="'/user/' + username") My Profile
@@ -139,7 +141,7 @@
     float:right;
     margin-right:1rem;
   }
-  
+
   .mob{
     margin-right:0.5em;
     color: $logocolor;
@@ -170,7 +172,7 @@
   }
   .right{
     float:right;
-    margin-right: 2em;    
+    margin-right: 2em;
   }
   @media all and (max-width: $mobilebreakpoint) {
     .logo{

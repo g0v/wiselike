@@ -6,19 +6,7 @@
 
     el-row
       el-col(:lg="16", :sm='24') <!-- Category -->
-        .hot
-          h3 Category
-          .buttonset
-            el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-              h6 {{tag}}
-            swiper(:options='swiperOption2')
-              swiper-slide.users(v-for='user in selectedUsers', :key='user', :data='user')
-                  router-link.user(:to="'/user/' + user.name")
-                    img.avatar.shadow(:src='user.avatar')
-                    p.name {{user.nickname}}
-              //- .swiper-pagination(slot='pagination')
-              .swiper-button-prev.swiper-button-black(slot='button-prev')
-              .swiper-button-next.swiper-button-black(slot='button-next')
+        Categories(:users='users')
 
       el-col(:lg="8", :sm='24') <!-- Recent Activity -->
         .activity
@@ -33,83 +21,34 @@
 </template>
 
 <script>
-  require('swiper/dist/css/swiper.css')
-  import Vue from 'vue'
-  import VueAwesomeSwiper from 'vue-awesome-swiper'
-  Vue.use(VueAwesomeSwiper)
   import axios from 'axios'
   import profile from './Profile.vue'
   import wisdom from './Wisdom.vue'
   import Slider from './Slider.vue'
+  import Categories from './Categories.vue'
   export default {
     name: 'hello',
     props: ['users', 'topics'],
     components: {
       wisdom,
       profile,
-      Slider
+      Slider,
+      Categories
     },
     data () {
       return {
-        currentDate: new Date(),
-        selectedUsers: [],
-        activeCate: 0,
-        activityTop10: [],
-        tags: [],
-        swiperOption2: {
-          nextButton: '.swiper-button-next',
-          prevButton: '.swiper-button-prev',
-          slidesPerView: 3,
-          slidesPerColumn: 2,
-          autoplay: 3000,
-          grabCursor: true,
-          paginationClickable: true,
-          spaceBetween: 30
-        }
+        activityTop10: []
       }
     },
     computed: {
-      sortedUsers: function () {
-        /* sort base on wisdom numbers */
-        this.users.sort((a, b) => {
-          b.topic_count - a.topic_count
-        })
-      }
     },
     methods: {
-      showCategory: function (tag) {
-        this.selectedUsers = []
-        if (tag !== '全部') {
-          /* get user from tag */
-          axios.get('https://talk.pdis.nat.gov.tw/tags/wiselike-' + tag + '.json')
-          .then((tagUsers) => {
-            let tagUser = tagUsers.data.users
-            this.users.forEach((singleUser) => {
-              tagUser.forEach((taguser) => {
-                if (singleUser.id === taguser.id) this.selectedUsers.push(singleUser)
-              })
-            })
-          })
-          return this.selectedUsers
-        } else if (tag === '全部') this.selectedUsers = this.users
-      },
-      slice (array, number) {
-        return array.slice(0, number)
-      },
       getActivity: function () {
         /* get recent activity */
         axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
         .then((response) => {
           /* get a list of topics under one category */
           let topics = response.data.topic_list.topics
-          let tags = response.data.topic_list.tags
-          let all = '全部'
-          for (var i in tags) {
-            if (tags[i].indexOf('wiselike') > -1) {
-              this.tags.push(tags[i].replace(/wiselike-/, ''))
-            }
-          }
-          this.tags.unshift(all)
           let newTopicsFilter = []
           topics.map((topic) => {
             let newTopic = {}
@@ -124,7 +63,7 @@
           })
           /* drop first topic which is actually meta */
           this.topicList = newTopicsFilter
-          // console.log(newTopicsFilter)
+
           /* find the profile owner by category id from each topic */
           return Promise.all(newTopicsFilter.map((topic) => axios.get('https://talk.pdis.nat.gov.tw/c/wiselike/' + topic.category + '.json')))
         }).then((responses) => {
@@ -142,20 +81,13 @@
         }).catch(err => console.log('getActivity error: ' + err))
       }
     },
-    mounted () {
-      this.selectedUsers = this.users
-    },
     watch: {
-      users: function () {
-        // console.log(this.users)
-        this.selectedUsers = this.users
-      },
       topics: function () {
-        this.activityTop10 = this.slice(this.topics, 10)
+        this.activityTop10 = this.topics.slice(0, 10)
       }
     },
     created: function () {
-      this.activityTop10 = this.slice(this.topics, 10)
+      this.activityTop10 = this.topics.slice(0, 10)
       this.getActivity()
     }
   }
@@ -176,25 +108,6 @@
   .background {
     background-color: #333;
   }
-  .user {
-    display: block;
-    padding: 1em 0 2em 0;
-    &:hover {
-      transform: scale(1.05, 1.05);
-    }
-    .avatar {
-      margin: 1em auto 0.5em auto;
-      width: 7em;
-      height: 7em;
-      border-radius: 50%;
-      display: block;
-    }
-    .name {
-      color: black;
-      text-align: center;
-      margin:0.8rem 0 0.5rem 0;
-    }
-  }
   .activity { // Recent Activity
     margin: 0 0 0 3ch;
     .say {
@@ -208,15 +121,6 @@
       h4 {
         line-height: 1.5em;
       }
-    }
-  }
-  .category {
-    border-radius: 0;
-    margin: 5px 5px 0 0;
-    padding: 0.5em;
-    font-size:1.5rem;
-    h6 {
-      margin: 0
     }
   }
 
@@ -242,11 +146,6 @@
       font-size: 1.2rem;
       line-height: 2;
       padding: 0.2em;
-    }
-  }
-  @media all and (min-width: $breakpoint) {
-    .bar {
-      display: none;
     }
   }
 }
