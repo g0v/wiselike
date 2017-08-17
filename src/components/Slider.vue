@@ -3,7 +3,7 @@
 .slides
   // Searchbar.bar(:users="users")
   h3 Popular Users
-  swiper(:options='swiperOption1')
+  swiper.swipe(:options='swiperOption1')
     swiper-slide(v-for='(star, idx) in stars', :key='star', :data='star')
       router-link.user.dim(:to="'/user/' + star.name", :style="{ backgroundImage: `url(${star.background})`}")
         img.avatar.shadow(:src='star.avatar')
@@ -149,13 +149,16 @@
 }
 @media all and (max-width: $breakpoint) {
   .slides{
-    margin: 2ch 3ch 0 3ch;
-      .user {
-        font-size: 120%;
-        .link{
-          padding: 0 1ch;
-        }
+    margin: 2ch 0 0 3ch;
+    .swipe {
+      margin: 0 0 0 -3ch;
+    }
+    .user {
+      font-size: 120%;
+      .link{
+        padding: 0 1ch;
       }
+    }
     .swiper-button-next,.swiper-button-prev{
       background-size: 18px 44px;
     }

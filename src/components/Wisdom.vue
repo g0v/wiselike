@@ -1,10 +1,10 @@
 <template lang="pug">
 //- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
-#wisdom(:class='[type]', v-if='!deleteCloseComponet && topicContent.title')
+.wisdom(:class='[type]', v-if='!deleteCloseComponet && topicContent.title')
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
-    
+
   .question
     .share-button
       el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
@@ -22,7 +22,8 @@
           i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
           img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
 
-      el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='') 分 享
+      el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='')
+        i.el-icon-share
 
     //- | {{ '#'+topicId }}
 
@@ -43,10 +44,10 @@
 
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
       el-button(type='primary', @click="reply = true", v-if="!myQuestion") 我 要 回 覆
-    div.center(v-else-if="local_storage.username === undefined")
+    div.replyButton(v-else-if="local_storage.username === undefined")
       el-button(@click.native="login",type="warning") 登 入 後 留 言
 
-    #editor(v-if='reply')
+    .editor(v-if='reply')
       mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :language = "'en'")
       el-tag.tag(type='primary') 欄位長度需大於10個字。
       el-button.button(style='float:right', type='primary', @click="submit") 送 出
@@ -323,7 +324,7 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
-  #editor {
+  .editor {
     margin: 1em;
     height: 20em;
     .button {
@@ -332,7 +333,8 @@
       float: left !important;
     }
   }
-  #wisdom {
+  .wisdom {
+    box-sizing: border-box;
     border: 1px solid #d1dbe5;
     border-radius: 4px;
     background-color: #fff;
@@ -410,9 +412,6 @@
       text-align: center;
       margin: 2em;
     }
-    .center {
-      text-align: center;
-    }
   }
   .delete {
     // float: right;
@@ -441,10 +440,7 @@
     margin-right: 0.5em;
    }
   .share {
-    // float: right;
-    color: white;
-    // font-weight: 700;
-    background-color: #324157;
+    color: $fontcolor;
   }
   .shareBox{
     width:300px;
@@ -465,7 +461,7 @@
     width: 100%;
   }
   @media all and (max-width: $breakpoint) {
-    #wisdom {
+    .wisdom {
       .title {
         font-size: 1rem;
       }
@@ -482,10 +478,10 @@
         font-size: 70%;
         background: none;
       }
-    }    
+    }
   }
 @media all and (max-width: $mobilebreakpoint) {
-  #wisdom {
+  .wisdom {
     .meta {
       font-size: 1.2rem;
       background: none;
@@ -506,6 +502,6 @@
         text-align: left;
       }
     }
-  }    
+  }
 }
 </style>

@@ -39,49 +39,14 @@ h1, h2, h3, h4, h5, h6, p, .meta {
   font-weight: 400;
   font-size: 90%;
 }
-// div.meta {
-//   color: rgba($fontcolor, 0.8);
-//   font-weight: 400;
-// }
-// span.meta {
-//   color: rgba($fontcolor, 0.8);
-//   font-size: 80%;
-//   font-weight: 400;
-//   &::before {
-//     content: ' - ';
-//   }
-// }
 body {
-    /***************** Hide Google Translate top row */
-    // > .skiptranslate {
-        // display: none;
-    // }
     /***************** Style Google Translate corner */
     > #google_translate_element {
         font-size: 3rem;
         display: flex;
-        // box-shadow: -1px 2px 3px 0 rgba($text_color, 0.3);
-        // z-index: 99999;
         position: fixed;
-        // left: 0;
-        // top: 2em;
         bottom: 0;
-        // right: -147px;
         padding: .2em;
-        // transition: all .3s ease;
-        // &:hover {
-        //     right: 0;
-        //     // background: rgba($highlight, 1);
-        // }
-        // &::before {
-        //     /* button */
-        //     content: "翻譯米糕";
-        //     // @media screen and (max-width: $breakpoint_tablet) {
-        //     //     font-family: FontAwesome;
-        //     //     content: '\f0a5';
-        //     // }
-        //     padding: 0 5px 0 0;
-        // }
     }
 }
 .center {

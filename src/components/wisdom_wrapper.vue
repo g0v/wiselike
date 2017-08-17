@@ -1,10 +1,10 @@
 <template lang="pug">
-  #wisdomcomponent(v-if='userId')
+  .wisdom-wrapper(v-if='userId')
 
-    .wisdom(v-if='!wisdoms.length')
+    .wisdoms(v-if='!wisdoms.length')
       p 空空如也
 
-    .wisdom(v-else)
+    .wisdoms(v-else)
       //- p(v-if='type === "private"') 等待回答
       //- p(v-else) 歷史問題
       p {{ title[type] }}
@@ -174,7 +174,7 @@
 
 <style lang="scss" scoped>
 @import '../global.scss';
-#wisdomcomponent {
+.wisdom-wrapper {
   // margin: 2em auto;
   // max-width: $maxWidth;
   @media all and (max-width: $breakpoint) {

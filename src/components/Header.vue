@@ -2,17 +2,18 @@
   .header
     router-link.logo(to='/', exact='') wiselike
     span.right
+      //- search
       el-button.mob(type="text", icon='search', @click='dialogTableVisible = true')
       el-dialog.dialog( v-model='dialogTableVisible', :modal-append-to-body='false', :show-close='false')
         Search(:users="users")
-
+      //- sign-in
       template(v-if="username")
         el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') Create
         el-button.text.mobtext(v-if="checkprofile", @click='logout') LogOut
       template(v-else)
         el-button.text(@click.native="login", index='0') Sign in
         el-button.text(@click.native="howtouse", index='0') ?
-
+      //- my profile
       el-dropdown(trigger='click')
         span.el-dropdown-link
           img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
@@ -144,7 +145,7 @@
 
   .mob{
     margin-right:0.5em;
-    color: $logocolor;
+    color: $fontcolor;
     font-size: 1.3rem;
     font-weight: 700;
     padding: 0.3em;
@@ -164,6 +165,9 @@
     border-radius: 4px;
     margin-right: 8px;
     vertical-align: middle;
+    &:hover {
+      cursor: pointer;
+    }
   }
   .text {
     color: whilte;
