@@ -12,8 +12,7 @@
             el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
               h6 {{tag}}
             swiper(:options='swiperOption2')
-              swiper-slide.card(v-for='user in selectedUsers', :key='user', :data='user')
-                .users
+              swiper-slide.users(v-for='user in selectedUsers', :key='user', :data='user')
                   router-link.user(:to="'/user/' + user.name")
                     img.avatar.shadow(:src='user.avatar')
                     p.name {{user.nickname}}
@@ -177,32 +176,23 @@
   .background {
     background-color: #333;
   }
-  .user { // For Category users
+  .user {
+    display: block;
+    padding: 1em 0 2em 0;
+    &:hover {
+      transform: scale(1.05, 1.05);
+    }
     .avatar {
+      margin: 1em auto 0.5em auto;
       width: 7em;
       height: 7em;
       border-radius: 50%;
-      margin: 10px auto;
       display: block;
     }
     .name {
+      color: black;
       text-align: center;
       margin:0.8rem 0 0.5rem 0;
-      color: white;
-    }
-  }
-  .users { // Category
-    padding: 1em 0 2em 0;
-    .user {
-      &:hover {
-        transform: scale(1.05, 1.05)
-      }
-      .avatar {
-        margin: 1em auto 0.5em auto;
-      }
-      .name {
-        color: black;
-      }
     }
   }
   .activity { // Recent Activity
@@ -242,10 +232,10 @@
       width: 4rem;
       height: 4rem;
     }
-    .users {
+    .user {
       padding: 0;
     }
-    .users .name {
+    .user .name {
       font-size: 1rem;
     }
     .category {

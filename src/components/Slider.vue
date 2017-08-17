@@ -4,11 +4,10 @@
   // Searchbar.bar(:users="users")
   h3 Popular Users
   swiper(:options='swiperOption1')
-    swiper-slide(v-for='(o, idx) in topStar', :key='o', :data='o', v-if='topStar !== undefined')
-      router-link.user.background(:to="'/user/' + o.name", :style="{ backgroundImage: `url(${o.background})`}")
-        el-badge(:value='o.topic_count')
-          img.avatar.shadow(:src='o.avatar')
-        p.name {{ o.nickname }}
+    swiper-slide(v-for='(star, idx) in stars', :key='star', :data='star')
+      router-link.user.dim(:to="'/user/' + star.name", :style="{ backgroundImage: `url(${star.background})`}")
+        img.avatar.shadow(:src='star.avatar')
+        p.name {{ star.nickname }}
         .link
           | ask me
     .swiper-button-prev.swiper-button-white(slot='button-prev')
@@ -33,23 +32,12 @@
     },
     data () {
       return {
-        topStar: [],
-        sortUser: [],
+        stars: [],
+        sortedProfiles: [],
         swiperOption1: {
-          // effect: 'coverflow',
-          // grabCursor: true,
           autoplay: 9000,
-          // centeredSlides: true,
-          // slidesPerView: 2,
-          // coverflow: {
-          //   rotate: 50,
-          //   stretch: 0,
-          //   depth: 100,
-          //   modifier: 1
-          // }
           nextButton: '.swiper-button-next',
           prevButton: '.swiper-button-prev',
-          // pagination: '.swiper-pagination',
           paginationClickable: true,
           // Disable preloading of all images
           preloadImages: false,
@@ -59,7 +47,7 @@
       }
     },
     methods: {
-      top3: function () {
+      sortProfiles: function () {
         axios.get('https://talk.pdis.nat.gov.tw/categories.json?parent_category_id=21')
         .then((subCategory) => { // get user list
           let Category = subCategory.data.category_list.categories
@@ -67,18 +55,36 @@
           Category.forEach((Profile) => {
             if (Profile['name'].indexOf('profile-') > -1) allProfile.push(Profile)
           })
-          /* sort by topic count */
-          this.sortUser = allProfile.sort((a, b) => { return a.topic_count - b.topic_count }).reverse()
-          this.matchUser()
+
+          /* sort by topic count of the month, DESC */
+          this.sortedProfiles = allProfile.sort((a, b) => a.topics_month - b.topics_month).reverse()
+
+          /* sort users by sortedProfile */
+          let sortedProfilesName = this.sortedProfiles.map(profile => profile.name.replace(/profile-/, ''))
+          this.stars = this.users
+                          /* make sure the user exist in profiles, and sort */
+                          .filter(user => sortedProfilesName.indexOf(user.name) >= 0)
+                          .sort((a, b) => sortedProfilesName.indexOf(a.name) - sortedProfilesName.indexOf(b.name))
+                          .slice(0, 3)
+          this.stars.map(star => {
+            axios.get('https://talk.pdis.nat.gov.tw/users/' + star.name + '.json')
+              .then((response) => {
+                let user = response.data.user
+                if (user.profile_background) {
+                  star.background = 'https://talk.pdis.nat.gov.tw' + user.profile_background
+                } else {
+                  star.background = 'https://images.unsplash.com/photo-1484199408980-5918a796a53f?dpr=1&auto=compress,format&fit=crop&w=1199&h=776&q=80&cs=tinysrgb&crop=&bg='
+                }
+              })
+          })
         })
       },
-
-      matchUser: function () {
-        // this.sortUser
+      matchUsers: function () {
+        // this.sortedProfiles
         this.users.filter((user) => {
           // console.log(user)
           for (let i = 0; i < 3; i++) {
-            let name = this.sortUser[i].name.replace(/profile-/, '')
+            let name = this.sortedProfiles[i].name.replace(/profile-/, '')
             // console.log(user.name.indexOf(name))
             if (user.name.indexOf(name) > -1) {
               axios.get('https://talk.pdis.nat.gov.tw/users/' + name + '.json').then((userdata) => {
@@ -89,21 +95,15 @@
                 } else {
                   user.background = 'https://talk.pdis.nat.gov.tw' + profile.profile_background
                 }
-                this.topStar.push(user)
-                console.log(this.topStar)
+                this.stars.push(user)
               })
             }
           }
         })
       }
     },
-    watch: {
-      users: function () {
-        this.matchUser()
-      }
-    },
     created: function () {
-      this.top3()
+      this.sortProfiles()
     }
   }
 </script>
@@ -120,19 +120,12 @@
   .user {
     background-size: cover;
     background-position: center;
-    height: 100%;
+    height: 25rem;
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     justify-content: center;
     font-size: 150%;
-    .link {
-      background: $highlight;
-      font-family: $logofont;
-      color: white;
-      line-height: 2em;
-      padding: 0 3ch;
-    }
     .avatar {
       width: 7em;
       height: 7em;
@@ -144,6 +137,13 @@
       text-align: center;
       margin:0.8rem 0 0.5rem 0;
       color: white;
+    }
+    .link {
+      background: $highlight;
+      font-family: $logofont;
+      color: white;
+      line-height: 2em;
+      padding: 0 3ch;
     }
   }
 }
