@@ -32,13 +32,11 @@ h1, h2, h3, h4, h5, h6, p, .meta {
   }
 }
 
-.meta {
-  color: rgba($fontcolor, 0.8);
-  background: $bgcolor;
-  padding: 3px;
-  font-weight: 400;
-  font-size: 90%;
+img {
+  max-width: 100%;
+  height: auto;
 }
+
 body {
     /***************** Style Google Translate corner */
     > #google_translate_element {
@@ -55,6 +53,13 @@ body {
 }
 .shadow {
   box-shadow: 0 5px 6px -5px gray;
+}
+.meta {
+  color: rgba($fontcolor, 0.8);
+  // background: $bgcolor;
+  padding: 3px;
+  font-weight: 400;
+  font-size: 90%;
 }
 .sereply {
   .thumbnail {
@@ -98,30 +103,31 @@ body {
     }
   }
 }
-#wisdom {
-  img {
-    max-width: 100%;
-  }
-  @media all and (max-width: $mobilebreakpoint) {
-    #editor {
-      margin: 0;
-      .v-note-wrapper {
-        min-width: 100%;
-        min-height: 100%;
-        z-index: 9500;
-      }
-    }
-  }
-}
-.header {
-  .el-dialog--small {
-    width: 100% !important;
-    top: 0% !important;
-  }
-  .el-dialog__body {
-    padding: 1em;
-  }
-}
+// #wisdom {
+//   img {
+//     max-width: 100%;
+//   }
+//   @media all and (max-width: $mobilebreakpoint) {
+//     #editor {
+//       margin: 0;
+//       .v-note-wrapper {
+//         min-width: 100%;
+//         min-height: 100%;
+//         z-index: 9500;
+//       }
+//     }
+//   }
+// }
+// .header {
+//   font-family: $logofont;
+//   .el-dialog--small {
+//     width: 100% !important;
+//     top: 0% !important;
+//   }
+//   .el-dialog__body {
+//     padding: 1em;
+//   }
+// }
 // ********************** transition
 
 .fade-enter,

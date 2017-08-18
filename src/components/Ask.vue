@@ -5,12 +5,12 @@
       | 我要提問
 
     el-dialog.askDialog.dim(title='建立新的問題', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
-      .anonymously(v-if='hasLoginAlert() === true') 您尚未登入網站，將以匿名提問！
+      .anonymously(v-if='hasLoginAlert() === true') You will ask in anonymous mode
       .radio
         el-checkbox(v-model='anonymousChecked')
-          span.text 選擇匿名提問
+          span.text Ask in anonymous mode
       el-input.input(v-model='title', auto-complete='off', :rows="2", placeholder='請輸入標題，欄位長度需大於10個字')
-      #editor
+      .editor
         mavon-editor.mavon(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :scrollStyle='true', :language = "'en'")
         el-tag.tag(type='primary') 欄位長度需大於10個字。
         //- el-button.button(style='float:right', type='primary', @click="tes") 測 試
@@ -183,7 +183,7 @@
   .askDialog {
     position: fixed;
   }
-  #editor {
+  .editor {
     height: 50vh;
     margin-bottom: 3em;
     text-align: left;

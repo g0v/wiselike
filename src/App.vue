@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    Navbar.header(:users="users")
+    Navbar.nav(:users="users")
     transition(name='fade', mode='out-in')
       router-view.view(:users="users", :topics="topicList", :watchCategory="watchCategory")
     el-button.page-up(@click='goAnchor', icon='arrow-up', size='large')
@@ -95,7 +95,7 @@
   flex-flow: column nowrap;
   min-height: 100vh;
   background: $bgcolor;
-  .header {
+  .nav {
     // flex: 0 0 3rem;
     position: absolute;
     width: 100%;

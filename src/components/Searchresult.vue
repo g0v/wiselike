@@ -101,7 +101,7 @@ export default {
     text-align: center;
     margin-top: 50px;
   }
-  .users { 
+  .users {
     display: flex;
     flex-flow: row wrap;
     padding: 3em 0;
@@ -138,6 +138,9 @@ export default {
       }
       h4 {
         line-height: 1.5em;
+        .meta {
+          margin: 0 0 0 1ch;
+        }
       }
     }
   }

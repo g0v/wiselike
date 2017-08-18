@@ -3,7 +3,7 @@
     h3 Category
     .buttonset
       el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
-        h6 {{tag}}
+        p.tag {{tag}}
 
     .users
       router-link.user(v-for='user in selectedUsers', :key='user.id', :to='"/user/" + user.name')
@@ -94,9 +94,10 @@
     margin: 5px 5px 0 0;
     padding: 0.5em;
     font-size:1.5rem;
-    h6 {
-      margin: 0
-    }
+  }
+  .tag {
+    font-size: 1rem;
+    margin: 0;
   }
 
   .users {

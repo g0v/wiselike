@@ -3,7 +3,7 @@
     input.hide_input(type='file', @change='onFileChange', v-if='!ImageEdit')
 
     .info.dim(:style="{ backgroundImage: `url(${ProfileBackroundImage})` }")
-      
+
       .backgroundImage
         el-button.button.backgroundimage(icon='picture', size='large', v-if='selfkey') 變更背景
         input.hide_input_background(@click="warningText('background')",type='file', @change='onFileChange', v-if='selfkey')
@@ -62,23 +62,25 @@
 
       .Subscribe-Ask(v-if='login')
         .subscribe
-          el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus') 訂 閱
-          el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus') 取消訂閱
+          el-button.subscribebutton(type='danger', @click='subscribe', icon='star-on', v-if='!subscribeStatus') Subscribe
+          el-button.unsubscribebutton(type='danger', @click='subscribe', icon='star-off', v-if='subscribeStatus') Unsubscribe
 
         ask(:userId = "user.name", v-if='Introedit')
       .unlogin(v-else)
-        el-button(type="warning", @click.native="Login") 請 先 登 入 方 可 提 問
+        el-button(type="warning", @click.native="Login") Login to ask
 
     .wrapped
-      wisdom(v-if='topId', :type='"top"', :userId='user.name', :topicId='topId')
-      el-tabs(v-model='mode', v-if='!topId')
+      //- single wisdom
+      template(v-if='topId')
+        wisdom(:type='"top"', :userId='user.name', :topicId='topId')
+        p.viewAll: router-link(:to='"/user/" + user.name') View {{user.nickname}}'s all wisdoms
+      //- multiple wisdom with wrap
+      el-tabs(v-else, v-model='mode')
         el-tab-pane(v-if='selfkey')
           span(slot='label', name='private', @click="information('private')")
             i.el-icon-information(v-if='infor')
             | 等待回答
           wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId || myQuestionID')
-        //- el-tab-pane(label='等待回答', name='private', v-if='selfkey')
-        //-   wisdomWrapper(:type = '"private"', :userId = "user.name", :topicId='topId || myQuestionID')
         el-tab-pane(label='歷史問題', name='public')
           wisdomWrapper(:type = '"public"', :userId = "user.name", :topicId='topId')
         el-tab-pane(label='我的提問', name='myQuestion')
@@ -634,6 +636,9 @@
   .el-icon-information {
     color: red;
     font-size: 1.5em;
+  }
+  .viewAll {
+    text-align: center;
   }
 }
 @media all and (max-width: $mobilebreakpoint) {

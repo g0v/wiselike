@@ -5,11 +5,12 @@
   h3 Popular Users
   swiper.swipe(:options='swiperOption1')
     swiper-slide(v-for='(star, idx) in stars', :key='star', :data='star')
-      router-link.user.dim(:to="'/user/' + star.name", :style="{ backgroundImage: `url(${star.background})`}")
+      .user.dim(:style="{ backgroundImage: `url(${star.background})`}")
         img.avatar.shadow(:src='star.avatar')
         p.name {{ star.nickname }}
-        .link
-          | ask me
+        router-link.link(:to="'/user/' + star.name")
+          i.el-icon-check
+          |  ask me
     .swiper-button-prev.swiper-button-white(slot='button-prev')
     .swiper-button-next.swiper-button-white(slot='button-next')
 

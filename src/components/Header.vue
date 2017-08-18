@@ -18,10 +18,9 @@
         span.el-dropdown-link
           img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
         el-dropdown-menu(slot='dropdown')
-          el-dropdown-item: router-link.submenu(:to="'/user/' + username") My Profile
-          el-dropdown-item: span.submenu(@click="logout") Log Out
-    .search
-      Search.nav(:users="users")
+          el-dropdown-item: router-link(:to="'/user/' + username") My Profile
+          el-dropdown-item: span(@click="logout") Log Out
+    Search.nav(:users="users")
 
 </template>
 
@@ -138,7 +137,7 @@
 @import '../global.scss';
 .header {
   padding-top: 1em;
-  .search{
+  .nav{
     float:right;
     margin-right:1rem;
   }
@@ -157,7 +156,7 @@
     text-decoration: none;
     font-size: 2.2rem;
     padding: 0 1ch;
-    vertical-align: -webkit-baseline-middle;
+    // vertical-align: -webkit-baseline-middle;
   }
   .avatar{
     display: inline-block;
@@ -169,11 +168,11 @@
       cursor: pointer;
     }
   }
-  .text {
-    color: whilte;
-    font-size: 1.3rem;
-    font-weight: 500;
-  }
+  // .text {
+  //   color: whilte;
+  //   font-size: 1.3rem;
+  //   font-weight: 500;
+  // }
   .right{
     float:right;
     margin-right: 2em;
@@ -202,9 +201,9 @@
     .mob{
       display: none;
     }
-    .search{
-      font-size: 2rem;
-    }
+    // .search{
+    //   font-size: 2rem;
+    // }
   }
 }
 </style>

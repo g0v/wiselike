@@ -17,7 +17,7 @@
 
       el-popover(ref='popover1', placement='top', width='400')
         h2 分享連結
-        el-input(v-model='shareLink', placeholder='请输入内容')
+        el-input(v-model='shareLink', readonly)
         span(v-for='(share, index) of shares')
           i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
           img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
@@ -43,9 +43,9 @@
         .line
 
     div.replyButton(v-if="!reply && local_storage.username !== undefined")
-      el-button(type='primary', @click="reply = true", v-if="!myQuestion") 我 要 回 覆
+      el-button(type='primary', @click="reply = true", v-if="!myQuestion") Reply
     div.replyButton(v-else-if="local_storage.username === undefined")
-      el-button(@click.native="login",type="warning") 登 入 後 留 言
+      el-button(@click.native="login",type="warning") Login to reply
 
     .editor(v-if='reply')
       mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :language = "'en'")
@@ -380,6 +380,9 @@
         text-align: center;
         left: 0;
         width: 6em;
+        // .meta {
+        //   background: none;
+        // }
       }
       .content {
         border-left: 5px solid lightgray;
@@ -476,7 +479,7 @@
       }
       .meta {
         font-size: 70%;
-        background: none;
+        // background: none;
       }
     }
   }
@@ -484,7 +487,7 @@
   .wisdom {
     .meta {
       font-size: 1.2rem;
-      background: none;
+      // background: none;
       position: absolute;
       top: 0.5em;
       left: 4.5em;
