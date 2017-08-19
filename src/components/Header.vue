@@ -9,14 +9,15 @@
       //- sign-in
       template(v-if="username")
         el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') Create
-        el-button.text.mobtext(v-if="checkprofile", @click='logout') LogOut
+        el-button.text.mobtext(v-if="checkprofile", @click='logout') Log out
       template(v-else)
         el-button.text(@click.native="login", index='0') Sign in
-        el-button.text(@click.native="howtouse", index='0') ?
+        router-link.link(:to='"/howtouse"')
+          i.el-icon-information
       //- my profile
-      el-dropdown(trigger='click')
+      el-dropdown(trigger='click', v-if='username')
         span.el-dropdown-link
-          img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
+          img.avatar.link(v-if="username && !checkprofile", :src='userIcon', :title='username')
         el-dropdown-menu(slot='dropdown')
           el-dropdown-item: router-link(:to="'/user/' + username") My Profile
           el-dropdown-item: span(@click="logout") Log Out
@@ -168,6 +169,9 @@
       cursor: pointer;
     }
   }
+  .link {
+    margin: 0 0 0 1ch;
+  }
   // .text {
   //   color: whilte;
   //   font-size: 1.3rem;
@@ -175,7 +179,7 @@
   // }
   .right{
     float:right;
-    margin-right: 2em;
+    margin-right: 1ch;
   }
   @media all and (max-width: $mobilebreakpoint) {
     .logo{
@@ -188,7 +192,7 @@
       width: 2em;
     }
     .text {
-      font-size: 1.2rem;
+    //  font-size: 1.2rem;
       padding: 0.3em;
     }
     .mobtext{

@@ -89,15 +89,17 @@
   h3 {
     font-family: 'Kadwa', serif;
   }
-  .category {
-    border-radius: 0;
-    margin: 5px 5px 0 0;
-    padding: 0.5em;
-    font-size:1.5rem;
-  }
-  .tag {
-    font-size: 1rem;
-    margin: 0;
+  .buttonset {
+    margin: 0 0 1em 0;
+    .category {
+      border-radius: 0;
+      margin: 0 1ch 1ch 0;
+      padding: .3em 1ch;
+      font-size: .9rem;
+      .tag {
+        margin: 0;
+      }
+    }
   }
 
   .users {
@@ -108,15 +110,16 @@
     overflow-x: hidden;
     .user {
       flex: 0 0 25%;
-      padding: 1em;
+      @media all and (max-width: $mobilebreakpoint) {
+        flex: 0 0 50%;
+      }
       box-sizing: border-box;
       &:hover {
         transform: scale(1.05, 1.05);
       }
       .avatar {
+        width: 80%;
         margin: 1em auto 0.5em auto;
-        width: 7em;
-        height: 7em;
         border-radius: 50%;
         display: block;
       }
