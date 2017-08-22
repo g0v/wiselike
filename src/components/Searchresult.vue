@@ -145,5 +145,21 @@ export default {
     }
   }
 }
+@media all and (max-width: $breakpoint) {
+  .result{
+    .users {
+      padding: 3em 1ch;
+      .user {
+        margin: 0 0.5ch;
+        .avatar{
+          height: auto;
+        }
+      }
+    }
+    .activity{
+      margin: 0 1ch;
+    }
+  }
+}
 
 </style>
