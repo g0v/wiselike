@@ -118,16 +118,16 @@ body {
 //     }
 //   }
 // }
-// .header {
-//   font-family: $logofont;
-//   .el-dialog--small {
-//     width: 100% !important;
-//     top: 0% !important;
-//   }
-//   .el-dialog__body {
-//     padding: 1em;
-//   }
-// }
+.header {
+  font-family: $logofont;
+  .el-dialog--small {
+    width: 100% !important;
+    top: 0% !important;
+  }
+  .el-dialog__body {
+    padding: 1em;
+  }
+}
 // ********************** transition
 
 .fade-enter,

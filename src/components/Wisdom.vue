@@ -15,7 +15,7 @@
       el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
       //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
 
-      el-popover(ref='popover1', placement='top', width='400')
+      el-popover(ref='popover1', placement='top')
         h2 分享連結
         el-input(v-model='shareLink', readonly)
         span(v-for='(share, index) of shares')
