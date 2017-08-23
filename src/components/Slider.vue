@@ -4,7 +4,7 @@
   // Searchbar.bar(:users="users")
   h3 Popular Users
   swiper.swipe(:options='swiperOption1')
-    swiper-slide(v-for='(star, idx) in stars', :key='star', :data='star')
+    swiper-slide(v-for='(star, idx) in stars', :key='idx', :data='star')
       .user.dim(:style="{ backgroundImage: `url(${star.background})`}")
         img.avatar.shadow(:src='star.avatar')
         p.name {{ star.nickname }}

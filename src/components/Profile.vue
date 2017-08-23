@@ -464,15 +464,6 @@
       this.List = this.checkList
     },
     computed: {
-      user: function () {
-        // let pos = this.users.map(e => e.name).indexOf(this.$route.params.userId)
-        // if (pos < 0) {
-        //   return false
-        // } else {
-        //   console.log(this.users[pos])
-        //   return this.users[pos]
-        // }
-      },
       topId: function () {
         // console.log(this.$route.params.userId.split('-')[1])
         return Number(this.$route.params.userId.split('-')[1])
