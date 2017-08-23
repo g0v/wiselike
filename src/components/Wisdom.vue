@@ -359,7 +359,7 @@
       font-weight: 700;
     }
     .question {
-      text-align: right;
+      /* text-align: right; */
       padding: 0 1em;
       a {
         color: #33f;
