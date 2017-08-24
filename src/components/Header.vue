@@ -29,6 +29,7 @@
   import { Loading } from 'element-ui'
   import Search from './Searchbar.vue'
   import axios from 'axios'
+  import Vue from 'vue'
   export default {
     name: 'header',
     props: ['users'],
@@ -120,11 +121,13 @@
     mounted: function () {
       this.setlocalstorage()
 
-      let googleTranslateCombobox = document.querySelector('.goog-te-combo')
-      if (!navigator.languages) return
-      if (navigator.languages.find(function (lang) { return lang.match(/^zh/) })) return
-      googleTranslateCombobox.value = navigator.language.split('-')[0] // "en-US" to "en"
-      googleTranslateCombobox.dispatchEvent(new Event('change'))
+      Vue.nextTick(() => {
+        let googleTranslateCombobox = document.querySelector('.goog-te-combo')
+        if (!navigator.languages) return
+        if (navigator.languages.find(function (lang) { return lang.match(/^zh/) })) return
+        googleTranslateCombobox.value = navigator.language.split('-')[0] // "en-US" to "en"
+        googleTranslateCombobox.dispatchEvent(new Event('change'))
+      })
     },
     updated: function () {
       this.username = window.localStorage.getItem('username')
