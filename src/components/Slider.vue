@@ -6,11 +6,12 @@
   swiper.swipe(:options='swiperOption1')
     swiper-slide(v-for='(star, idx) in stars', :key='idx', :data='star')
       .user.dim(:style="{ backgroundImage: `url(${star.background})`}")
-        img.avatar.shadow(:src='star.avatar')
-        p.name {{ star.nickname }}
         router-link.link(:to="'/user/' + star.name")
-          i.el-icon-check
-          |  ask me
+          img.avatar.shadow(:src='star.avatar')
+          p.name {{ star.nickname }}
+          .ask-btn
+            i.el-icon-check
+            |  ask me
     .swiper-button-prev.swiper-button-white(slot='button-prev')
     .swiper-button-next.swiper-button-white(slot='button-next')
 
@@ -139,7 +140,7 @@
       margin:0.8rem 0 0.5rem 0;
       color: white;
     }
-    .link {
+    .ask-btn {
       background: $highlight;
       font-family: $logofont;
       color: white;
