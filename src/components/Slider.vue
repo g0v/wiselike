@@ -6,7 +6,7 @@
   swiper.swipe(:options='swiperOption1')
     swiper-slide(v-for='(star, idx) in stars', :key='idx', :data='star')
       .user.dim(:style="{ backgroundImage: `url(${star.background})`}")
-        router-link.link(:to="'/user/' + star.name")
+        router-link.link.clickable(:to="'/user/' + star.name" tag="div")
           img.avatar.shadow(:src='star.avatar')
           p.name {{ star.nickname }}
           .ask-btn
@@ -118,6 +118,9 @@
   margin: 3em 0;
   h3 {
     font-family: 'Kadwa', serif;
+  }
+  .clickable {
+    cursor:pointer;
   }
   .user {
     background-size: cover;
