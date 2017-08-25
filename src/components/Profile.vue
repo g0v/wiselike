@@ -573,12 +573,14 @@
         border-color: rgba(255, 73, 73, 0);
         width: 8em;
         font-size: 1em;
+        padding: 10px;
       }
       .unsubscribebutton {
         background-color: #324157;
         border-color: rgba(255, 73, 73, 0);
         width: 8em;
         font-size: 1em;
+        padding: 10px;
       }
       .text {
         font-size: 1.2rem;

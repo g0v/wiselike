@@ -1,6 +1,6 @@
 <template lang="pug">
   .hot
-    h3 Category
+    h3 Categories
     .buttonset
       el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
         p.tag {{tag}}

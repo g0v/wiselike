@@ -2,7 +2,7 @@
   .ask
 
     el-button(@click='openAsk', icon='edit', size='large')
-      | 我要提問
+      | 我要提問 (Ask Me Anything)
 
     el-dialog.askDialog.dim(title='建立新的問題', v-model='dialogFormVisible', :close-on-click-modal='false', :modal-append-to-body='false')
       .anonymously(v-if='hasLoginAlert() === true') You will ask in anonymous mode

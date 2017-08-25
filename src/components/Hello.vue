@@ -10,7 +10,7 @@
 
       el-col(:lg="8", :sm='24') <!-- Recent Activity -->
         .activity
-          h3 Recent Activity
+          h3 Recent Activities
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '-' + o.id", :data="o", :key="o.title")
             h4
               i.fa.fa-retweet
