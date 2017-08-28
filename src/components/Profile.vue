@@ -13,7 +13,8 @@
 
       .avatar
         div(v-if='ImageEdit')
-          img.avatar_image(:src="user.avatar")
+          router-link(:to="'/user/' + user.name")
+            img.avatar_image(:src="user.avatar")
           el-button.button.absolute(@click="warningText('avatar')", icon='edit', size='large', v-if='selfkey && !background')
         div(v-else)
           div(v-if='!image')
