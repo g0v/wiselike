@@ -191,7 +191,8 @@
       margin-bottom: 1em;
     }
     .button {
-      margin-left: 1em
+      margin-left: 0.5em;
+      padding: 0.5em;
     }
 
   }

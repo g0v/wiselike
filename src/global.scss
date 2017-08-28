@@ -103,21 +103,21 @@ body {
     }
   }
 }
-// #wisdom {
-//   img {
-//     max-width: 100%;
-//   }
-//   @media all and (max-width: $mobilebreakpoint) {
-//     #editor {
-//       margin: 0;
-//       .v-note-wrapper {
-//         min-width: 100%;
-//         min-height: 100%;
-//         z-index: 9500;
-//       }
-//     }
-//   }
-// }
+.wisdom {
+  // img {
+  //   max-width: 100%;
+  // }
+  @media all and (max-width: $mobilebreakpoint) {
+    .editor {
+      margin: 0;
+      .v-note-wrapper {
+        min-width: 100%;
+        min-height: 100%;
+        z-index: 9500;
+      }
+    }
+  }
+}
 .header {
   font-family: $logofont;
   .el-dialog--small {
