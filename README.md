@@ -29,38 +29,37 @@ yarn dev-proxy # port 9000
 #### Proxy APIs
 
 With `yarn dev-proxy`, proxy server is serving on http://localhost:9000 by default.
-Or you might use the following APIs hosted on 139.162.109.88 (dev only, not always up-to-date)
 
 ##### Login
- - `GET http://139.162.109.88:9000/login`
+ - `GET https://proxy.wiselike.tw/login`
  - return json: `{'sso': '{sso}', 'sig': '{sig}', 'username': '{username}'}`
- 
+
 ##### List all users
- - `GET http://139.162.109.88:9000/users`
- 
+ - `GET https://proxy.wiselike.tw/users`
+
 ##### Get user profile
- - `GET http://139.162.109.88:9000/users/{user}`
- 
+ - `GET https://proxy.wiselike.tw/users/{user}`
+
 ##### Get my profile
- - `GET http://139.162.109.88:9000/me?sso={sso}&sig={sig}`
+ - `GET https://proxy.wiselike.tw/me?sso={sso}&sig={sig}`
 
 ##### Get my username
- - `GET http://139.162.109.88:9000/whoami?sso={sso}&sig={sig}`
- 
+ - `GET https://proxy.wiselike.tw/whoami?sso={sso}&sig={sig}`
+
 ##### Get wisdoms of a user
- - `GET http://139.162.109.88:9000/users/{user}/wisdoms`
- 
+ - `GET https://proxy.wiselike.tw/users/{user}/wisdoms`
+
 ##### Ask a question
- - `POST http://139.162.109.88:9000/users/{user}/wisdoms?sso={sso}&sig={sig}`
+ - `POST https://proxy.wiselike.tw/users/{user}/wisdoms?sso={sso}&sig={sig}`
  - HTTP Body: `?title={title}&raw={raw}`
-  
+
 ##### Replay question
- - `POST http://localhost:9000/users/{user}/wisdoms/topic?sso={sso}&sig={sig}`
+ - `POST https://proxy.wiselike.tw/users/{user}/wisdoms/topic?sso={sso}&sig={sig}`
 
 ##### Create Profile
- - `POST http://localhost:9000/users/{user}/createprofile?sso={sso}&sig={sig}`
- 
- 
+ - `POST https://proxy.wiselike.tw/users/{user}/createprofile?sso={sso}&sig={sig}`
+
+
 #### sso, sig and username
 
  - `sso` and `sig` should keep private, after signing in through the proxy `/login` API, browser stores `sso` and `sig` in Localstroage. You should pass `sso` and `sig` to proxy APIs on all user-specific operations. 
