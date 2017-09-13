@@ -3,7 +3,7 @@
     router-link.logo(to='/', exact='') wiselike
     span.right
       //- search
-      el-button.mob(type="text", icon='search', @click='dialogTableVisible = true')
+      el-button.mob.hide-on-fat(type="text", icon='search', @click='dialogTableVisible = true')
       el-dialog.dialog( v-model='dialogTableVisible', :modal-append-to-body='false', :show-close='false')
         Search(:users="users")
       //- sign-in
@@ -21,7 +21,7 @@
         el-dropdown-menu(slot='dropdown')
           el-dropdown-item: router-link(:to="'/user/' + username") My Profile
           el-dropdown-item: span(@click="logout") Log Out
-    Search.nav(:users="users")
+    Search.right.hide-on-thin(:users="users")
 
 </template>
 
@@ -142,12 +142,8 @@
 @import url('https://fonts.googleapis.com/css?family=Kadwa');
 @import '../global.scss';
 .header {
-  padding-top: 1em;
-  .nav{
-    float:right;
-    margin-right:1rem;
-  }
-
+  padding: 1em 0 0 0;
+  max-width: $maxWidth;
   .mob{
     margin-right:0.5em;
     color: $fontcolor;
@@ -162,7 +158,6 @@
     text-decoration: none;
     font-size: 2.2rem;
     padding: 0 1ch;
-    // vertical-align: -webkit-baseline-middle;
   }
   .avatar{
     display: inline-block;
@@ -177,21 +172,17 @@
   .link {
     margin: 0 0 0 1ch;
   }
-  // .text {
-  //   color: whilte;
-  //   font-size: 1.3rem;
-  //   font-weight: 500;
-  // }
   .right{
     float:right;
     margin-right: 1ch;
   }
+  .left {
+    float: left;
+    margin-left: 1ch;
+  }
   @media all and (max-width: $mobilebreakpoint) {
     .logo{
       font-size: 1.5rem;
-    }
-    .nav {
-      display: none;
     }
     .right .avatar {
       width: 2em;
@@ -205,14 +196,14 @@
       padding: 0.3em !important;
       margin: 0.1em !important;
     }
-  }
-  @media all and (min-width: $mobilebreakpoint) {
-    .mob{
+    .hide-on-thin {
       display: none;
     }
-    // .search{
-    //   font-size: 2rem;
-    // }
+  }
+  @media all and (min-width: $mobilebreakpoint) {
+    .hide-on-fat{
+      display: none;
+    }
   }
 }
 </style>

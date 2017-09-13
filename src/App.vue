@@ -90,28 +90,23 @@
 <style lang="scss" scoped>
 @import 'global.scss';
 #app {
-  // font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
   display: flex;
   flex-flow: column nowrap;
+  align-items: center;
   min-height: 100vh;
   background: $bgcolor;
   .nav {
     // flex: 0 0 3rem;
     position: absolute;
-    width: 100%;
-    // height: 3rem;
     z-index: 1000;
-    // background: $back-color;
-    // border-bottom: 1px solid lightgray;
+    width: 100%;
   }
   .view {
     flex: 1 1 auto; /* ie11 hates 0px */
-    // padding: 0 0 0 0;
-
+    width: 100%;
   }
   .footer {
     flex: 0 0 7rem;
-    // background: $lightblack;
     text-align: center;
     border-top: 1px solid lightgray;
     width: 100%; /* fix for ie11 */
@@ -128,7 +123,6 @@
     cursor: pointer;
     font-size: 1.5em;
     opacity: 1;
-    -webkit-transition: .3s;
     transition: .3s;
     z-index: 100;
   }
