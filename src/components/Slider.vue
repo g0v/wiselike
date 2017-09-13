@@ -153,10 +153,10 @@
 }
 @media all and (max-width: $breakpoint) {
   .slides{
-    margin: 2ch 0 0 3ch;
-    .swipe {
-      margin: 0 0 0 -3ch;
-    }
+    // margin: 0 0 0 3ch;
+    // .swipe {
+    //   margin: 0 0 0 -3ch;
+    // }
     .user {
       font-size: 120%;
       .link{

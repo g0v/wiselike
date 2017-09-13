@@ -107,7 +107,7 @@
   }
   .el-row {
     max-width: $maxWidth;
-    margin: 1rem auto;
+    margin: 0 auto;
   }
   .background {
     background-color: #333;
