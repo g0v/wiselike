@@ -102,7 +102,8 @@
     width: 100%;
   }
   .view {
-    flex: 1 1 auto; /* ie11 hates 0px */
+    flex: 1 0 auto; /* ie11 hates 0px */
+    margin-top: 4rem;
     width: 100%;
   }
   .footer {

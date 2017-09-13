@@ -2,7 +2,7 @@
 
 .slides
   // Searchbar.bar(:users="users")
-  h3 Popular Users
+  //- h3 Popular Users
   swiper.swipe(:options='swiperOption1')
     swiper-slide(v-for='(star, idx) in stars', :key='idx', :data='star')
       .user.dim(:style="{ backgroundImage: `url(${star.background})`}")
@@ -115,7 +115,6 @@
 @import '../global.scss';
 
 .slides { // Popular People
-  margin: 3em 0;
   h3 {
     font-family: 'Kadwa', serif;
   }

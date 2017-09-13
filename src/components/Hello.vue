@@ -2,15 +2,21 @@
 
   .hello
     el-row
-      Slider(:users='users') <!-- Popular People -->
+      el-alert.tos(title="Terms of Service", type="info", description="我們深信網路言論自由就是一切，本網站不會進行任何形式的內容審查；除非應法院或其他政府機關依法提出的要求，本網站也不會主動移除他人在上面發表的內容。", close-text="我瞭解了", show-icon)
+
+    //- Popular People
+    el-row
+      Slider(:users='users')
 
     el-row
-      el-col(:lg="16", :sm='24') <!-- Category -->
+      //- Category
+      el-col(:lg="16", :sm='24')
         Categories(:users='users')
 
-      el-col(:lg="8", :sm='24') <!-- Recent Activity -->
+      //- Recent Activity
+      el-col(:lg="8", :sm='24')
         .activity
-          h3 Recent Activities
+          h3 最新回應
           router-link.say.shadow(v-for='o in activityTop10', :to="'/user/' + o.profile + '-' + o.id", :data="o", :key="o.title")
             h4
               i.fa.fa-retweet
@@ -39,8 +45,6 @@
       return {
         activityTop10: []
       }
-    },
-    computed: {
     },
     methods: {
       getActivity: function () {
@@ -97,13 +101,13 @@
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
-  padding: 3rem 0 0 0;
-  h3 {
-    font-family: 'Kadwa', serif;
+  .tos {
+    background-color: teal;
+    border-radius: 0;
   }
   .el-row {
     max-width: $maxWidth;
-    margin: 0 auto;
+    margin: 1rem auto;
   }
   .background {
     background-color: #333;

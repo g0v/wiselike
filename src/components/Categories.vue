@@ -1,6 +1,6 @@
 <template lang="pug">
   .hot
-    h3 Categories
+    h3 領域類別
     .buttonset
       el-button.category(:type="(idx === activeCate)?'warning':'basic'", v-for='(tag, idx) in tags', :key='tag', :data='tag', @click='showCategory(tag); activeCate = idx')
         p.tag {{tag}}
@@ -64,8 +64,6 @@
         }
       }
     },
-    watch: {
-    },
     mounted: function () {
       axios.get('https://talk.pdis.nat.gov.tw/c/wiselike.json')
       .then((response) => {
@@ -86,9 +84,6 @@
 <style lang="scss" scoped>
 @import '../global.scss';
 
-  h3 {
-    font-family: 'Kadwa', serif;
-  }
   .buttonset {
     margin: 0 0 1em 0;
     .category {
