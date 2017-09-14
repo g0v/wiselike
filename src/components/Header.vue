@@ -16,8 +16,9 @@
           i.el-icon-information
       //- my profile
       el-dropdown(trigger='click', v-if='username', :hide-on-click="false")
-        span.el-dropdown-link
-          img.avatar.link(v-if="username && !checkprofile", :src='userIcon', :title='username')
+        span.el-dropdown-link.link
+          img.avatar(v-if="username && !checkprofile", :src='userIcon', :title='username')
+          i.el-icon-setting
         el-dropdown-menu(slot='dropdown')
           el-dropdown-item: router-link(:to="'/user/' + username", style="display:block;") 我的專頁
           el-dropdown-item: div(@click="logout") 登出
@@ -65,7 +66,7 @@
       },
       login: function (event) {
         // window.open(config.runtime.proxyHost + '/login')
-        window.open(process.env.proxyHost + '/login')
+        window.open(process.env.proxyHost + '/login', '_blank')
       },
       logout: function (event) {
         window.localStorage.removeItem('userIcon')
@@ -162,15 +163,14 @@
   .avatar{
     display: inline-block;
     width: 3em;
-    border-radius: 4px;
-    margin-right: 8px;
+    border-radius: 50%;
     vertical-align: middle;
-    &:hover {
-      cursor: pointer;
-    }
   }
   .link {
     margin: 0 0 0 1ch;
+    &:hover {
+      cursor: pointer;
+    }
   }
   .right{
     float:right;
@@ -186,10 +186,6 @@
     }
     .right .avatar {
       width: 2em;
-    }
-    .text {
-    //  font-size: 1.2rem;
-      padding: 0.3em;
     }
     .mobtext{
       font-size: 0.9rem !important;

@@ -34,9 +34,5 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
-  },
-  // runtime: {
-  //   proxyHost: 'http://localhost:9000',
-  //   webHost: 'http://localhost:8000'
-  // }
+  }
 }
