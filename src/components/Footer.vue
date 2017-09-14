@@ -12,7 +12,9 @@
           br
           | 回報建議
     el-col.license(:lg='14', :sm='24')
-      p This license lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
+      p
+        i.fa.fa-creative-commons
+        |  This license lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.
 </template>
 
 <script>

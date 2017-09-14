@@ -102,7 +102,7 @@
 @import 'node_modules/font-awesome/scss/font-awesome';
 .hello{
   .tos {
-    background-color: teal;
+    background-color: $highlight;
     border-radius: 0;
   }
   .el-row {
