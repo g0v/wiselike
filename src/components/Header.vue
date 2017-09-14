@@ -8,19 +8,19 @@
         Search(:users="users")
       //- sign-in
       template(v-if="username")
-        el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') Create
-        el-button.text.mobtext(v-if="checkprofile", @click='logout') Log out
+        el-button.text.mobtext(v-if="checkprofile", @click="CreateProfile", index='1') 創建專頁
+        el-button.text.mobtext(v-if="checkprofile", @click='logout') 登出
       template(v-else)
-        el-button.text(@click.native="login", index='0') Sign in
+        el-button.text(@click.native="login", index='0') 登入
         router-link.link(:to='"/howtouse"')
           i.el-icon-information
       //- my profile
-      el-dropdown(trigger='click', v-if='username')
+      el-dropdown(trigger='click', v-if='username', :hide-on-click="false")
         span.el-dropdown-link
           img.avatar.link(v-if="username && !checkprofile", :src='userIcon', :title='username')
         el-dropdown-menu(slot='dropdown')
-          el-dropdown-item: router-link(:to="'/user/' + username") My Profile
-          el-dropdown-item: span(@click="logout") Log Out
+          el-dropdown-item: router-link(:to="'/user/' + username", style="display:block;") 我的專頁
+          el-dropdown-item: div(@click="logout") 登出
     Search.right.hide-on-thin(:users="users")
 
 </template>

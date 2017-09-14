@@ -1,32 +1,28 @@
 <template lang="pug">
-//- .wisdom(:class='[type]', :id='(type==="top") ? "top" : ""')
 .wisdom(:class='[type]', v-if='!deleteCloseComponet && topicContent.title')
+  .share-button
+    //- 刪除按鈕
+    el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
+      h2 確認刪除此問題？
+      div(style='text-align: right; margin: 0')
+        el-button(size='mini', type='text', @click='visible2 = false') 取消
+        el-button(type='primary', size='mini', @click='DeletePrivate') 確定
+    el-button.delete(v-if="deleteQ", v-popover:popover5='') 删 除
+
+    //- 分享按鈕
+    el-popover(ref='popover1', placement='top')
+      h2 分享連結
+      el-input(v-model='shareLink', readonly)
+      span(v-for='(share, index) of shares')
+        i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
+        img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
+    el-button.share(v-if="!deleteQ && !myQuestion", type='text', icon="share", v-popover:popover1='')
+
   .title
     i.fa.fa-lg.fa-question-circle
     span  {{topicContent.title}}
 
   .question
-    .share-button
-      el-popover(ref='popover5', placement='top', width='160', v-model='visible2')
-        h2 確認刪除此問題？
-        div(style='text-align: right; margin: 0')
-          el-button(size='mini', type='text', @click='visible2 = false') 取消
-          el-button(type='primary', size='mini', @click='DeletePrivate') 確定
-      el-button.delete(v-if="deleteQ === true", v-popover:popover5='') 删 除
-      //- el-button.delete(v-if="deleteQ === true", @click='Delet') 測試
-
-      el-popover(ref='popover1', placement='top')
-        h2 分享連結
-        el-input(v-model='shareLink', readonly)
-        span(v-for='(share, index) of shares')
-          i.shareIcon(v-if="share !== 'line'",:class="share", aria-hidden='true', @click='sharing(share)')
-          img.lineIcon(v-else, src='../assets/line.png', @click='sharing(share)')
-
-      el-button.share(v-if="!deleteQ && !myQuestion", v-popover:popover1='')
-        i.el-icon-share
-
-    //- | {{ '#'+topicId }}
-
     div(v-for='(post, index) of topicContent.posts')
       .reply
         .authorName
@@ -36,22 +32,21 @@
 
         .content
           .e(v-html='post.content')
-          .time(v-if='index === 0') {{post.time}} 提問
-          .time(v-else) {{post.time}} 回答
+          .time {{post.time}}
       div.replyCount(v-if='index === 0')
-        |{{replyCount}}個回答
+        | {{replyCount}} 個回答
         .line
 
-    div.replyButton(v-if="!reply && local_storage.username !== undefined")
-      el-button(type='primary', @click="reply = true", v-if="!myQuestion") Reply
-    div.replyButton(v-else-if="local_storage.username === undefined")
-      el-button(@click.native="login",type="warning") Login to reply
+  div.replyButton(v-if="!reply && local_storage.username !== undefined")
+    el-button(type='primary', @click="reply = true", v-if="!myQuestion") Reply
+  div.replyButton(v-else-if="local_storage.username === undefined")
+    el-button(@click.native="login",type="warning") Login to reply
 
-    .editor(v-if='reply')
-      mavon-editor(style='height: 100%', v-model="markdownText", :toolbars="toolbars", :language = "'en'")
-      el-tag.tag(type='primary') 欄位長度需大於10個字。
-      el-button.button(style='float:right', type='primary', @click="submit") 送 出
-      el-button.button(style='float:right', @click="reply = false") 取 消
+  .editor(v-if='reply')
+    mavon-editor(v-model="markdownText", :toolbars="toolbars", :language = "'en'")
+    el-button.button(type='primary', @click="submit") 送 出
+    el-button.button(@click="reply = false") 取 消
+    el-tag.tag(type='primary') 欄位長度需大於10個字。
 
 </template>
 
@@ -112,7 +107,6 @@
     methods: {
 
       login: function (event) {
-        // window.open(config.runtime.proxyHost + '/login')
         window.open(process.env.proxyHost + '/login')
       },
 
@@ -283,15 +277,12 @@
           wisdom.topicId = topic.data.id
           wisdom.category = vm.type
           let localstorageReply = await LocalStorage.LocalStorageReply('reply', vm.topicId, wisdom)
-          // console.log(localstorageReply)
           if (localstorageReply !== null) {
             wisdom = localstorageReply.data
           }
-          // console.log
           /* save the wisdom */
           vm.topicContent = wisdom
           vm.replyCount = vm.topicContent.posts.length - 1
-          // console.log(this.replyCount)
           setTimeout(() => {
             if (vm.type === 'top') {
               vm.goAnchor('.top')
@@ -311,12 +302,6 @@
       if (this.type === 'myQuestion') this.myQuestion = true
       /* fetch topic by id */
       this.getData()
-    },
-    mounted () {
-      /* go to anchor if there's a highlight topic */
-      // if (this.type === 'top') {
-      //   this.goAnchor('.top')
-      // }
     }
   }
 </script>
@@ -325,12 +310,10 @@
 @import '../global.scss';
 @import 'node_modules/font-awesome/scss/font-awesome';
   .editor {
-    margin: 1em;
-    height: 20em;
-    .button {
-      margin:0.5em;
-      padding: 0.5em;
-      float: left !important;
+    margin: 0 1em;
+    .button,
+    .tag {
+      margin: .5em 1ch 0 0;
     }
   }
   .wisdom {
@@ -344,45 +327,31 @@
     line-height: 2em;
     width: 100%;
     margin-bottom: 2em;
+    padding: 1em;
     &.top {
       border: 2px solid salmon;
     }
-    .el-dialog__title{
-      margin-right: 1em;
-    }
-    .sereply{
-      margin-left:3em;
+    .share-button {
+      float: right;
     }
     .title {
       font-size: 1.5rem;
-      padding: .5em 0 0 1em;
       font-weight: 700;
     }
     .question {
-      /* text-align: right; */
-      padding: 0 1em;
-      a {
-        color: #33f;
-      }
+      padding: 1em 0;
     }
     .reply {
       padding: 0 3em;
-      margin: 0 0 1em 0;
       position: relative;
       display: flex;
       flex-flow: row nowrap;
       align-items: baseline;
-      .el-button {
-        margin: 0 0 0 1ch;
-      }
       .authorName {
         position: absolute;
         text-align: center;
         left: 0;
         width: 6em;
-        // .meta {
-        //   background: none;
-        // }
       }
       .content {
         border-left: 5px solid lightgray;
@@ -391,12 +360,9 @@
         line-height: 2rem;
         text-align: left;
       }
-      .tag {
-        font-size: 1.2rem;
-        margin: 1em;
-      }
       .time {
         color: #7d7a7a;
+        font-family: monospace;
       }
     }
     .avatar {
@@ -406,20 +372,17 @@
     }
     .replyCount {
       text-align: left;
-      margin: 2em 0 2em 0;
+      margin: 1em 0;
     }
     .line {
       border: 1px solid #d1dbe5;
     }
     .replyButton {
       text-align: center;
-      margin: 2em;
     }
   }
   .delete {
-    // float: right;
     color: white;
-    // font-weight: 700;
     background-color: red;
   }
   .shareIcon {

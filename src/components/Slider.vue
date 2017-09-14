@@ -115,9 +115,9 @@
 @import '../global.scss';
 
 .slides { // Popular People
-  h3 {
-    font-family: 'Kadwa', serif;
-  }
+  // h3 {
+  //   font-family: 'Kadwa', serif;
+  // }
   .clickable {
     cursor:pointer;
   }
