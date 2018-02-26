@@ -72,6 +72,7 @@ With `yarn dev-proxy`, proxy server is serving on http://localhost:9000 by defau
 
 `pm2 start ./ecosystem.config.js`
 
+`(After Discourse v1.9.3 change [slug generation method] setting from 'none' to 'ascii'.)`
 
 ## Design - Naming
 
