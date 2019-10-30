@@ -41,7 +41,7 @@
         }, 1000)
       },
       getAllUser: function () {
-        axios.get('https://talk.pdis.nat.gov.tw/groups/wiselike/members.json?limit=100000')
+        axios.get('https://talk.pdis.nat.gov.tw/groups/wiselike/members.json?limit=1000')
         .then((Users) => {
           let allUsers = Users.data.members
           // let
