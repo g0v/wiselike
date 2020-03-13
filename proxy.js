@@ -38,7 +38,7 @@ function getProfile (sso, sig) {
     // res.status(403).send('Invalid auth')
   }
 
-  let profile = querystring.parse(Buffer.alloc(sso, 'base64').toString('utf8'))
+  let profile = querystring.parse(Buffer.from(sso, 'base64').toString('utf8'))
   // TODO check that profile.nonce should match the nonce from the login step.
   console.log(profile)
   return profile
@@ -73,7 +73,7 @@ app.get('/login', (req, res) => {
     if (err) throw err
 
     let nonce = buf.toString('hex')
-    let payload = Buffer.alloc(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
+    let payload = Buffer.from(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
     let sig = hmac.update(payload).digest('hex')
     let urlRedirect = `${DISCOURSE_HOST}/session/sso_provider?sso=${encodeURIComponent(payload)}&sig=${sig}`
     res.redirect(urlRedirect)
