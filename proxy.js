@@ -214,8 +214,8 @@ app.post('/users/:user/wisdoms', (req, res) => {
   )
   let header = {
     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'api_key': process.env.DISCOURSE_API_KEY,
-              'api_username': process.env.DISCOURSE_API_USERNAME}
+              'Api-Key': process.env.DISCOURSE_API_KEY,
+              'Api-Username': process.env.DISCOURSE_API_USERNAME}
   }
   console.log(username)
   /* post question */
@@ -239,8 +239,8 @@ app.post('/users/:user/wisdoms', (req, res) => {
           notification_level: 3
         }
       )
-      header.headers.api_key = process.env.DISCOURSE_SUPER_API_KEY
-      header.headers.api_username = me
+      header.headers['Api-Key'] = process.env.DISCOURSE_SUPER_API_KEY
+      header.headers['Api-Username'] = me
       axios.post(watchUrl, watchformData, header)
       .then((val) => {
         console.log(topicID)
@@ -286,8 +286,8 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   )
   let header = {
     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'api_key': process.env.DISCOURSE_API_KEY,
-              'api_username': process.env.DISCOURSE_API_USERNAME}
+              'Api-Key': process.env.DISCOURSE_API_KEY,
+              'Api-Username': process.env.DISCOURSE_API_USERNAME}
   }
   axios.post(posturl, postformData, header)
   .then((val) => {
@@ -309,8 +309,8 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
         }
       )
       /* watching topic */
-      header.headers.api_key = process.env.DISCOURSE_SUPER_API_KEY
-      header.headers.api_username = me
+      header.headers['Api-Key'] = process.env.DISCOURSE_SUPER_API_KEY
+      header.headers['Api-Username'] = me
       axios.post(watchUrl, watchformData, header)
       .then((val) => {
         console.log(watchUrl)
