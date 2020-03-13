@@ -13,12 +13,17 @@
     "lint": "eslint --ext .js,.vue src",
     "analyz": "NODE_ENV=production npm_config_report=true npm run build"
   },
+  "engines": {
+    "node": ">= 4.0.0",
+    "npm": ">= 3.0.0"
+  },
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.19.2",
     "body-parser": "^1.17.1",
     "cors": "^2.8.3",
     "dotenv": "^4.0.0",
     "element-ui": "^1.2.5",
+    "es6-promise": "^4.2.8",
     "font-awesome": "^4.7.0",
     "form-data": "^2.1.4",
     "formidable": "^1.1.1",
@@ -82,10 +87,6 @@
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.16.1",
     "webpack-merge": "^2.6.1"
-  },
-  "engines": {
-    "node": ">= 4.0.0",
-    "npm": ">= 3.0.0"
   },
   "browserslist": [
     "> 1%",

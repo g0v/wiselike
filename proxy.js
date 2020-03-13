@@ -38,7 +38,7 @@ function getProfile (sso, sig) {
     // res.status(403).send('Invalid auth')
   }
 
-  let profile = querystring.parse(new Buffer(sso, 'base64').toString('utf8'))
+  let profile = querystring.parse(Buffer.alloc(sso, 'base64').toString('utf8'))
   // TODO check that profile.nonce should match the nonce from the login step.
   console.log(profile)
   return profile
@@ -73,7 +73,7 @@ app.get('/login', (req, res) => {
     if (err) throw err
 
     let nonce = buf.toString('hex')
-    let payload = new Buffer(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
+    let payload = Buffer.alloc(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
     let sig = hmac.update(payload).digest('hex')
     let urlRedirect = `${DISCOURSE_HOST}/session/sso_provider?sso=${encodeURIComponent(payload)}&sig=${sig}`
     res.redirect(urlRedirect)
@@ -207,40 +207,41 @@ app.post('/users/:user/wisdoms', (req, res) => {
   }
   let formData = querystring.stringify(
     {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
       category: `inbox-${req.params.user}`,
       title: req.body.title,
       raw: req.body.raw
     }
   )
+  let header = {
+    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'api_key': process.env.DISCOURSE_API_KEY,
+              'api_username': process.env.DISCOURSE_API_USERNAME}
+  }
   console.log(username)
   /* post question */
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData)
+  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, header)
   .then((val) => {
     let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + val.data.topic_id + `/change-owner`
     let ChangeNameformData = querystring.stringify(
       {
-        api_key: process.env.DISCOURSE_API_KEY,
-        api_username: process.env.DISCOURSE_API_USERNAME,
         username: username,
         'post_ids[]': val.data.id
       }
     )
     let topicID = val.data.topic_id
     /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData)
+    axios.post(ChangeNameUrl, ChangeNameformData, header)
     .then((val) => {
       /* watching topic */
       let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
       let watchformData = querystring.stringify(
         {
-          api_key: process.env.DISCOURSE_SUPER_API_KEY,
-          api_username: me,
           notification_level: 3
         }
       )
-      axios.post(watchUrl, watchformData)
+      header.headers.api_key = process.env.DISCOURSE_SUPER_API_KEY
+      header.headers.api_username = me
+      axios.post(watchUrl, watchformData, header)
       .then((val) => {
         console.log(topicID)
         val.data.success = topicID
@@ -278,38 +279,39 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + lowerMe + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
-      api_key: process.env.DISCOURSE_API_KEY,
-      api_username: process.env.DISCOURSE_API_USERNAME,
       category: `${req.params.user}`,
       topic_id: topicid,
       raw: req.body.raw
     }
   )
-  axios.post(posturl, postformData)
+  let header = {
+    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'api_key': process.env.DISCOURSE_API_KEY,
+              'api_username': process.env.DISCOURSE_API_USERNAME}
+  }
+  axios.post(posturl, postformData, header)
   .then((val) => {
     let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
     let ChangeNameformData = querystring.stringify(
       {
-        api_key: process.env.DISCOURSE_API_KEY,
-        api_username: process.env.DISCOURSE_API_USERNAME,
         username: me,
         'post_ids[]': val.data.id
       }
     )
     let topicID = topicid
     /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData)
+    axios.post(ChangeNameUrl, ChangeNameformData, header)
     .then((val) => {
       let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
       let watchformData = querystring.stringify(
         {
-          api_key: process.env.DISCOURSE_SUPER_API_KEY,
-          api_username: me,
           notification_level: 3
         }
       )
       /* watching topic */
-      axios.post(watchUrl, watchformData)
+      header.headers.api_key = process.env.DISCOURSE_SUPER_API_KEY
+      header.headers.api_username = me
+      axios.post(watchUrl, watchformData, header)
       .then((val) => {
         console.log(watchUrl)
       })
