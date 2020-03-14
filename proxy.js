@@ -56,6 +56,24 @@ function getUsername (sso, sig) {
   let profile = getProfile(sso, sig)
   return profile.username
 }
+function getCategoryIdByName (name) {
+  axios.get(process.env.DISCOURSE_HOST + '/categories.json', {
+      params: {
+        parent_category_id: 21, // the "wiselike" category in discourse, FIXME
+        api_key: process.env.DISCOURSE_API_KEY,
+        api_username: process.env.DISCOURSE_API_USERNAME
+      }
+    })
+    .then(response => {
+      /* find the category id that match the name */
+      return response.data.category_list.categories.find(category => category.name == name).id
+    })
+    .catch(error => {
+      console.log(error)
+      return res.status(error.response.status).json(error.response.data)
+    })
+}
+
 const app = express()
 
 app.use(bodyParser.json())
@@ -101,7 +119,7 @@ app.get('/whoami', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let username = getUsername(sso, sig)
-  res.json({'username': username})
+  return res.json({'username': username})
 })
 
 app.get('/users', (req, res) => {
@@ -205,21 +223,31 @@ app.post('/users/:user/wisdoms', (req, res) => {
   } else {
     username = me
   }
+  /* find the id base on the name of category */
   let formData = querystring.stringify(
     {
-      category: `inbox-${req.params.user}`,
+      category: getCategoryIdByName(`inbox-${req.params.user}`),
       title: req.body.title,
       raw: req.body.raw
     }
   )
-  let header = {
-    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Api-Key': process.env.DISCOURSE_API_KEY,
-              'Api-Username': process.env.DISCOURSE_API_USERNAME}
+  let config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Api-Key': process.env.DISCOURSE_API_KEY,
+      'Api-Username': process.env.DISCOURSE_API_USERNAME
+    }
+  }
+  let config_alluser = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Api-Key': process.env.DISCOURSE_SUPER_API_KEY,
+      'Api-Username': me
+    }
   }
   console.log(username)
   /* post question */
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, header)
+  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, config)
   .then((val) => {
     let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + val.data.topic_id + `/change-owner`
     let ChangeNameformData = querystring.stringify(
@@ -230,7 +258,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
     )
     let topicID = val.data.topic_id
     /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData, header)
+    axios.post(ChangeNameUrl, ChangeNameformData, config)
     .then((val) => {
       /* watching topic */
       let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
@@ -239,9 +267,7 @@ app.post('/users/:user/wisdoms', (req, res) => {
           notification_level: 3
         }
       )
-      header.headers['Api-Key'] = process.env.DISCOURSE_SUPER_API_KEY
-      header.headers['Api-Username'] = me
-      axios.post(watchUrl, watchformData, header)
+      axios.post(watchUrl, watchformData, config_alluser)
       .then((val) => {
         console.log(topicID)
         val.data.success = topicID
@@ -279,17 +305,26 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + lowerMe + `/` + topicid + `.json`
   let postformData = querystring.stringify(
     {
-      category: `${req.params.user}`,
       topic_id: topicid,
       raw: req.body.raw
     }
   )
-  let header = {
-    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'Api-Key': process.env.DISCOURSE_API_KEY,
-              'Api-Username': process.env.DISCOURSE_API_USERNAME}
+  let config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Api-Key': process.env.DISCOURSE_API_KEY,
+      'Api-Username': process.env.DISCOURSE_API_USERNAME
+    }
   }
-  axios.post(posturl, postformData, header)
+  let config_alluser = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Api-Key': process.env.DISCOURSE_SUPER_API_KEY,
+      'Api-Username': me
+    }
+  }
+  /* creating new post under certain topic */
+  axios.post(posturl, postformData, config)
   .then((val) => {
     let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
     let ChangeNameformData = querystring.stringify(
@@ -299,8 +334,8 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
       }
     )
     let topicID = topicid
-    /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData, header)
+    /* change the post owner to the user */
+    axios.post(ChangeNameUrl, ChangeNameformData, config)
     .then((val) => {
       let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
       let watchformData = querystring.stringify(
@@ -309,9 +344,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
         }
       )
       /* watching topic */
-      header.headers['Api-Key'] = process.env.DISCOURSE_SUPER_API_KEY
-      header.headers['Api-Username'] = me
-      axios.post(watchUrl, watchformData, header)
+      axios.post(watchUrl, watchformData, config_alluser)
       .then((val) => {
         console.log(watchUrl)
       })
@@ -330,12 +363,10 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
           console.log(id)
           let putformData1 = querystring.stringify(
             {
-              api_key: process.env.DISCOURSE_API_KEY,
-              api_username: process.env.DISCOURSE_API_USERNAME,
               category_id: id
             }
           )
-          axios.put(puturl, putformData1)
+          axios.put(puturl, putformData1, config)
           .then((val) => {
             res.status(200).send(val)
           })
