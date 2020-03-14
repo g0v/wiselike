@@ -24,8 +24,8 @@ require('dotenv').config() // use dotenv (prevent messing up with vuejs env conf
 
 // Discourse SSO
 const DISCOURSE_SSO_SECRET = process.env.DISCOURSE_SSO_SECRET
-const DISCOURSE_HOST = process.env.DISCOURSE_HOST || 'https://talk.pdis.nat.gov.tw'
-const PROXY_PORT = process.env.PROXY_PORT || 9000
+const DISCOURSE_HOST = process.env.DISCOURSE_HOST
+const PROXY_PORT = process.env.PROXY_PORT
 
 function getProfile (sso, sig) {
   let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET)
@@ -40,7 +40,7 @@ function getProfile (sso, sig) {
 
   let profile = querystring.parse(Buffer.from(sso, 'base64').toString('utf8'))
   // TODO check that profile.nonce should match the nonce from the login step.
-  console.log(profile)
+  // console.log(profile)
   return profile
 }
 // function verification (req) {
@@ -57,7 +57,7 @@ function getUsername (sso, sig) {
   return profile.username
 }
 function getCategoryIdByName (name) {
-  axios.get(process.env.DISCOURSE_HOST + '/categories.json', {
+  return axios.get(process.env.DISCOURSE_HOST + '/categories.json', {
       params: {
         parent_category_id: 21, // the "wiselike" category in discourse, FIXME
         api_key: process.env.DISCOURSE_API_KEY,
@@ -82,6 +82,10 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use(cors())
+
+app.listen(PROXY_PORT, () => {
+  console.log(`server started at localhost:${PROXY_PORT}`)
+})
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
@@ -223,14 +227,6 @@ app.post('/users/:user/wisdoms', (req, res) => {
   } else {
     username = me
   }
-  /* find the id base on the name of category */
-  let formData = querystring.stringify(
-    {
-      category: getCategoryIdByName(`inbox-${req.params.user}`),
-      title: req.body.title,
-      raw: req.body.raw
-    }
-  )
   let config = {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -245,21 +241,34 @@ app.post('/users/:user/wisdoms', (req, res) => {
       'Api-Username': me
     }
   }
-  console.log(username)
-  /* post question */
-  axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, config)
-  .then((val) => {
-    let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + val.data.topic_id + `/change-owner`
-    let ChangeNameformData = querystring.stringify(
-      {
-        username: username,
-        'post_ids[]': val.data.id
-      }
-    )
-    let topicID = val.data.topic_id
-    /* change owner */
-    axios.post(ChangeNameUrl, ChangeNameformData, config)
+  let topicID = 0
+  /* find the id base on the name of category */
+  getCategoryIdByName(`inbox-${req.params.user}`)
+    .then(catId => {
+      let formData = querystring.stringify(
+        {
+          category: catId,
+          title: req.body.title,
+          raw: req.body.raw
+        }
+      )
+      // console.log(username)
+      /* post question */
+      return axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, config)
+    })
     .then((val) => {
+      topicID = val.data.topic_id
+      let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + `/change-owner`
+      let ChangeNameformData = querystring.stringify(
+        {
+          username: username,
+          'post_ids[]': val.data.id
+        }
+      )
+      /* change owner */
+      return axios.post(ChangeNameUrl, ChangeNameformData, config)
+    })
+    .then(_ => {
       /* watching topic */
       let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
       let watchformData = querystring.stringify(
@@ -267,24 +276,17 @@ app.post('/users/:user/wisdoms', (req, res) => {
           notification_level: 3
         }
       )
-      axios.post(watchUrl, watchformData, config_alluser)
-      .then((val) => {
-        console.log(topicID)
-        val.data.success = topicID
-        res.status(200).send(val.data)
-      })
-      .catch(error => {
-        res.status(433).send(error.response.data)
-      })
+      return axios.post(watchUrl, watchformData, config_alluser)
+    })
+    .then((val) => {
+      // console.log(topicID)
+      val.data.success = topicID
+      res.status(200).send(val.data)
     })
     .catch(error => {
+      console.log('fail to ask a question')
       res.status(433).send(error.response.data)
     })
-  })
-  .catch(error => {
-    res.status(433).send(error.response.data)
-  })
-  return null
 })
 
 /* ****************** Reply *********************/
@@ -292,7 +294,6 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  let lowerMe = me.toLowerCase().replace(/_/g, '-')
   if (me === undefined) {
     res.status(403)
     return res.json({'error': 'Please login'})
@@ -302,7 +303,7 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let topicid = req.query.topicid
   let type = req.query.type
   let posturl = `${process.env.DISCOURSE_HOST}/posts`
-  let puturl = `${process.env.DISCOURSE_HOST}/t/inbox-` + lowerMe + `/` + topicid + `.json`
+  let puturl = `${process.env.DISCOURSE_HOST}/t/-/${topicid}.json`
   let postformData = querystring.stringify(
     {
       topic_id: topicid,
@@ -325,74 +326,56 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   }
   /* creating new post under certain topic */
   axios.post(posturl, postformData, config)
-  .then((val) => {
-    let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
-    let ChangeNameformData = querystring.stringify(
-      {
-        username: me,
-        'post_ids[]': val.data.id
-      }
-    )
-    let topicID = topicid
-    /* change the post owner to the user */
-    axios.post(ChangeNameUrl, ChangeNameformData, config)
     .then((val) => {
-      let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicID + '/notifications'
+      let ChangeNameUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + `/change-owner`
+      let ChangeNameformData = querystring.stringify(
+        {
+          username: me,
+          'post_ids[]': val.data.id
+        }
+      )
+      /* change the post owner to the user */
+      return axios.post(ChangeNameUrl, ChangeNameformData, config)
+    })
+    .then(_ => {
+      let watchUrl = `${process.env.DISCOURSE_HOST}/t/` + topicid + '/notifications'
       let watchformData = querystring.stringify(
         {
           notification_level: 3
         }
       )
       /* watching topic */
-      axios.post(watchUrl, watchformData, config_alluser)
-      .then((val) => {
-        console.log(watchUrl)
-      })
-      .catch(error => {
-        res.status(433).send(error.response.data)
-      })
-
+      return axios.post(watchUrl, watchformData, config_alluser)
+    })
+    .then(val => {
       /* if first reply need change to profile category */
       if (type === 'public' || type === 'top') {
         res.status(200).send(val.data)
-      } else {
+      } 
+      else {
         /* change category */
-        axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${lowerMe}.json`)
-        .then(response => {
-          let id = response.data.topic_list.topics[0].category_id
-          console.log(id)
-          let putformData1 = querystring.stringify(
-            {
-              category_id: id
-            }
-          )
-          axios.put(puturl, putformData1, config)
-          .then((val) => {
-            res.status(200).send(val)
+        getCategoryIdByName(`profile-${me}`)
+          .then(id => {
+            let putformData1 = querystring.stringify(
+              {
+                category_id: id
+              }
+            )
+            return axios.put(puturl, putformData1, config)
+          })
+          .then(_ => {
+            res.status(200).send('category changed')
           })
           .catch(error => {
-            res.status(433).send(error.response)
+            console.log('fail to change category')
+            res.status(433).json(error.response)
           })
-        })
-        .catch(error => {
-          console.log(error)
-          return res.status(error.response.status).json(error.response)
-        })
       }
     })
     .catch(error => {
-      res.status(433).send(error.response)
+      console.log('fail to reply')
+      res.status(433).send(error.response.data)
     })
-  })
-  .catch(error => {
-    res.status(433).send(error.response)
-  })
-
-  return null
-})
-
-app.listen(PROXY_PORT, () => {
-  console.log(`server started at localhost:${PROXY_PORT}`)
 })
 
 /* ****************** Create Profile *********************/
@@ -462,7 +445,6 @@ app.post('/users/:user/createprofile', (req, res) => {
           /* Change profile introduction '建立一個完整的「簡介」可以讓更多人瞭解你...' */
           axios.put(introductionUrl, introduction)
           .then((val) => {
-            console.log(val.data.post.username)
             /* Add user to wiselike group once */
             if (i === 0) {
               let groupUrl = `${process.env.DISCOURSE_HOST}/groups/44/members.json`
@@ -655,7 +637,6 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
   })
   .then(function (val) {
     val = JSON.parse(val)
-    console.log(val)
     let pickform = {
       api_key: process.env.DISCOURSE_API_KEY,
       api_username: process.env.DISCOURSE_API_USERNAME,
@@ -740,7 +721,6 @@ app.post('/users/:user/subscribe', (req, res) => {
   )
   axios.post(watchUrl, watchformData)
   .then((val) => {
-    console.log(watchformData)
     val.data.success = categoryID
     res.status(200).send(val.data)
   })

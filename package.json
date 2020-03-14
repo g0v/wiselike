@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "dev-proxy": "./node_modules/.bin/nodemon proxy.js localhost 9000",
-    "dev-proxy-win": "node_modules\\.bin\\nodemon proxy.js localhost 9000",
+    "dev-proxy": "./node_modules/.bin/nodemon proxy.js",
+    "dev-proxy-win": "node_modules\\.bin\\nodemon proxy.js",
     "dev-web": "node build/dev-server.js",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
