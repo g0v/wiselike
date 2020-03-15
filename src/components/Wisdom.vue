@@ -166,10 +166,10 @@
           this.deleteCloseComponet = true
         })
         .catch(function (error) {
-          console.log(error)
+          console.log(error.response.data)
           /* turn off full screen loading */
           loadingInstance.close()
-          vm.$message.error('刪除失敗，請稍後重試。')
+          vm.$message.error('刪除失敗，' + error.response.data.errors)
         })
       },
 
@@ -220,10 +220,10 @@
           })
         })
         .catch(function (error) {
-          console.log(error)
+          console.log(error.response.data)
           /* turn off full screen loading */
           loadingInstance.close()
-          vm.$message.error('回覆失敗，請稍後重試。')
+          vm.$message.error('回覆失敗，' + error.response.data.errors)
         })
       },
       goAnchor: function (anchor) {

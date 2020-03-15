@@ -145,9 +145,10 @@
           loadingInstance.close()
           vm.$message.success('成功回覆，但是鑒於瀏覽器緩存可能需要一段時間後才會生效。')
         })
-        .catch(function (error) {
-          console.log(error)
-          vm.$message.error('回覆失敗，請稍後重試。')
+        .catch(error => {
+          loadingInstance.close()
+          console.log(error.response.data)
+          vm.$message.error('回覆失敗，' + error.response.data.errors)
         })
       },
       hasLoginAlert: function () {

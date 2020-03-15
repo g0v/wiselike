@@ -6,7 +6,6 @@ const crypto = require('crypto')
 const cors = require('cors')
 const querystring = require('querystring')
 const axios = require('axios')
-// const config = require('./config')
 const Prequest = require('request-promise')
 const fs = require('fs')
 const multer = require('multer')
@@ -20,15 +19,10 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({ storage: storage })
-require('dotenv').config() // use dotenv (prevent messing up with vuejs env config)
-
-// Discourse SSO
-const DISCOURSE_SSO_SECRET = process.env.DISCOURSE_SSO_SECRET
-const DISCOURSE_HOST = process.env.DISCOURSE_HOST
-const PROXY_PORT = process.env.PROXY_PORT
+require('dotenv').config() // use dotenv's process.env (prevent messing up with vuejs env config)
 
 function getProfile (sso, sig) {
-  let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET)
+  let hmac = crypto.createHmac('sha256', process.env.DISCOURSE_SSO_SECRET)
   let decodedSso = decodeURIComponent(sso)
   let hash = hmac.update(decodedSso).digest('hex')
 
@@ -40,18 +34,8 @@ function getProfile (sso, sig) {
 
   let profile = querystring.parse(Buffer.from(sso, 'base64').toString('utf8'))
   // TODO check that profile.nonce should match the nonce from the login step.
-  // console.log(profile)
   return profile
 }
-// function verification (req) {
-//   let sso = req.query.sso
-//   let sig = req.query.sig
-//   let me = getUsername(sso, sig)
-//   if (me === undefined || req.params.user !== me) {
-//     return false
-//   }
-//   return true
-// }
 function getUsername (sso, sig) {
   let profile = getProfile(sso, sig)
   return profile.username
@@ -59,9 +43,7 @@ function getUsername (sso, sig) {
 function getCategoryIdByName (name) {
   return axios.get(process.env.DISCOURSE_HOST + '/categories.json', {
       params: {
-        parent_category_id: 21, // the "wiselike" category in discourse, FIXME
-        api_key: process.env.DISCOURSE_API_KEY,
-        api_username: process.env.DISCOURSE_API_USERNAME
+        parent_category_id: process.env.wiselike_category_id,
       }
     })
     .then(response => {
@@ -69,7 +51,7 @@ function getCategoryIdByName (name) {
       return response.data.category_list.categories.find(category => category.name == name).id
     })
     .catch(error => {
-      console.log(error)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
 }
@@ -83,21 +65,21 @@ app.use(bodyParser.urlencoded({
 
 app.use(cors())
 
-app.listen(PROXY_PORT, () => {
-  console.log(`server started at localhost:${PROXY_PORT}`)
+app.listen(process.env.PROXY_PORT, () => {
+  console.log(`server started at localhost:${process.env.PROXY_PORT}`)
 })
 
 app.get('/login', (req, res) => {
   let returnUrl = `${req.protocol}://${req.get('host')}/sso_done`
   // source: https://github.com/edhemphill/passport-discourse/blob/master/lib/discourse-sso.js
-  let hmac = crypto.createHmac('sha256', DISCOURSE_SSO_SECRET)
+  let hmac = crypto.createHmac('sha256', process.env.DISCOURSE_SSO_SECRET)
   crypto.randomBytes(16, (err, buf) => {
     if (err) throw err
 
     let nonce = buf.toString('hex')
     let payload = Buffer.from(`nonce=${nonce}&return_sso_url=${returnUrl}`).toString('base64')
     let sig = hmac.update(payload).digest('hex')
-    let urlRedirect = `${DISCOURSE_HOST}/session/sso_provider?sso=${encodeURIComponent(payload)}&sig=${sig}`
+    let urlRedirect = `${process.env.DISCOURSE_HOST}/session/sso_provider?sso=${encodeURIComponent(payload)}&sig=${sig}`
     res.redirect(urlRedirect)
   })
 })
@@ -107,12 +89,10 @@ app.get('/sso_done', (req, res) => {
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   let data = JSON.stringify({'sso': sso, 'sig': sig, 'username': username})
-  // let webHost = config.runtime.webHost
-  let webHost = process.env.webHost
   let body = `
 Hello ${username}, you may close this window. It will be automatically closed in 3 seconds.
 <script>
-window.opener.postMessage(${data}, "${webHost}");
+window.opener.postMessage(${data}, "${process.env.webHost}");
 window.close();
 </script>
 `
@@ -130,16 +110,14 @@ app.get('/users', (req, res) => {
   axios.get(
     process.env.DISCOURSE_HOST + '/categories.json', {
       params: {
-        parent_category_id: 21, // the "wiselike" category in discourse, FIXME
-        api_key: process.env.DISCOURSE_API_KEY,
-        api_username: process.env.DISCOURSE_API_USERNAME
+        parent_category_id: process.env.wiselike_category_id
       }
     })
     .then(response => {
       return res.json(response.data.category_list.categories)
     })
     .catch(error => {
-      console.log(error)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
 })
@@ -156,7 +134,7 @@ app.get('/me', (req, res) => {
       return res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
     })
     .catch(error => {
-      console.log(error)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
   return null
@@ -172,7 +150,7 @@ app.get('/users/:user', (req, res) => {
       return res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
     })
     .catch(error => {
-      console.log(error.response)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
   return null
@@ -185,7 +163,7 @@ app.get('/users/:user/wisdoms', (req, res) => {
       return res.json(response.data.topic_list.topics)
     })
     .catch(error => {
-      console.log(error.response)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
 })
@@ -206,7 +184,7 @@ app.get('/users/:user/subscribestatus', (req, res) => {
       res.status(200).send(response.data.user.watched_category_ids)
     })
     .catch(error => {
-      console.log(error)
+      console.log(error.response.data)
       return res.status(error.response.status).json(error.response.data)
     })
 })
@@ -252,7 +230,6 @@ app.post('/users/:user/wisdoms', (req, res) => {
           raw: req.body.raw
         }
       )
-      // console.log(username)
       /* post question */
       return axios.post(`${process.env.DISCOURSE_HOST}/posts`, formData, config)
     })
@@ -279,13 +256,12 @@ app.post('/users/:user/wisdoms', (req, res) => {
       return axios.post(watchUrl, watchformData, config_alluser)
     })
     .then((val) => {
-      // console.log(topicID)
       val.data.success = topicID
       res.status(200).send(val.data)
     })
     .catch(error => {
-      console.log('fail to ask a question')
-      res.status(433).send(error.response.data)
+      console.log(error.response.data)
+      res.status(error.response.status).send(error.response.data)
     })
 })
 
@@ -367,14 +343,14 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
             res.status(200).send('category changed')
           })
           .catch(error => {
-            console.log('fail to change category')
-            res.status(433).json(error.response)
+            console.log(error.response.data)
+            res.status(error.response.status).json(error.response.data)
           })
       }
     })
     .catch(error => {
-      console.log('fail to reply')
-      res.status(433).send(error.response.data)
+      console.log(error.response.data)
+      res.status(error.response.status).send(error.response.data)
     })
 })
 
@@ -395,7 +371,7 @@ app.post('/users/:user/createprofile', (req, res) => {
       name: `profile-${req.params.user}`,
       color: `AB9364`,
       text_color: `FFFFFF`,
-      parent_category_id: `21`,
+      parent_category_id: process.env.wiselike_category_id,
       'permissions[admins]': `1`,
       'permissions[everyone]': `3`
     }
@@ -407,7 +383,7 @@ app.post('/users/:user/createprofile', (req, res) => {
       name: `inbox-${req.params.user}`,
       color: `b3b5b4`,
       text_color: `FFFFFF`,
-      parent_category_id: `21`,
+      parent_category_id: process.env.wiselike_category_id,
       'permissions[admins]': `1`,
       'permissions[everyone]': `3`
     }
@@ -447,7 +423,7 @@ app.post('/users/:user/createprofile', (req, res) => {
           .then((val) => {
             /* Add user to wiselike group once */
             if (i === 0) {
-              let groupUrl = `${process.env.DISCOURSE_HOST}/groups/44/members.json`
+              let groupUrl = `${process.env.DISCOURSE_HOST}/groups/${process.env.wiselike_group_id}/members.json`
               let group = {
                 api_key: process.env.DISCOURSE_API_KEY,
                 api_username: process.env.DISCOURSE_API_USERNAME,
@@ -461,24 +437,24 @@ app.post('/users/:user/createprofile', (req, res) => {
                 res.status(200).send(val)
               })
               .catch(error => {
-                res.status(433).send(error)
+                res.status(error.response.status).send(error.response.data)
               })
             }
           })
           .catch(error => {
-            res.status(433).send(error.response.data)
+            res.status(error.response.status).send(error.response.data)
           })
         })
         .catch(error => {
-          res.status(433).send(error.response.data)
+          res.status(error.response.status).send(error.response.data)
         })
       })
       .catch(error => {
-        res.status(433).send(error.response.data)
+        res.status(error.response.status).send(error.response.data)
       })
     })
     .catch(error => {
-      res.status(433).send(error.response.data)
+      res.status(error.response.status).send(error.response.data)
     })
   }
   return null
@@ -531,11 +507,11 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       })
     })
     .catch(error => {
-      res.status(433).send(error)
+      res.status(error.response.status).send(error)
     })
   })
   .catch(error => {
-    res.status(433).send(error)
+    res.status(error.response.status).send(error)
   })
   return null
 })
@@ -567,7 +543,7 @@ app.post('/users/:user/introduction', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(433).send(error)
+    res.status(error.response.status).send(error)
   })
   return null
 })
@@ -581,7 +557,6 @@ app.post('/users/:user/category', (req, res) => {
     res.status(403)
     return res.json({'error': 'Please login'})
   }
-  // console.log(req.body.categoryUrl)
   let introUrl = `${process.env.DISCOURSE_HOST}` + '/t/profile-' + me + '/' + req.body.introductionID
   // let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
   axios.get(introUrl + `.json`)
@@ -604,11 +579,11 @@ app.post('/users/:user/category', (req, res) => {
       res.status(200).send(val.data)
     })
     .catch(error => {
-      res.status(433).send(error)
+      res.status(error.response.status).send(error)
     })
   })
   .catch(error => {
-    res.status(433).send(error)
+    res.status(error.response.status).send(error)
   })
   return null
 })
@@ -658,11 +633,11 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
       })
     })
     .catch(error => {
-      res.status(433).send(error)
+      res.status(error.response.status).send(error)
     })
   })
   .catch(error => {
-    res.status(433).send(error)
+    res.status(error.response.status).send(error)
   })
   return null
 })
@@ -690,7 +665,7 @@ app.post('/users/:user/delete', (req, res) => { // set user category
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(433).send(error)
+    res.status(error.response.status).send(error.response.data)
   })
   return null
 })
@@ -725,7 +700,7 @@ app.post('/users/:user/subscribe', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(433).send(error.response.data)
+    res.status(error.response.status).send(error.response.data)
   })
   return null
 })
@@ -749,7 +724,7 @@ app.post('/users/:user/rename', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(433).send(error.response.data)
+    res.status(error.response.status).send(error.response.data)
   })
   return null
 })
