@@ -25,19 +25,19 @@ function getProfile (sso, sig) {
   let hmac = crypto.createHmac('sha256', process.env.DISCOURSE_SSO_SECRET)
   let decodedSso = decodeURIComponent(sso)
   let hash = hmac.update(decodedSso).digest('hex')
-
   if (sig !== hash) {
     console.error('Invalid auth')
     // FIXME send 403
     // res.status(403).send('Invalid auth')
+    return 0
   }
-
   let profile = querystring.parse(Buffer.from(sso, 'base64').toString('utf8'))
   // TODO check that profile.nonce should match the nonce from the login step.
   return profile
 }
 function getUsername (sso, sig) {
   let profile = getProfile(sso, sig)
+  if (!profile) return ''
   return profile.username
 }
 function getCategoryIdByName (name) {
@@ -51,8 +51,8 @@ function getCategoryIdByName (name) {
       return response.data.category_list.categories.find(category => category.name == name).id
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      return 0
     })
 }
 
@@ -103,7 +103,7 @@ app.get('/whoami', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let username = getUsername(sso, sig)
-  return res.json({'username': username})
+  res.json({'username': username})
 })
 
 app.get('/users', (req, res) => {
@@ -114,11 +114,11 @@ app.get('/users', (req, res) => {
       }
     })
     .then(response => {
-      return res.json(response.data.category_list.categories)
+      res.json(response.data.category_list.categories)
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
 })
 
@@ -127,44 +127,42 @@ app.get('/me', (req, res) => {
   let sig = req.query.sig
   let username = getUsername(sso, sig)
   if (!username) {
-    return res.json({})
+    res.json({})
   }
   axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`)
     .then(response => {
-      return res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
+      res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
-  return null
 })
 
 app.get('/users/:user', (req, res) => {
   let username = req.params.user
   if (!username) {
-    return res.json({})
+    res.json({})
   }
   axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${username}.json`)
     .then(response => {
-      return res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
+      res.json(response.data.topic_list.topics[0]) // the first topic describes the user profile
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
-  return null
 })
 
 app.get('/users/:user/wisdoms', (req, res) => {
   axios.get(`${process.env.DISCOURSE_HOST}/c/wiselike/profile-${req.params.user}.json`)
     .then(response => {
       response.data.topic_list.topics.shift()
-      return res.json(response.data.topic_list.topics)
+      res.json(response.data.topic_list.topics)
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
 })
 /* ****************** subscribestatus *********************/
@@ -184,8 +182,8 @@ app.get('/users/:user/subscribestatus', (req, res) => {
       res.status(200).send(response.data.user.watched_category_ids)
     })
     .catch(error => {
-      console.log(error.response.data)
-      return res.status(error.response.status).json(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
 })
 
@@ -260,8 +258,8 @@ app.post('/users/:user/wisdoms', (req, res) => {
       res.status(200).send(val.data)
     })
     .catch(error => {
-      console.log(error.response.data)
-      res.status(error.response.status).send(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
 })
 
@@ -270,9 +268,8 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
   }
   res.send(req.body.raw)
 
@@ -339,18 +336,18 @@ app.post('/users/:user/wisdoms/topic', (req, res) => {
             )
             return axios.put(puturl, putformData1, config)
           })
-          .then(_ => {
-            res.status(200).send('category changed')
+          .then(val => {
+            res.status(200).send(val)
           })
           .catch(error => {
-            console.log(error.response.data)
-            res.status(error.response.status).json(error.response.data)
+            console.log(error.toJSON())
+            res.send(error.toJSON())
           })
       }
     })
     .catch(error => {
-      console.log(error.response.data)
-      res.status(error.response.status).send(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
 })
 
@@ -359,9 +356,8 @@ app.post('/users/:user/createprofile', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
   }
   let Url = `${process.env.DISCOURSE_HOST}/categories`
   let profileformData = querystring.stringify(
@@ -437,39 +433,41 @@ app.post('/users/:user/createprofile', (req, res) => {
                 res.status(200).send(val)
               })
               .catch(error => {
-                res.status(error.response.status).send(error.response.data)
+                console.log(error.toJSON())
+                res.send(error.toJSON())
               })
             }
           })
           .catch(error => {
-            res.status(error.response.status).send(error.response.data)
+            console.log(error.toJSON())
+            res.send(error.toJSON())
           })
         })
         .catch(error => {
-          res.status(error.response.status).send(error.response.data)
+          console.log(error.toJSON())
+          res.send(error.toJSON())
         })
       })
       .catch(error => {
-        res.status(error.response.status).send(error.response.data)
+        console.log(error.toJSON())
+        res.send(error.toJSON())
       })
     })
     .catch(error => {
-      res.status(error.response.status).send(error.response.data)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
   }
-  return null
 })
 
 /* ****************** Upload avatar *********************/
 app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  let profile = getProfile(sso, sig)
+  if (!profile) {
+    return res.status(403).json({'error': 'Please login'})
   }
-  let profile = getProfile(req.query.sso, req.query.sig)
   let form = {
     api_key: process.env.DISCOURSE_API_KEY,
     api_username: process.env.DISCOURSE_API_USERNAME,
@@ -507,13 +505,14 @@ app.post('/users/:user/avatar', upload.single('avatar'), (req, res) => {
       })
     })
     .catch(error => {
-      res.status(error.response.status).send(error)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
   })
   .catch(error => {
-    res.status(error.response.status).send(error)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** Change User Introduction *********************/
@@ -521,9 +520,8 @@ app.post('/users/:user/introduction', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
   }
   let Url = `${process.env.DISCOURSE_HOST}/posts/` + req.body.id
   let introduction = querystring.stringify(
@@ -543,9 +541,9 @@ app.post('/users/:user/introduction', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(error.response.status).send(error)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** Set user Category tag *********************/
@@ -553,9 +551,8 @@ app.post('/users/:user/category', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
   }
   let introUrl = `${process.env.DISCOURSE_HOST}` + '/t/profile-' + me + '/' + req.body.introductionID
   // let Url = `${process.env.DISCOURSE_HOST}` + req.body.categoryUrl
@@ -579,25 +576,25 @@ app.post('/users/:user/category', (req, res) => {
       res.status(200).send(val.data)
     })
     .catch(error => {
-      res.status(error.response.status).send(error)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
   })
   .catch(error => {
-    res.status(error.response.status).send(error)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** Change user Background Image *********************/
 app.post('/users/:user/background', upload.single('profile_background'), (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
-  let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  let profile = getProfile(sso, sig)
+  if (!profile) {
+    return res.status(403).json({'error': 'Please login'})
   }
-  let profile = getProfile(req.query.sso, req.query.sig)
+  let me = profile.username
   let form = {
     api_key: process.env.DISCOURSE_API_KEY,
     api_username: process.env.DISCOURSE_API_USERNAME,
@@ -633,13 +630,14 @@ app.post('/users/:user/background', upload.single('profile_background'), (req, r
       })
     })
     .catch(error => {
-      res.status(error.response.status).send(error)
+      console.log(error.toJSON())
+      res.send(error.toJSON())
     })
   })
   .catch(error => {
-    res.status(error.response.status).send(error)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** Delete Question *********************/
@@ -647,9 +645,8 @@ app.post('/users/:user/delete', (req, res) => { // set user category
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
-  if (me === undefined) {
-    res.status(403)
-    return res.json({'error': 'Please login'})
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
   }
   let Url = `${process.env.DISCOURSE_HOST}/t/` + req.body.topid
   let form = {
@@ -665,9 +662,9 @@ app.post('/users/:user/delete', (req, res) => { // set user category
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(error.response.status).send(error.response.data)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** subscribe *********************/
@@ -675,6 +672,9 @@ app.post('/users/:user/subscribe', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
+  }
   let categoryID = req.body.categoryID
   let subscribeStatus = req.body.subscribeStatus
   let notificationlevel = ''
@@ -700,9 +700,9 @@ app.post('/users/:user/subscribe', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(error.response.status).send(error.response.data)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })
 
 /* ****************** RENAME *********************/
@@ -710,6 +710,9 @@ app.post('/users/:user/rename', (req, res) => {
   let sso = req.query.sso
   let sig = req.query.sig
   let me = getUsername(sso, sig)
+  if (!me) {
+    return res.status(403).json({'error': 'Please login'})
+  }
   let ReNameUrl = `${process.env.DISCOURSE_HOST}/u/` + me + '.json'
   let ReNameData = querystring.stringify(
     {
@@ -724,7 +727,7 @@ app.post('/users/:user/rename', (req, res) => {
     res.status(200).send(val.data)
   })
   .catch(error => {
-    res.status(error.response.status).send(error.response.data)
+    console.log(error.toJSON())
+    res.send(error.toJSON())
   })
-  return null
 })

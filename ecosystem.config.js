@@ -9,7 +9,10 @@ module.exports = {
     {
       name      : 'PROXY',
       script    : 'proxy.js',
-      watch     : ['proxy.js', 'config', '.env'],
+      merge_logs: true,
+      log_date_format: "YYYY-MM-DD HH:mm Z",
+      watch     : true,
+      ignore_watch: ["upload.?", "node_modules"],
       env_production : {
         NODE_ENV: 'production'
       }
