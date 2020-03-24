@@ -661,7 +661,7 @@ app.post('/users/:user/rename', (req, res) => {
       res.send(val.data)
     })
     .catch(error => {
-      console.log(`fail to rename`, error.toJSON())
+      console.log(`fail to rename`)
       res.send(error)
     })
 })
