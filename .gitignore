@@ -4,6 +4,7 @@ dist/
 npm-debug.log
 yarn-error.log
 .idea
-/.env
+.env
 yarn.lock
 note
+uploads/

@@ -35,7 +35,7 @@ function getLoginProfile (sso, sig) {
   let decodedSso = decodeURIComponent(sso)
   let hash = hmac.update(decodedSso).digest('hex')
   if (sig !== hash) {
-    console.log('Invalid auth')
+    console.log(`Invalid auth: sig '${sig}' and hash '${hash}' not matched.`)
     return 0
   }
   let profile = querystring.parse(Buffer.from(sso, 'base64').toString('utf8'))
